@@ -1,8 +1,16 @@
 package com.ijse.adlync.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Home_and_gardenEntity {
 
     @Id
@@ -18,56 +26,17 @@ public class Home_and_gardenEntity {
 
     private String condition;
 
+    private String brand;
+
+    private String color;
+
+    private String weight;
+
+    private String assembly_required;
+
+    private String special_features;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private PostEntity post;
-
-    public Long getHome_garden_id() {
-        return home_garden_id;
-    }
-
-    public void setHome_garden_id(Long home_garden_id) {
-        this.home_garden_id = home_garden_id;
-    }
-
-    public String getItem_type() {
-        return item_type;
-    }
-
-    public void setItem_type(String item_type) {
-        this.item_type = item_type;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getDimensions() {
-        return dimensions;
-    }
-
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
-
 }

@@ -2,11 +2,20 @@ package com.ijse.adlync.entity;
 
 import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "posts")
 public class PostEntity {
 
     @Id
@@ -23,6 +32,11 @@ public class PostEntity {
 
     @Column(nullable = false)
     private String description;
+
+    @Column(nullable = false)
+    private String contact_number;
+
+    private double price;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "report_id")
@@ -108,246 +122,36 @@ public class PostEntity {
     @OneToOne(mappedBy = "post")
     private EssentialsEntity essentials;
 
-    public Long getPost_id() {
-        return post_id;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OrderBy("display_order ASC, upload_date ASC")
+    private List<ImageEntity> images = new ArrayList<>();
+
+    // Utility methods for managing images
+    public void addImage(ImageEntity image) {
+        this.images.add(image);
+        image.setPost(this);
     }
 
-    public void setPost_id(Long post_id) {
-        this.post_id = post_id;
+    public void removeImage(ImageEntity image) {
+        this.images.remove(image);
+        image.setPost(null);
     }
 
-    public PostEntityStatusEnum getStatus() {
-        return status;
+    // Get primary/featured image
+    public ImageEntity getPrimaryImage() {
+        return images.stream()
+                .filter(ImageEntity::getIs_primary)
+                .findFirst()
+                .orElse(images.isEmpty() ? null : images.get(0));
     }
 
-    public void setStatus(PostEntityStatusEnum status) {
-        this.status = status;
+    // Set primary image
+    public void setPrimaryImage(ImageEntity image) {
+        // Remove primary flag from all images
+        images.forEach(img -> img.setIs_primary(false));
+        // Set the new primary image
+        if (image != null && images.contains(image)) {
+            image.setIs_primary(true);
+        }
     }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
-
-    public ReportEntity getReport() {
-        return report;
-    }
-
-    public void setReport(ReportEntity report) {
-        this.report = report;
-    }
-
-    public List<PaymentEntity> getPayments() {
-        return payments;
-    }
-
-    public void setPayments(List<PaymentEntity> payments) {
-        this.payments = payments;
-    }
-
-    public void addPayment(PaymentEntity payment) {
-        this.payments.add(payment);
-    }
-
-    public void removePayment(PaymentEntity payment) {
-        this.payments.remove(payment);
-    }
-
-    public List<ReportEntity> getReports() {
-        return reports;
-    }
-
-    public void setReports(List<ReportEntity> reports) {
-        this.reports = reports;
-    }
-
-    public void addReport(ReportEntity report) {
-        this.reports.add(report);
-    }
-
-    public void removeReport(ReportEntity report) {
-        this.reports.remove(report);
-    }
-
-    public CategoryEntity getCategory() {
-        return category;
-    }
-
-    public void setCategory(CategoryEntity category) {
-        this.category = category;
-    }
-
-    public Advertisement_typeEntity getAdvertisement_type() {
-        return advertisement_type;
-    }
-
-    public void setAdvertisement_type(Advertisement_typeEntity advertisement_type) {
-        this.advertisement_type = advertisement_type;
-    }
-
-    public LocationEntity getLocation() {
-        return location;
-    }
-
-    public void setLocation(LocationEntity location) {
-        this.location = location;
-    }
-
-    public MessageEntity getMessage() {
-        return message;
-    }
-
-    public void setMessage(MessageEntity message) {
-        this.message = message;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public VehicleEntity getVehicle() {
-        return vehicle;
-    }
-
-    public void setVehicle(VehicleEntity vehicle) {
-        this.vehicle = vehicle;
-    }
-
-    public AnimalEntity getAnimal() {
-        return animal;
-    }
-
-    public void setAnimal(AnimalEntity animal) {
-        this.animal = animal;
-    }
-
-    public PropertyEntity getProperty() {
-        return property;
-    }
-
-    public void setProperty(PropertyEntity property) {
-        this.property = property;
-    }
-
-    public JobEntity getJob() {
-        return job;
-    }
-
-    public void setJob(JobEntity job) {
-        this.job = job;
-    }
-
-    public MobileEntity getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(MobileEntity mobile) {
-        this.mobile = mobile;
-    }
-
-    public ElectronicEntity getElectronic() {
-        return electronic;
-    }
-
-    public void setElectronic(ElectronicEntity electronic) {
-        this.electronic = electronic;
-    }
-
-    public EducationEntity getEducation() {
-        return education;
-    }
-
-    public void setEducation(EducationEntity education) {
-        this.education = education;
-    }
-
-    public ServicesEntity getServices() {
-        return services;
-    }
-
-    public void setServices(ServicesEntity services) {
-        this.services = services;
-    }
-
-    public AgricultureEntity getAgriculture() {
-        return agriculture;
-    }
-
-    public void setAgriculture(AgricultureEntity agriculture) {
-        this.agriculture = agriculture;
-    }
-
-    public Fashion_and_beautyEntity getFashion_and_beauty() {
-        return fashion_and_beauty;
-    }
-
-    public void setFashion_and_beauty(Fashion_and_beautyEntity fashion_and_beauty) {
-        this.fashion_and_beauty = fashion_and_beauty;
-    }
-
-    public KidsEntity getKids() {
-        return kids;
-    }
-
-    public void setKids(KidsEntity kids) {
-        this.kids = kids;
-    }
-
-    public EntertaintmentEntity getEntertaintment() {
-        return entertaintment;
-    }
-
-    public void setEntertaintment(EntertaintmentEntity entertaintment) {
-        this.entertaintment = entertaintment;
-    }
-
-    public SportEntity getSport() {
-        return sport;
-    }
-
-    public void setSport(SportEntity sport) {
-        this.sport = sport;
-    }
-
-    public Work_over_seasEntity getWork_over_seas() {
-        return work_over_seas;
-    }
-
-    public void setWork_over_seas(Work_over_seasEntity work_over_seas) {
-        this.work_over_seas = work_over_seas;
-    }
-
-    public Home_and_gardenEntity getHome_and_garden() {
-        return home_and_garden;
-    }
-
-    public void setHome_and_garden(Home_and_gardenEntity home_and_garden) {
-        this.home_and_garden = home_and_garden;
-    }
-
-    public EssentialsEntity getEssentials() {
-        return essentials;
-    }
-
-    public void setEssentials(EssentialsEntity essentials) {
-        this.essentials = essentials;
-    }
-
 }

@@ -1,8 +1,19 @@
 package com.ijse.adlync.entity;
 
+import com.ijse.adlync.entity.enums.EntertainmentItemConditionEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.sql.Date;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class EntertaintmentEntity {
 
     @Id
@@ -16,48 +27,18 @@ public class EntertaintmentEntity {
 
     private String brand;
 
+    private String genre;
+
+    private Date release_year;
+
+    private String rating;
+
+    private String creator;
+
+    @Enumerated(EnumType.STRING)
+    private EntertainmentItemConditionEnum condition;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private PostEntity post;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getFormat() {
-        return format;
-    }
-
-    public void setFormat(String format) {
-        this.format = format;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
-
 }

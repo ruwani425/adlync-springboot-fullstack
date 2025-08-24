@@ -1,8 +1,16 @@
 package com.ijse.adlync.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SportEntity {
 
     @Id
@@ -18,55 +26,9 @@ public class SportEntity {
 
     private String size;
 
+    private String additional_information;
+
     @OneToOne(mappedBy = "sport")
     private PostEntity post;
-
-    public Long getSport_id() {
-        return sport_id;
-    }
-
-    public void setSport_id(Long sport_id) {
-        this.sport_id = sport_id;
-    }
-
-    public String getEquipment_type() {
-        return equipment_type;
-    }
-
-    public void setEquipment_type(String equipment_type) {
-        this.equipment_type = equipment_type;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
 
 }

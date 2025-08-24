@@ -1,51 +1,21 @@
 package com.ijse.adlync.dto.response;
 
 
-public class SportResponseDTO {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class SportResponseDTO {
     private Long sport_id;
     private String equipment_type;
     private String brand;
     private String condition;
     private String size;
-
-    public Long getSport_id() {
-        return sport_id;
-    }
-
-    public void setSport_id(Long sport_id) {
-        this.sport_id = sport_id;
-    }
-
-    public String getEquipment_type() {
-        return equipment_type;
-    }
-
-    public void setEquipment_type(String equipment_type) {
-        this.equipment_type = equipment_type;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public String getSize() {
-        return size;
-    }
-
-    public void setSize(String size) {
-        this.size = size;
-    }
+    private String additional_information;
+    private Long post_id;
 }

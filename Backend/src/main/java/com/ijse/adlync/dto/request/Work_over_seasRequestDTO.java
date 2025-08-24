@@ -1,51 +1,24 @@
 package com.ijse.adlync.dto.request;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Work_over_seasRequestDTO {
-
+    private Long work_over_seas_id;
     private String position;
     private String country;
     private String salary;
-    private String requirements;
     private String contract_duration;
-
-    public String getPosition() {
-        return position;
-    }
-
-    public void setPosition(String position) {
-        this.position = position;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public String getSalary() {
-        return salary;
-    }
-
-    public void setSalary(String salary) {
-        this.salary = salary;
-    }
-
-    public String getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(String requirements) {
-        this.requirements = requirements;
-    }
-
-    public String getContract_duration() {
-        return contract_duration;
-    }
-
-    public void setContract_duration(String contract_duration) {
-        this.contract_duration = contract_duration;
-    }
+    private String requirements;
+    private String company_name;
+    private String visa_status;
+    private String accommodation;
+    private String benefits;
+    private Long post_id;
 }

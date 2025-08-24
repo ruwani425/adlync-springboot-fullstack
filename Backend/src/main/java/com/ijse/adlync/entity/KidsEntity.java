@@ -1,8 +1,17 @@
 package com.ijse.adlync.entity;
 
+import com.ijse.adlync.entity.enums.KidsGenderEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class KidsEntity {
 
     @Id
@@ -18,56 +27,13 @@ public class KidsEntity {
 
     private String condition;
 
+    private String size;
+
+    private KidsGenderEnum gender;
+
+    private String safety_information;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private PostEntity post;
-
-    public Long getKids_id() {
-        return kids_id;
-    }
-
-    public void setKids_id(Long kids_id) {
-        this.kids_id = kids_id;
-    }
-
-    public String getItem_type() {
-        return item_type;
-    }
-
-    public void setItem_type(String item_type) {
-        this.item_type = item_type;
-    }
-
-    public String getAge_range() {
-        return age_range;
-    }
-
-    public void setAge_range(String age_range) {
-        this.age_range = age_range;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
-
 }

@@ -1,42 +1,25 @@
 package com.ijse.adlync.dto.request;
 
 
-public class Home_and_gardenRequestDTO {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class Home_and_gardenRequestDTO {
+    private Long home_garden_id;
     private String item_type;
     private String material;
     private String dimensions;
     private String condition;
-
-    public String getItem_type() {
-        return item_type;
-    }
-
-    public void setItem_type(String item_type) {
-        this.item_type = item_type;
-    }
-
-    public String getMaterial() {
-        return material;
-    }
-
-    public void setMaterial(String material) {
-        this.material = material;
-    }
-
-    public String getDimensions() {
-        return dimensions;
-    }
-
-    public void setDimensions(String dimensions) {
-        this.dimensions = dimensions;
-    }
-
-    public String getCondition() {
-        return condition;
-    }
-
-    public void setCondition(String condition) {
-        this.condition = condition;
-    }
+    private String brand;
+    private String color;
+    private String weight;
+    private String assembly_required;
+    private String special_features;
+    private Long post_id;
 }

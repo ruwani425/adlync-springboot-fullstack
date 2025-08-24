@@ -1,34 +1,19 @@
 package com.ijse.adlync.dto.response;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReportResponseDTO {
 
     private Long report_id;
     private String reason;
     private LocalDateTime date;
-
-    public Long getReport_id() {
-        return report_id;
-    }
-
-    public void setReport_id(Long report_id) {
-        this.report_id = report_id;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
 }

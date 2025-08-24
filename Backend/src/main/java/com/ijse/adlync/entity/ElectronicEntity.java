@@ -1,8 +1,19 @@
 package com.ijse.adlync.entity;
 
+import com.ijse.adlync.entity.enums.ElectronicEntityConditionEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class ElectronicEntity {
 
     @Id
@@ -18,56 +29,12 @@ public class ElectronicEntity {
 
     private String warranty;
 
+    @Enumerated(EnumType.STRING)
+    private ElectronicEntityConditionEnum condition;
+
+    private ArrayList<String> accessories;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id")
     private PostEntity post;
-
-    public Long getElectronic_id() {
-        return electronic_id;
-    }
-
-    public void setElectronic_id(Long electronic_id) {
-        this.electronic_id = electronic_id;
-    }
-
-    public String getBrand() {
-        return brand;
-    }
-
-    public void setBrand(String brand) {
-        this.brand = brand;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    public String getWarranty() {
-        return warranty;
-    }
-
-    public void setWarranty(String warranty) {
-        this.warranty = warranty;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
-
 }
