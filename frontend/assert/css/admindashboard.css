@@ -1,0 +1,251 @@
+:root {
+    --emerald-600: #059669;
+    --emerald-500: #10b981;
+    --bg: #ffffff;
+    --fg: #475569;
+    --card: #f6f8fb;
+    --border: #e5e7eb;
+    --sidebar-width: 280px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--fg);
+    background: #f8fafc;
+}
+
+.text-primary-emerald {
+    color: var(--emerald-600) !important;
+}
+
+.btn-emerald {
+    background: var(--emerald-600);
+    color: #fff;
+    border-color: var(--emerald-600);
+}
+
+.btn-emerald:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #fff;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: var(--sidebar-width);
+    background: #1e293b;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+}
+
+.sidebar-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #334155;
+}
+
+.sidebar-nav {
+    padding: 1rem 0;
+}
+
+.nav-item {
+    margin: 0.25rem 0;
+}
+
+.nav-link {
+    color: #cbd5e1;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.nav-link:hover {
+    background: #334155;
+    color: #f8fafc;
+}
+
+.nav-link.active {
+    background: var(--emerald-600);
+    color: #fff;
+}
+
+.nav-link i {
+    width: 20px;
+    margin-right: 0.75rem;
+}
+
+.main-content {
+    margin-left: var(--sidebar-width);
+    min-height: 100vh;
+}
+
+.top-navbar {
+    background: #fff;
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content-wrapper {
+    padding: 2rem;
+}
+
+.card {
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.card-hover {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.stat-card {
+    background: linear-gradient(135deg, var(--emerald-600), #047857);
+    color: white;
+}
+
+.stat-card.secondary {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+}
+
+.stat-card.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-card.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.post-card {
+    border-left: 4px solid var(--emerald-600);
+}
+
+.post-card.pending {
+    border-left-color: #f59e0b;
+}
+
+.post-card.rejected {
+    border-left-color: #ef4444;
+}
+
+.status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.status-approved {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.sidebar-toggle {
+    display: none;
+}
+
+.icon-pill {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bg-soft-blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.bg-soft-purple { background: rgba(147, 51, 234, 0.1); color: #9333ea; }
+.bg-soft-orange { background: rgba(251, 146, 60, 0.1); color: #fb923c; }
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.show {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .sidebar-toggle {
+        display: block;
+    }
+
+    .content-wrapper {
+        padding: 1rem;
+    }
+}
+
+.table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.modal-header {
+    background: var(--emerald-600);
+    color: white;
+}
+
+.form-control:focus {
+    border-color: var(--emerald-600);
+    box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+}
+
+.btn-outline-emerald {
+    color: var(--emerald-600);
+    border-color: var(--emerald-600);
+}
+
+.btn-outline-emerald:hover {
+    background: var(--emerald-600);
+    border-color: var(--emerald-600);
+    color: white;
+}
+
+.section-header {
+    border-bottom: 2px solid var(--emerald-600);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-switch .form-check-input:checked {
+    background-color: var(--emerald-600);
+    border-color: var(--emerald-600);
+}
