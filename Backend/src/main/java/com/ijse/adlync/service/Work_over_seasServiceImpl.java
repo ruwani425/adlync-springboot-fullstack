@@ -52,7 +52,7 @@ public class Work_over_seasServiceImpl {
 
     private Work_over_seasResponseDTO toResponseDTO(Work_over_seasEntity entity) {
         Work_over_seasResponseDTO dto = new Work_over_seasResponseDTO();
-        dto.setOverseas_id(entity.getOverseas_id());
+        dto.setWork_over_seas_id(entity.getOverseas_id());
         dto.setPosition(entity.getPosition());
         dto.setCountry(entity.getCountry());
         dto.setSalary(entity.getSalary());

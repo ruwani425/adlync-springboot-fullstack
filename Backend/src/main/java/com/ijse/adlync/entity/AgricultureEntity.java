@@ -34,9 +34,10 @@ public class AgricultureEntity {
     private String certifications;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "`condition`", nullable = false)
     private AgricultureEntityConditionEnum condition;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false, unique = true) // Owning side
     private PostEntity post;
 }

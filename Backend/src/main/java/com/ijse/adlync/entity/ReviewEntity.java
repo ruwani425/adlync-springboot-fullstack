@@ -1,11 +1,20 @@
 package com.ijse.adlync.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReviewEntity {
 
     @Id
@@ -23,53 +32,4 @@ public class ReviewEntity {
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<UserEntity> users = new ArrayList<>();
-
-    public Long getReview_id() {
-        return review_id;
-    }
-
-    public void setReview_id(Long review_id) {
-        this.review_id = review_id;
-    }
-
-    public Double getRating() {
-        return rating;
-    }
-
-    public void setRating(Double rating) {
-        this.rating = rating;
-    }
-
-    public LocalDateTime getCreated_at() {
-        return created_at;
-    }
-
-    public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public List<UserEntity> getUsers() {
-        return users;
-    }
-
-    public void setUsers(List<UserEntity> users) {
-        this.users = users;
-    }
-
-    public void addUser(UserEntity user) {
-        this.users.add(user);
-    }
-
-    public void removeUser(UserEntity user) {
-        this.users.remove(user);
-    }
-
 }

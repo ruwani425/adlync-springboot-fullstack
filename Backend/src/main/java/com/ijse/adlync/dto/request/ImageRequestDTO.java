@@ -20,5 +20,5 @@ public class ImageRequestDTO {
     private LocalDateTime upload_date;
     private Boolean is_primary;
     private Integer display_order;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

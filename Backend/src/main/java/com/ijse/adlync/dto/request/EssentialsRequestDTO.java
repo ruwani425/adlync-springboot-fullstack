@@ -1,11 +1,12 @@
 package com.ijse.adlync.dto.request;
 
+import com.ijse.adlync.entity.enums.EssentialItemConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Getter
 @Setter
@@ -18,6 +19,6 @@ public class EssentialsRequestDTO {
     private Date expiry_date;
     private String product_type;
     private String storage_instructions;
-    private String condition;
-    private Long post_id;
+    private EssentialItemConditionEnum condition;
+    private PostRequestDTO postRequestDTO;
 }

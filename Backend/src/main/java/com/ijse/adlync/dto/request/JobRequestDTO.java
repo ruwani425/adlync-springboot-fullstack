@@ -17,8 +17,8 @@ public class JobRequestDTO {
     private Double salary_min;
     private Double salary_max;
     private String industry;
-    private String job_type;
+    private JobEntityEmployment_typeEnum job_type;
     private String requirements;
     private String expiriance_level;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

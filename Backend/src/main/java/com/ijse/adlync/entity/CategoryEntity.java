@@ -2,10 +2,19 @@ package com.ijse.adlync.entity;
 
 import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class CategoryEntity {
 
     @Id
@@ -19,37 +28,4 @@ public class CategoryEntity {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostEntity> posts = new ArrayList<>();
-
-    public Long getCategory_id() {
-        return category_id;
-    }
-
-    public void setCategory_id(Long category_id) {
-        this.category_id = category_id;
-    }
-
-    public CategoryEntityNameEnum getName() {
-        return name;
-    }
-
-    public void setName(CategoryEntityNameEnum name) {
-        this.name = name;
-    }
-
-    public List<PostEntity> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(List<PostEntity> posts) {
-        this.posts = posts;
-    }
-
-    public void addPost(PostEntity post) {
-        this.posts.add(post);
-    }
-
-    public void removePost(PostEntity post) {
-        this.posts.remove(post);
-    }
-
 }

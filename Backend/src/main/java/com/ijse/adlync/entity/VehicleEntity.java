@@ -37,11 +37,13 @@ public class VehicleEntity {
 
     private String transmission;
 
+    @Column(name = "`condition`")
     private String condition;
 
     @Enumerated(EnumType.STRING)
     private VehicleParkingEnum parking;
 
-    @OneToOne(mappedBy = "vehicle")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private PostEntity post;
 }

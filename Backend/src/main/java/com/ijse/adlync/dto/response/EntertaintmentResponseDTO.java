@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.response;
 
 
+import com.ijse.adlync.entity.enums.EntertainmentItemConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,6 +22,6 @@ public class EntertaintmentResponseDTO {
     private Date release_year;
     private String rating;
     private String creator;
-    private String condition;
-    private Long post_id;
+    private EntertainmentItemConditionEnum condition;
+    private PostResponseDTO postResponseDTO;
 }

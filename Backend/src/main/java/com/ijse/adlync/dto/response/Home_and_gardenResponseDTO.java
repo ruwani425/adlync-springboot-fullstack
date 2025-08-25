@@ -21,5 +21,5 @@ public class Home_and_gardenResponseDTO {
     private String weight;
     private String assembly_required;
     private String special_features;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

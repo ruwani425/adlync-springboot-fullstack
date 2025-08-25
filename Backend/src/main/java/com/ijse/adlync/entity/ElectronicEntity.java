@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,11 +31,13 @@ public class ElectronicEntity {
     private String warranty;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "`condition`")
     private ElectronicEntityConditionEnum condition;
 
-    private ArrayList<String> accessories;
+    @ElementCollection
+    private List<String> accessories = new ArrayList<>();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false, unique = true) // owns FK
     private PostEntity post;
 }

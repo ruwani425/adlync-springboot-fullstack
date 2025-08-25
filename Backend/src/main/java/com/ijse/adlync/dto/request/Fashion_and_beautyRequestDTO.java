@@ -15,10 +15,10 @@ public class Fashion_and_beautyRequestDTO {
     private String item_type;
     private String brand;
     private String size;
-    private String gender;
+    private Fashion_and_beautyEntityGenderEnum gender;
     private String condition;
     private String color;
     private String material;
     private String style_note;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

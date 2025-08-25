@@ -20,6 +20,7 @@ public class MobileEntity {
 
     private String storage;
 
+    @Column(name = "`condition`")
     private String condition;
 
     private String warranty_status;
@@ -37,7 +38,7 @@ public class MobileEntity {
     private String additional_information;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id",referencedColumnName = "post_id")
     private PostEntity post;
 
 }

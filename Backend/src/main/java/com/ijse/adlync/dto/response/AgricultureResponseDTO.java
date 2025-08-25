@@ -20,6 +20,6 @@ public class AgricultureResponseDTO {
     private String variety;
     private Date production_Date;
     private String certifications;
-    private String condition;
-    private Long post_id;
+    private AgricultureEntityConditionEnum condition;
+    private PostResponseDTO postResponseDTO;
 }

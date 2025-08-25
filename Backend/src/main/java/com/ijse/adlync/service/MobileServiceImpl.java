@@ -55,7 +55,6 @@ public class MobileServiceImpl {
         dto.setMobile_id(entity.getMobile_id());
         dto.setStorage(entity.getStorage());
         dto.setCondition(entity.getCondition());
-        dto.setWarranty(entity.getWarranty());
         dto.setRam(entity.getRam());
         dto.setBrand(entity.getBrand());
         return dto;
@@ -65,7 +64,6 @@ public class MobileServiceImpl {
         MobileEntity entity = new MobileEntity();
         entity.setStorage(dto.getStorage());
         entity.setCondition(dto.getCondition());
-        entity.setWarranty(dto.getWarranty());
         entity.setRam(dto.getRam());
         entity.setBrand(dto.getBrand());
         return entity;

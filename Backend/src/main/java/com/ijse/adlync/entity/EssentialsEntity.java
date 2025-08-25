@@ -32,6 +32,7 @@ public class EssentialsEntity {
     private String storage_instructions;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "`condition`")
     private EssentialItemConditionEnum condition;
 
     @OneToOne(cascade = CascadeType.ALL)

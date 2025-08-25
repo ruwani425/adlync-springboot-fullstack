@@ -21,5 +21,5 @@ public class EducationRequestDTO {
     private String education_level;
     private String schedule;
     private String requirements;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

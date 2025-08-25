@@ -1,5 +1,6 @@
 package com.ijse.adlync.service;
 
+import com.ijse.adlync.entity.enums.Fashion_and_beautyEntityGenderEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -56,8 +57,8 @@ public class Fashion_and_beautyServiceImpl {
         dto.setItem_type(entity.getItem_type());
         dto.setBrand(entity.getBrand());
         dto.setSize(entity.getSize());
-        dto.setGender(entity.getGender());
-        dto.setCondition(entity.getCondition());
+        dto.setGender(String.valueOf(entity.getGender()));
+        dto.setCondition(Fashion_and_beautyEntityGenderEnum.valueOf(entity.getCondition()));
         return dto;
     }
 

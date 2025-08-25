@@ -24,6 +24,7 @@ public class Home_and_gardenEntity {
 
     private String dimensions;
 
+    @Column(name = "`condition`")
     private String condition;
 
     private String brand;
@@ -36,7 +37,7 @@ public class Home_and_gardenEntity {
 
     private String special_features;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToOne
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private PostEntity post;
 }

@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.request;
 
 
+import com.ijse.adlync.entity.enums.KidsGenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ public class KidsRequestDTO {
     private String brand;
     private String condition;
     private String size;
-    private String gender;
+    private KidsGenderEnum gender;
     private String safety_information;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

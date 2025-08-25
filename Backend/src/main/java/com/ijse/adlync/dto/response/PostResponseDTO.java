@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostResponseDTO {
     private Long post_id;
-    private String status;
+    private PostEntityStatusEnum status;
     private String title;
     private String description;
     private String contact_number;

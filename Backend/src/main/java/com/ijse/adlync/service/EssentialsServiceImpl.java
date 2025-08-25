@@ -53,20 +53,16 @@ public class EssentialsServiceImpl {
     private EssentialsResponseDTO toResponseDTO(EssentialsEntity entity) {
         EssentialsResponseDTO dto = new EssentialsResponseDTO();
         dto.setEssential_id(entity.getEssential_id());
-        dto.setItem_name(entity.getItem_name());
         dto.setBrand(entity.getBrand());
         dto.setQuantity(entity.getQuantity());
-        dto.setUnit(entity.getUnit());
         dto.setExpiry_date(entity.getExpiry_date());
         return dto;
     }
 
     private EssentialsEntity toEntity(EssentialsRequestDTO dto) {
         EssentialsEntity entity = new EssentialsEntity();
-        entity.setItem_name(dto.getItem_name());
         entity.setBrand(dto.getBrand());
         entity.setQuantity(dto.getQuantity());
-        entity.setUnit(dto.getUnit());
         entity.setExpiry_date(dto.getExpiry_date());
         return entity;
     }

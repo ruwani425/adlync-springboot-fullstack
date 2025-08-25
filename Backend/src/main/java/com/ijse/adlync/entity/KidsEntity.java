@@ -25,6 +25,7 @@ public class KidsEntity {
 
     private String brand;
 
+    @Column(name = "`condition`")
     private String condition;
 
     private String size;
@@ -34,6 +35,6 @@ public class KidsEntity {
     private String safety_information;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id",referencedColumnName = "post_id")
     private PostEntity post;
 }

@@ -17,5 +17,5 @@ public class SportResponseDTO {
     private String condition;
     private String size;
     private String additional_information;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

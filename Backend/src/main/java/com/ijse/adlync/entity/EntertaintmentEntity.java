@@ -36,9 +36,10 @@ public class EntertaintmentEntity {
     private String creator;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "`condition`")
     private EntertainmentItemConditionEnum condition;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToOne
+    @JoinColumn(name = "post_id", nullable = false, unique = true)
     private PostEntity post;
 }

@@ -53,9 +53,7 @@ public class AgricultureServiceImpl {
     private AgricultureResponseDTO toResponseDTO(AgricultureEntity entity) {
         AgricultureResponseDTO dto = new AgricultureResponseDTO();
         dto.setAgriculture_id(entity.getAgriculture_id());
-        dto.setProduct_name(entity.getProduct_name());
         dto.setQuantity(entity.getQuantity());
-        dto.setUnit(entity.getUnit());
         dto.setSeason(entity.getSeason());
         dto.setCondition(entity.getCondition());
         return dto;
@@ -63,9 +61,7 @@ public class AgricultureServiceImpl {
 
     private AgricultureEntity toEntity(AgricultureRequestDTO dto) {
         AgricultureEntity entity = new AgricultureEntity();
-        entity.setProduct_name(dto.getProduct_name());
         entity.setQuantity(dto.getQuantity());
-        entity.setUnit(dto.getUnit());
         entity.setSeason(dto.getSeason());
         entity.setCondition(dto.getCondition());
         return entity;

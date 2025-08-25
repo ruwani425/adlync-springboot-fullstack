@@ -13,10 +13,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class PropertyResponseDTO {
     private Long property_id;
-    private String type;
+    private PropertyEntityTypeEnum type;
     private Double land_size;
     private String bedroom;
     private String barthroom;
-    private String furnished;
-    private Long post_id;
+    private PropertyEntityFurnishedEnum furnished;
+    private PostResponseDTO postResponseDTO;
 }

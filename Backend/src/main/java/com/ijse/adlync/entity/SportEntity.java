@@ -22,13 +22,14 @@ public class SportEntity {
 
     private String brand;
 
+    @Column(name = "`condition`")
     private String condition;
 
     private String size;
 
     private String additional_information;
 
-    @OneToOne(mappedBy = "sport")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private PostEntity post;
-
 }

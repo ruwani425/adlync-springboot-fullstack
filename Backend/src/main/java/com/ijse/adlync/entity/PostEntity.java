@@ -69,8 +69,7 @@ public class PostEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "vehicle_id")
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL,fetch =  FetchType.LAZY)
     private VehicleEntity vehicle;
 
     @OneToOne(mappedBy = "post")
@@ -83,10 +82,10 @@ public class PostEntity {
     @OneToOne(mappedBy = "post")
     private JobEntity job;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private MobileEntity mobile;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private ElectronicEntity electronic;
 
     @OneToOne(mappedBy = "post")
@@ -96,31 +95,28 @@ public class PostEntity {
     @JoinColumn(name = "services_id")
     private ServicesEntity services;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private AgricultureEntity agriculture;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Fashion_and_beautyEntity fashion_and_beauty;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private KidsEntity kids;
 
     @OneToOne(mappedBy = "post")
-    private EntertaintmentEntity entertaintment;
+    private EssentialsEntity essentials;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "sport_id")
+
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private SportEntity sport;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "work_over_seas_id")
     private Work_over_seasEntity work_over_seas;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Home_and_gardenEntity home_and_garden;
-
-    @OneToOne(mappedBy = "post")
-    private EssentialsEntity essentials;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("display_order ASC, upload_date ASC")

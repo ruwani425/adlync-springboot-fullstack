@@ -16,9 +16,9 @@ public class Fashion_and_beautyResponseDTO {
     private String brand;
     private String size;
     private String gender;
-    private String condition;
+    private Fashion_and_beautyEntityGenderEnum condition;
     private String color;
     private String material;
     private String style_note;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

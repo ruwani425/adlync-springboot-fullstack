@@ -55,10 +55,6 @@ public class JobServiceImpl {
         dto.setJob_id(entity.getJob_id());
         dto.setPosition(entity.getPosition());
         dto.setCompany(entity.getCompany());
-        dto.setSalary(entity.getSalary());
-        dto.setEmployment_type(entity.getEmployment_type());
-        dto.setQuilifications(entity.getQuilifications());
-        dto.setExpiriance_required(entity.getExpiriance_required());
         return dto;
     }
 
@@ -66,10 +62,6 @@ public class JobServiceImpl {
         JobEntity entity = new JobEntity();
         entity.setPosition(dto.getPosition());
         entity.setCompany(dto.getCompany());
-        entity.setSalary(dto.getSalary());
-        entity.setEmployment_type(dto.getEmployment_type());
-        entity.setQuilifications(dto.getQuilifications());
-        entity.setExpiriance_required(dto.getExpiriance_required());
         return entity;
     }
 }

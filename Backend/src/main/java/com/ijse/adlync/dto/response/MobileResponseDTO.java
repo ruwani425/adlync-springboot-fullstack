@@ -21,5 +21,5 @@ public class MobileResponseDTO {
     private String colour;
     private String included_accessories;
     private String additional_information;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

@@ -16,7 +16,7 @@ public class AnimalResponseDTO {
     private String species;
     private String breed;
     private Integer age;
-    private String gender;
+    private AnimalEntityGenderEnum gender;
     private String vaccination_status;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

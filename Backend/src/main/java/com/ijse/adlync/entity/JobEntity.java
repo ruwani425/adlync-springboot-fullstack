@@ -37,6 +37,6 @@ public class JobEntity {
     private String expiriance_level;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id",referencedColumnName = "post_id")
     private PostEntity post;
 }

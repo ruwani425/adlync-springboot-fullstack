@@ -28,6 +28,7 @@ public class Fashion_and_beautyEntity {
     @Enumerated(EnumType.STRING)
     private Fashion_and_beautyEntityGenderEnum gender;
 
+    @Column(name = "`condition`")
     private String condition;
 
     private String color;
@@ -36,7 +37,7 @@ public class Fashion_and_beautyEntity {
 
     private String style_note;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "post_id")
+    @OneToOne
+    @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private PostEntity post;
 }

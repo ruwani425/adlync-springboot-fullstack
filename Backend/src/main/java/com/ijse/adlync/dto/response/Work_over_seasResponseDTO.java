@@ -20,5 +20,5 @@ public class Work_over_seasResponseDTO {
     private String visa_status;
     private String accommodation;
     private String benefits;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

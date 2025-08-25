@@ -14,9 +14,9 @@ public class ServicesRequestDTO {
     private Long service_id;
     private String service_type;
     private String provider_name;
-    private String availability;
+    private ServicesEntityAvailabilityEnum availability;
     private String charges;
     private String service_area;
     private String qualifications;
-    private Long post_id;
+    private PostRequestDTO postRequestDTO;
 }

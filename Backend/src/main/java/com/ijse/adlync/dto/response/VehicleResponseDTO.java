@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.response;
 
 import com.ijse.adlync.entity.enums.VehicleEntityFuel_typeEnum;
+import com.ijse.adlync.entity.enums.VehicleParkingEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,9 @@ public class VehicleResponseDTO {
     private Date year;
     private String brand;
     private String model;
-    private String fuel_type;
+    private VehicleEntityFuel_typeEnum fuel_type;
     private String transmission;
     private String condition;
-    private String parking;
-    private Long post_id;
+    private VehicleParkingEnum parking;
+    private PostResponseDTO postResponseDTO;
 }

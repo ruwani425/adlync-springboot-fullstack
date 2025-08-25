@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.response;
 
 
+import com.ijse.adlync.entity.enums.ElectronicEntityConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class ElectronicResponseDTO {
     private String type;
     private String model;
     private String warranty;
-    private String condition;
+    private ElectronicEntityConditionEnum condition;
     private ArrayList<String> accessories;
-    private Long post_id;
+    private PostResponseDTO postResponseDTO;
 }

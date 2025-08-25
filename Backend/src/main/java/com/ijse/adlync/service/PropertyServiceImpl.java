@@ -58,7 +58,6 @@ public class PropertyServiceImpl {
         dto.setBedroom(entity.getBedroom());
         dto.setBarthroom(entity.getBarthroom());
         dto.setFurnished(entity.getFurnished());
-        dto.setLocation_details(entity.getLocation_details());
         return dto;
     }
 
@@ -69,7 +68,6 @@ public class PropertyServiceImpl {
         entity.setBedroom(dto.getBedroom());
         entity.setBarthroom(dto.getBarthroom());
         entity.setFurnished(dto.getFurnished());
-        entity.setLocation_details(dto.getLocation_details());
         return entity;
     }
 }
