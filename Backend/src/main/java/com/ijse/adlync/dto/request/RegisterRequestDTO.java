@@ -1,4 +1,4 @@
-package com.ijse.adlync.dto.response;
+package com.ijse.adlync.dto.request;
 
 import com.ijse.adlync.entity.enums.UserEntityRoleEnum;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,10 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDTO {
+public class RegisterRequestDTO {
 
-    private Long id;
     private String password;
+    private String username;
     private UserEntityRoleEnum role;
     private String name;
     private String email;

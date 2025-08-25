@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.UserRepository;
-import com.ijse.adlync.dto.request.UserRequestDTO;
-import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.dto.request.RegisterRequestDTO;
+import com.ijse.adlync.dto.response.RegisterResponseDTO;
 
 @Service
 public class UserServiceImpl {
@@ -15,25 +15,25 @@ public class UserServiceImpl {
     @Autowired
     private UserRepository repository;
 
-    public List<UserResponseDTO> findAll() {
+    public List<RegisterResponseDTO> findAll() {
         return repository.findAll().stream()
             .map(this::toResponseDTO)
             .collect(Collectors.toList());
     }
 
-    public UserResponseDTO findById(Long id) {
+    public RegisterResponseDTO findById(Long id) {
         UserEntity entity = repository.findById(id)
             .orElseThrow(() -> new RuntimeException("UserEntity not found with id: " + id));
         return toResponseDTO(entity);
     }
 
-    public UserResponseDTO create(UserRequestDTO requestDTO) {
+    public RegisterResponseDTO create(RegisterRequestDTO requestDTO) {
         UserEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
         return toResponseDTO(entity);
     }
 
-    public UserResponseDTO update(Long id, UserRequestDTO requestDTO) {
+    public RegisterResponseDTO update(Long id, RegisterRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("UserEntity not found with id: " + id);
         }
@@ -50,8 +50,8 @@ public class UserServiceImpl {
         repository.deleteById(id);
     }
 
-    private UserResponseDTO toResponseDTO(UserEntity entity) {
-        UserResponseDTO dto = new UserResponseDTO();
+    private RegisterResponseDTO toResponseDTO(UserEntity entity) {
+        RegisterResponseDTO dto = new RegisterResponseDTO();
         dto.setId(entity.getId());
         dto.setPassword(entity.getPassword());
         dto.setRole(entity.getRole());
@@ -60,7 +60,7 @@ public class UserServiceImpl {
         return dto;
     }
 
-    private UserEntity toEntity(UserRequestDTO dto) {
+    private UserEntity toEntity(RegisterRequestDTO dto) {
         UserEntity entity = new UserEntity();
         entity.setPassword(dto.getPassword());
         entity.setRole(dto.getRole());

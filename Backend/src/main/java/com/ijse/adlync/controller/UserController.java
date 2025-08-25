@@ -4,8 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
-import com.ijse.adlync.dto.request.UserRequestDTO;
-import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.dto.request.RegisterRequestDTO;
+import com.ijse.adlync.dto.response.RegisterResponseDTO;
 import com.ijse.adlync.service.UserServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -27,8 +27,8 @@ public class UserController {
         @ApiResponse(responseCode = "200", description = "Successfully retrieved list of Users"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
-        List<UserResponseDTO> response = service.findAll();
+    public ResponseEntity<List<RegisterResponseDTO>> getAllUsers() {
+        List<RegisterResponseDTO> response = service.findAll();
         return ResponseEntity.ok(response);
     }
 
@@ -39,8 +39,8 @@ public class UserController {
         @ApiResponse(responseCode = "404", description = "User not found"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<UserResponseDTO> getUserById(@Parameter(description = "ID of the User to retrieve") @PathVariable Long id) {
-        UserResponseDTO response = service.findById(id);
+    public ResponseEntity<RegisterResponseDTO> getUserById(@Parameter(description = "ID of the User to retrieve") @PathVariable Long id) {
+        RegisterResponseDTO response = service.findById(id);
         return ResponseEntity.ok(response);
     }
 
@@ -51,8 +51,8 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Invalid input data"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<UserResponseDTO> createUser(@Parameter(description = "User data to create") @RequestBody UserRequestDTO requestDTO) {
-        UserResponseDTO response = service.create(requestDTO);
+    public ResponseEntity<RegisterResponseDTO> createUser(@Parameter(description = "User data to create") @RequestBody RegisterRequestDTO requestDTO) {
+        RegisterResponseDTO response = service.create(requestDTO);
         return ResponseEntity.ok(response);
     }
 
@@ -64,8 +64,8 @@ public class UserController {
         @ApiResponse(responseCode = "400", description = "Invalid input data"),
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<UserResponseDTO> updateUser(@Parameter(description = "ID of the User to update") @PathVariable Long id, @Parameter(description = "Updated User data") @RequestBody UserRequestDTO requestDTO) {
-        UserResponseDTO response = service.update(id, requestDTO);
+    public ResponseEntity<RegisterResponseDTO> updateUser(@Parameter(description = "ID of the User to update") @PathVariable Long id, @Parameter(description = "Updated User data") @RequestBody RegisterRequestDTO requestDTO) {
+        RegisterResponseDTO response = service.update(id, requestDTO);
         return ResponseEntity.ok(response);
     }
 
