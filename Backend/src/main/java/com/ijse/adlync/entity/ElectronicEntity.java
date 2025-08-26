@@ -38,6 +38,6 @@ public class ElectronicEntity {
     private List<String> accessories = new ArrayList<>();
 
     @OneToOne
-    @JoinColumn(name = "post_id", nullable = false, unique = true) // owns FK
+    @JoinColumn(name = "post_id", nullable = false, unique = true)
     private PostEntity post;
 }

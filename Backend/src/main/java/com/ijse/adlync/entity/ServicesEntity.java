@@ -32,6 +32,7 @@ public class ServicesEntity {
 
     private String qualifications;
 
-    @OneToOne(mappedBy = "services")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private PostEntity post;
 }

@@ -52,7 +52,6 @@ public class PostEntity {
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "advertisement_type_id")
     private Advertisement_typeEntity advertisement_type;
@@ -61,93 +60,59 @@ public class PostEntity {
     @JoinColumn(name = "location_id")
     private LocationEntity location;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "message_id")
-    private MessageEntity message;
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MessageEntity> messages = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL,fetch =  FetchType.LAZY)
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private VehicleEntity vehicle;
 
     @OneToOne(mappedBy = "post")
     private AnimalEntity animal;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "property_id")
+    @OneToOne(mappedBy = "post")
     private PropertyEntity property;
 
     @OneToOne(mappedBy = "post")
     private JobEntity job;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private MobileEntity mobile;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private ElectronicEntity electronic;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private EducationEntity education;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "services_id")
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private ServicesEntity services;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private AgricultureEntity agriculture;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private Fashion_and_beautyEntity fashion_and_beauty;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private KidsEntity kids;
 
-    @OneToOne(mappedBy = "post")
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private EssentialsEntity essentials;
 
-
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private SportEntity sport;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "work_over_seas_id")
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
     private Work_over_seasEntity work_over_seas;
 
-    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private Home_and_gardenEntity home_and_garden;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @OrderBy("display_order ASC, upload_date ASC")
     private List<ImageEntity> images = new ArrayList<>();
-
-    // Utility methods for managing images
-    public void addImage(ImageEntity image) {
-        this.images.add(image);
-        image.setPost(this);
-    }
-
-    public void removeImage(ImageEntity image) {
-        this.images.remove(image);
-        image.setPost(null);
-    }
-
-    // Get primary/featured image
-    public ImageEntity getPrimaryImage() {
-        return images.stream()
-                .filter(ImageEntity::getIs_primary)
-                .findFirst()
-                .orElse(images.isEmpty() ? null : images.get(0));
-    }
-
-    // Set primary image
-    public void setPrimaryImage(ImageEntity image) {
-        // Remove primary flag from all images
-        images.forEach(img -> img.setIs_primary(false));
-        // Set the new primary image
-        if (image != null && images.contains(image)) {
-            image.setIs_primary(true);
-        }
-    }
 }

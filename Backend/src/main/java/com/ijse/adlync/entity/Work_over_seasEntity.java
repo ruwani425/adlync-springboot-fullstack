@@ -36,6 +36,7 @@ public class Work_over_seasEntity {
 
     private String additional_benefits;
 
-    @OneToOne(mappedBy = "work_over_seas")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private PostEntity post;
 }

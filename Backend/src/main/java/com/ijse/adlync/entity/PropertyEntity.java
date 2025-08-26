@@ -32,6 +32,7 @@ public class PropertyEntity {
     @Enumerated(EnumType.STRING)
     private PropertyEntityFurnishedEnum furnished;
 
-    @OneToOne(mappedBy = "property")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "post_id")
     private PostEntity post;
 }

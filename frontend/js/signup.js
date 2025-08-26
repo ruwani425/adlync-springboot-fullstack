@@ -17,10 +17,6 @@ function socialSignup(provider) {
             window.location.href = 'index.html';
         }, 2000);
     }, 2500);
-
-    // In real implementation, you would integrate with:
-    // Google: Google OAuth 2.0 / Google Sign-In
-    // Facebook: Facebook Login SDK
 }
 
 // Form validation and submission
@@ -29,8 +25,8 @@ $('#signupForm').on('submit', function(e) {
 
     const formData = {
         fullName: $('#fullName').val().trim(),
+        username: $('#username').val().trim(),
         email: $('#email').val().trim(),
-        phone: $('#phone').val().trim(),
         password: $('#password').val(),
         confirmPassword: $('#confirmPassword').val(),
         termsAccepted: $('#termsCheck').is(':checked')
@@ -48,13 +44,13 @@ $('#signupForm').on('submit', function(e) {
         isValid = false;
     }
 
-    if (!isValidEmail(formData.email)) {
-        showFieldError('email', 'Please enter a valid email address');
+    if (!isValidUsername(formData.username)) {
+        showFieldError('username', 'Username must be 3-20 characters long and contain only letters, numbers, and underscores');
         isValid = false;
     }
 
-    if (formData.phone && !isValidPhone(formData.phone)) {
-        showFieldError('phone', 'Please enter a valid Sri Lankan phone number');
+    if (!isValidEmail(formData.email)) {
+        showFieldError('email', 'Please enter a valid email address');
         isValid = false;
     }
 
@@ -119,15 +115,14 @@ function updatePasswordStrength(strength) {
 }
 
 // Utility functions
+function isValidUsername(username) {
+    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+    return usernameRegex.test(username);
+}
+
 function isValidEmail(email) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
-}
-
-function isValidPhone(phone) {
-    // Sri Lankan phone number validation
-    const phoneRegex = /^(\+94|0)?[1-9][0-9]{8}$/;
-    return phoneRegex.test(phone.replace(/\s+/g, ''));
 }
 
 function showAlert(message, type = 'info') {
@@ -177,7 +172,7 @@ function setLoading(loading) {
 
     if (loading) {
         $form.addClass('loading');
-        $btn.addClass('loading').text('');
+        $btn.addClass('loading').text('Creating Account...');
     } else {
         $form.removeClass('loading');
         $btn.removeClass('loading').text('Sign Up');
