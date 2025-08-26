@@ -1,16 +1,12 @@
-// Social signup handlers
 function socialSignup(provider) {
     showAlert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} signup initiated...`, 'info');
 
-    // Set loading state
     const $btn = $(`.btn-${provider}`);
     $btn.addClass('loading').css('pointerEvents', 'none');
 
-    // Simulate social login process
     setTimeout(() => {
         $btn.removeClass('loading').css('pointerEvents', 'auto');
 
-        // Simulate success
         showAlert(`Successfully signed up with ${provider}! Redirecting...`, 'success');
 
         setTimeout(() => {
@@ -19,8 +15,7 @@ function socialSignup(provider) {
     }, 2500);
 }
 
-// Form validation and submission
-$('#signupForm').on('submit', function(e) {
+$('#signupForm').on('submit', function (e) {
     e.preventDefault();
 
     const formData = {
@@ -32,38 +27,31 @@ $('#signupForm').on('submit', function(e) {
         termsAccepted: $('#termsCheck').is(':checked')
     };
 
-    // Clear previous alerts and validation
     clearAlerts();
     clearValidation();
 
-    // Validate form
     let isValid = true;
 
     if (formData.fullName.length < 2) {
         showFieldError('fullName', 'Full name must be at least 2 characters long');
         isValid = false;
     }
-
     if (!isValidUsername(formData.username)) {
         showFieldError('username', 'Username must be 3-20 characters long and contain only letters, numbers, and underscores');
         isValid = false;
     }
-
     if (!isValidEmail(formData.email)) {
         showFieldError('email', 'Please enter a valid email address');
         isValid = false;
     }
-
     if (formData.password.length < 8) {
         showFieldError('password', 'Password must be at least 8 characters long');
         isValid = false;
     }
-
     if (formData.password !== formData.confirmPassword) {
         showFieldError('confirmPassword', 'Passwords do not match');
         isValid = false;
     }
-
     if (!formData.termsAccepted) {
         showAlert('Please accept the Terms of Service and Privacy Policy', 'danger');
         isValid = false;
@@ -71,21 +59,47 @@ $('#signupForm').on('submit', function(e) {
 
     if (!isValid) return;
 
-    // Show loading state
     setLoading(true);
 
-    // Simulate signup process
-    setTimeout(() => {
-        showAlert('Account created successfully! Welcome to Adlync!', 'success');
-
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
-    }, 2500);
+    $.ajax({
+        url: 'http://localhost:8080/auth/register',
+        type: 'POST',
+        data: JSON.stringify({
+            name: formData.fullName,
+            username: formData.username,
+            email: formData.email,
+            password: formData.password,
+            role: 'USER' // Add role
+        }),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (response) {
+            Swal.fire({
+                icon: 'success',
+                title: 'Registration Success',
+                text: response.message || 'Account created successfully!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 1500);
+        },
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON?.message || 'Registration failed. Please try again.';
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: errorMsg,
+                showConfirmButton: false,
+                timer: 2000
+            });
+            setLoading(false);
+        }
+    });
 });
 
-// Password strength checker
-$('#password').on('input', function() {
+$('#password').on('input', function () {
     const password = $(this).val();
     const strength = checkPasswordStrength(password);
     updatePasswordStrength(strength);
@@ -114,7 +128,6 @@ function updatePasswordStrength(strength) {
     $strengthText.text(strength.charAt(0).toUpperCase() + strength.slice(1));
 }
 
-// Utility functions
 function isValidUsername(username) {
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     return usernameRegex.test(username);
@@ -141,7 +154,6 @@ function showAlert(message, type = 'info') {
 
     $alertContainer.append($alertDiv);
 
-    // Auto-remove alert after 5 seconds
     setTimeout(() => {
         $alertDiv.remove();
     }, 5000);
@@ -187,7 +199,51 @@ function showPrivacy() {
     showAlert('Privacy Policy would open in a new window', 'info');
 }
 
-// Auto-focus on full name field when page loads
-$(document).ready(function() {
+$(document).ready(function () {
     $('#fullName').focus();
 });
+//
+// $("#signupBtn").click(function () {
+//
+//     var fullname = $("#fullName").val();
+//     var username = $("#username").val();
+//     var email = $("#email").val();
+//     var password = $("#password").val();
+//     var conformpassword = $("#confirmPassword").val();
+//
+//     if (password === conformpassword){
+//
+//     }
+//
+//     var user = {
+//         fullname: fullname,
+//         username: username,
+//         email: email,
+//         password: password,
+//         role:"USER"
+//     }
+//
+//     $.ajax({
+//         url: `http://localhost:8080/auth/register`,
+//         type: "POST",
+//         data: JSON.stringify(user),
+//         contentType: "application/json",
+//         dataType: "json",
+//         success: function (user) {
+//             Swal.fire({
+//                 icon: 'success',
+//                 title: 'Registration success',
+//                 showConfirmButton: false,
+//                 timer: 1500
+//             })
+//         },
+//         error: function (xhr, status, error) {
+//             Swal.fire({
+//                 icon: 'error',
+//                 title: 'Registration Failed',
+//                 showConfirmButton: false,
+//                 text: xhr.responseText
+//             })
+//         }
+//     });
+// });

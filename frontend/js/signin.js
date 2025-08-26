@@ -27,7 +27,7 @@ function showForgotPassword() {
 // Show alert
 function showAlert(message, type) {
     const alertClass = type === 'success' ? 'alert-success'
-        : type === 'error'   ? 'alert-danger'
+        : type === 'error' ? 'alert-danger'
             : 'alert-info';
 
     $('#alertContainer').html(`
@@ -43,20 +43,20 @@ function isValidLoginIdentifier(identifier) {
     // Check if it's a valid email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (emailRegex.test(identifier)) {
-        return { type: 'email', valid: true };
+        return {type: 'email', valid: true};
     }
 
     // Check if it's a valid username
     const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
     if (usernameRegex.test(identifier)) {
-        return { type: 'username', valid: true };
+        return {type: 'username', valid: true};
     }
 
-    return { type: 'unknown', valid: false };
+    return {type: 'unknown', valid: false};
 }
 
 // Handle login form submit
-$('#loginForm').on('submit', function(e) {
+$('#loginForm').on('submit', function (e) {
     e.preventDefault();
 
     const loginIdentifier = $('#loginIdentifier').val().trim();
@@ -99,9 +99,44 @@ $('#loginForm').on('submit', function(e) {
             showAlert('Login successful! Redirecting...', 'success');
         }, 2000);
     }
+    $.ajax({
+        url: 'http://localhost:8080/auth/login',
+        type: 'POST',
+        data: JSON.stringify({
+            username: loginIdentifier,
+            password: password
+        }),
+        contentType: 'application/json',
+        dataType: 'json',
+        success: function (response) {
+            let token = response.data.token;
+            //1day walin cookie eka expire wenawa
+            setCookie("token", token, 1)
+            console.log(document.cookie)
+            Swal.fire({
+                icon: 'success',
+                title: 'login Success',
+                text: response.message || 'login successfully!',
+                showConfirmButton: false,
+                timer: 1500
+            });
+            window.location.href = "../index.html"
+        },
+        error: function (xhr) {
+            const errorMsg = xhr.responseJSON?.message || 'login failed. Please try again.';
+            Swal.fire({
+                icon: 'error',
+                title: 'login Failed',
+                text: errorMsg,
+                showConfirmButton: false,
+                timer: 2000
+            });
+            setLoading(false);
+        }
+    })
 });
 
 // Auto-focus on login identifier field when page loads
-$(document).ready(function() {
+$(document).ready(function () {
     $('#loginIdentifier').focus();
 });

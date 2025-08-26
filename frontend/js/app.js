@@ -61,9 +61,16 @@ $(function () {
 });
 
 $(function () {
-    $('#postAdBtn').on('click', function () {
-        window.location.href = 'pages/signup.html';
-    });
+    var token = getCookie("token");
+    if (token != null){
+        $('#postAdBtn').on('click', function () {
+            window.location.href = 'pages/postad.html';
+        });
+    }else{
+        $('#postAdBtn').on('click', function () {
+            window.location.href = 'pages/signup.html';
+        });
+    }
 });
 
 $(function () {
@@ -71,3 +78,4 @@ $(function () {
         window.location.href = 'pages/signin.html';
     });
 });
+
