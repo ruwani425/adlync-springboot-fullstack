@@ -56,7 +56,8 @@ public class PostEntity {
     @JoinColumn(name = "advertisement_type_id")
     private Advertisement_typeEntity advertisement_type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    // Changed from @ManyToOne to @OneToOne with cascade
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private LocationEntity location;
 
@@ -67,7 +68,7 @@ public class PostEntity {
     @JoinColumn(name = "user_id")
     private UserEntity user;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private VehicleEntity vehicle;
 
     @OneToOne(mappedBy = "post")
@@ -85,10 +86,10 @@ public class PostEntity {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private ElectronicEntity electronic;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private EducationEntity education;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private ServicesEntity services;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
@@ -100,13 +101,13 @@ public class PostEntity {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private KidsEntity kids;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private EssentialsEntity essentials;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private SportEntity sport;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private Work_over_seasEntity work_over_seas;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)

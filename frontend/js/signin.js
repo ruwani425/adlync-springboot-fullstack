@@ -89,11 +89,9 @@ $('#loginForm').on('submit', function (e) {
         const $loginBtn = $('#loginBtn');
         $loginBtn.addClass('loading').text('Signing In...');
 
-        // Show what type of identifier was used
         const identifierType = identifierValidation.type === 'email' ? 'email' : 'username';
         console.log(`Attempting login with ${identifierType}: ${loginIdentifier}`);
 
-        // Simulate login process
         setTimeout(() => {
             $loginBtn.removeClass('loading').text('Sign In');
             showAlert('Login successful! Redirecting...', 'success');

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Payment - Post Advertisement</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.10.0/font/bootstrap-icons.min.css"
+          rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="../assert/css/payment.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="payment-container">
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="text-center">
+                <div class="spinner mb-3"></div>
+                <p>Processing your payment...</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <!-- Payment Header -->
+            <div class="payment-header">
+                <div class="payment-icon">
+                    <i class="bi bi-credit-card"></i>
+                </div>
+                <h1 class="h3 mb-2">Complete Your Payment</h1>
+                <p class="mb-0 opacity-75">Secure payment for your advertisement posting</p>
+            </div>
+
+            <div class="card-body p-4">
+                <!-- Fee Summary -->
+                <div class="fee-summary">
+                    <h4>Advertisement Posting Fee</h4>
+                    <div class="fee-amount" id="feeAmount">LKR 750.00</div>
+                    <small class="opacity-75">One-time payment • Secure & Encrypted</small>
+                </div>
+
+                <!-- Payment Method Selection -->
+                <h5 class="mb-4">
+                    <i class="bi bi-shield-check text-success me-2"></i>
+                    Choose Payment Method
+                </h5>
+
+                <!-- Card Payment Option -->
+                <div class="payment-method-card" data-method="card" onclick="selectPaymentMethod('card')">
+                    <div class="form-check">
+                        <input class="form-check-input" id="cardPayment" name="paymentMethod" type="radio" value="card">
+                        <label class="form-check-label w-100" for="cardPayment">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="bi bi-credit-card me-2"></i>
+                                        Card Payment
+                                    </h6>
+                                    <small class="text-muted">Pay securely with Visa, Mastercard, or American
+                                        Express</small>
+                                    <div class="mt-2">
+                                        <span class="badge bg-success me-1">Instant</span>
+                                        <span class="badge bg-primary">Most Popular</span>
+                                    </div>
+                                </div>
+                                <div class="text-primary fs-2">
+                                    <i class="bi bi-credit-card-2-front"></i>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Bank Transfer Option -->
+                <div class="payment-method-card" data-method="bank" onclick="selectPaymentMethod('bank')">
+                    <div class="form-check">
+                        <input class="form-check-input" id="bankPayment" name="paymentMethod" type="radio" value="bank">
+                        <label class="form-check-label w-100" for="bankPayment">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <div>
+                                    <h6 class="mb-1">
+                                        <i class="bi bi-bank me-2"></i>
+                                        Bank Transfer
+                                    </h6>
+                                    <small class="text-muted">Transfer to our bank account and upload receipt</small>
+                                    <div class="mt-2">
+                                        <span class="badge bg-info me-1">Manual Verification</span>
+                                        <span class="badge bg-warning">24-48 Hours</span>
+                                    </div>
+                                </div>
+                                <div class="text-primary fs-2">
+                                    <i class="bi bi-building"></i>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Card Payment Details -->
+                <div id="cardPaymentForm" style="display: none;">
+                    <div class="payment-details">
+                        <div class="text-center">
+                            <div class="mb-3">
+                                <i class="bi bi-shield-lock-fill text-success fs-1"></i>
+                            </div>
+                            <h6 class="mb-3">
+                                <i class="bi bi-shield-check me-2"></i>
+                                256-bit SSL Encrypted Payment
+                            </h6>
+                            <p class="mb-3">You will be redirected to our secure payment partner to complete your
+                                transaction safely. Your card details are never stored on our servers.</p>
+                            <div class="d-flex justify-content-center gap-3 mb-3">
+                                <img alt="Visa" class="border rounded"
+                                     src="https://via.placeholder.com/50x30/1a1a1a/ffffff?text=VISA">
+                                <img alt="Mastercard" class="border rounded"
+                                     src="https://via.placeholder.com/50x30/eb001b/ffffff?text=MC">
+                                <img alt="American Express"
+                                     class="border rounded"
+                                     src="https://via.placeholder.com/50x30/006fcf/ffffff?text=AMEX">
+                            </div>
+                            <small class="text-muted">
+                                <i class="bi bi-lock me-1"></i>
+                                Protected by industry-standard encryption
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bank Transfer Details -->
+                <div id="bankSlipForm" style="display: none;">
+                    <div class="payment-details">
+                        <div class="alert alert-info mb-4" role="alert">
+                            <div class="d-flex">
+                                <i class="bi bi-info-circle-fill me-3 fs-4"></i>
+                                <div>
+                                    <h6 class="alert-heading mb-2">Bank Transfer Instructions</h6>
+                                    <p class="mb-1">1. Transfer LKR 750.00 to any of the bank accounts below</p>
+                                    <p class="mb-1">2. Upload a clear photo of your payment slip</p>
+                                    <p class="mb-0">3. Your ad will be activated within 24-48 hours after
+                                        verification</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="bank-info">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-bank2 text-primary me-2"></i>
+                                        <strong>Commercial Bank</strong>
+                                    </div>
+                                    <small>
+                                        <strong>Account Name:</strong> YourSite Classified Pvt Ltd<br>
+                                        <strong>Account No:</strong> 1234567890<br>
+                                        <strong>Branch:</strong> Colombo Main Branch<br>
+                                        <strong>Swift Code:</strong> CCEYLKLX
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="bank-info">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-bank2 text-success me-2"></i>
+                                        <strong>People's Bank</strong>
+                                    </div>
+                                    <small>
+                                        <strong>Account Name:</strong> YourSite Classified Pvt Ltd<br>
+                                        <strong>Account No:</strong> 0987654321<br>
+                                        <strong>Branch:</strong> Kandy Main Branch<br>
+                                        <strong>Swift Code:</strong> PBLKLKLX
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="bank-info">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-bank2 text-warning me-2"></i>
+                                        <strong>Bank of Ceylon</strong>
+                                    </div>
+                                    <small>
+                                        <strong>Account Name:</strong> YourSite Classified Pvt Ltd<br>
+                                        <strong>Account No:</strong> 1122334455<br>
+                                        <strong>Branch:</strong> Gampaha Branch<br>
+                                        <strong>Swift Code:</strong> BCEYLKLX
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="bank-info">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <i class="bi bi-bank2 text-info me-2"></i>
+                                        <strong>Sampath Bank</strong>
+                                    </div>
+                                    <small>
+                                        <strong>Account Name:</strong> YourSite Classified Pvt Ltd<br>
+                                        <strong>Account No:</strong> 5544332211<br>
+                                        <strong>Branch:</strong> Negombo Branch<br>
+                                        <strong>Swift Code:</strong> SAPLKLKX
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold" for="selectedBank">
+                                <i class="bi bi-bank me-2"></i>Bank Used for Payment *
+                            </label>
+                            <select class="form-select" id="selectedBank" name="selectedBank" required>
+                                <option value="">Select the bank you used</option>
+                                <option value="commercial">Commercial Bank</option>
+                                <option value="peoples">People's Bank</option>
+                                <option value="boc">Bank of Ceylon</option>
+                                <option value="sampath">Sampath Bank</option>
+                                <option value="other">Other Bank</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label fw-semibold" for="bankSlipUpload">
+                                <i class="bi bi-cloud-upload me-2"></i>Upload Payment Slip *
+                            </label>
+                            <input accept="image/*,.pdf" class="form-control" id="bankSlipUpload" name="bankSlipUpload"
+                                   onchange="previewFile(this)" required type="file">
+                            <small class="text-muted">
+                                <i class="bi bi-info-circle me-1"></i>
+                                PNG, JPG, or PDF (Max 5MB)
+                            </small>
+                        </div>
+                    </div>
+
+                    <div class="mt-3" id="filePreview" style="display: none;">
+                        <div class="alert alert-success">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                                <span>File uploaded successfully: <span id="fileName"></span></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="text-center mt-5">
+                    <button class="btn btn-payment btn-lg px-5" id="proceedPaymentBtn" onclick="processPayment()"
+                            style="display: none;" type="button">
+                            <span id="btnText">
+                                <i class="bi bi-lock-fill me-2"></i>
+                                Proceed to Secure Payment
+                            </span>
+                    </button>
+                </div>
+
+                <!-- Success Message -->
+                <div class="success-message mt-4" id="successMessage">
+                    <div class="mb-3">
+                        <i class="bi bi-check-circle-fill fs-1"></i>
+                    </div>
+                    <h4>Payment Submitted Successfully!</h4>
+                    <p class="mb-4">Your payment is being processed. You'll receive a confirmation email shortly.</p>
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">Next Steps:</h6>
+                        <ul class="list-unstyled mb-0">
+                            <li>• Payment verification in progress</li>
+                            <li>• Advertisement review within 24 hours</li>
+                            <li>• Email confirmation once approved</li>
+                            <li>• Your ad goes live automatically</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-outline-light btn-lg mt-3" onclick="window.location.href='/'">
+                        <i class="bi bi-house me-2"></i>Return to Homepage
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../js/payment.js"></script>
+</body>
+</html>

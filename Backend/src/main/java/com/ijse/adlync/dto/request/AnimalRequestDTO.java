@@ -12,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 public class AnimalRequestDTO {
 
-    private Long animal_id;
     private String species;
     private String breed;
     private Integer age;

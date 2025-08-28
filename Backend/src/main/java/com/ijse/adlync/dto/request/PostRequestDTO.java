@@ -19,10 +19,8 @@ public class PostRequestDTO {
     private String description;
     private String contact_number;
     private double price;
-    private Long category_id;
-    private Long advertisement_type_id;
-    private Long location_id;
-    private Long message_id;
-    private Long user_id;
+    private String city;
+    private String district;
+    private String address;
     private List<ImageRequestDTO> images;
 }

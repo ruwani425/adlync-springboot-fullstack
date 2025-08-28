@@ -10,7 +10,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocationRequestDTO {
-
     private String city;
     private String district;
+    private String address;
 }

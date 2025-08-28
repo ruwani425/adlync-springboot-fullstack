@@ -10,8 +10,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class LocationResponseDTO {
-
     private Long location_id;
     private String city;
     private String district;
+    private String address;
 }

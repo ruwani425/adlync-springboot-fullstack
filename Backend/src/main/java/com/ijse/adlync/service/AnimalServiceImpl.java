@@ -1,13 +1,18 @@
 package com.ijse.adlync.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
-import com.ijse.adlync.entity.AnimalEntity;
-import com.ijse.adlync.repository.AnimalRepository;
 import com.ijse.adlync.dto.request.AnimalRequestDTO;
 import com.ijse.adlync.dto.response.AnimalResponseDTO;
+import com.ijse.adlync.entity.AnimalEntity;
+import com.ijse.adlync.entity.CategoryEntity;
+import com.ijse.adlync.entity.PostEntity;
+import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
+import com.ijse.adlync.repository.AnimalRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AnimalServiceImpl {
@@ -17,16 +22,17 @@ public class AnimalServiceImpl {
 
     public List<AnimalResponseDTO> findAll() {
         return repository.findAll().stream()
-            .map(this::toResponseDTO)
-            .collect(Collectors.toList());
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
 
     public AnimalResponseDTO findById(Long id) {
         AnimalEntity entity = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("AnimalEntity not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("AnimalEntity not found with id: " + id));
         return toResponseDTO(entity);
     }
 
+    @Transactional
     public AnimalResponseDTO create(AnimalRequestDTO requestDTO) {
         AnimalEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
@@ -63,11 +69,17 @@ public class AnimalServiceImpl {
 
     private AnimalEntity toEntity(AnimalRequestDTO dto) {
         AnimalEntity entity = new AnimalEntity();
+        PostEntity post = new PostEntity();
+        CategoryEntity category = new CategoryEntity();
+        category.setName(CategoryEntityNameEnum.ANIMAL);
+        post.setPost_id(dto.getPostRequestDTO().getPost_id());
+
         entity.setSpecies(dto.getSpecies());
         entity.setBreed(dto.getBreed());
         entity.setAge(dto.getAge());
         entity.setGender(dto.getGender());
         entity.setVaccination_status(dto.getVaccination_status());
+        entity.setPost(post);
         return entity;
     }
 }

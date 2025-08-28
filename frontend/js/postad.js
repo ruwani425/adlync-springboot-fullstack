@@ -224,8 +224,11 @@ $(document).ready(function () {
         });
 
         if (isValid) {
-            alert("Advertisement posted successfully!");
-            console.log("Form data:", Object.fromEntries(formData));
+            const formDataObj = Object.fromEntries(formData);
+            formDataObj["category"] = selectedCategory;
+            localStorage.setItem("adFormData", JSON.stringify(formDataObj));
+            window.location.href="../pages/paymentform.html"
+            console.log("Form data with category:", formDataObj);
 
             $("#step2").removeClass("active").addClass("completed");
             $("#step3").addClass("active");
@@ -253,38 +256,51 @@ function generateDynamicForm(categoryId) {
         <div class="row mb-3">
             <div class="col-md-8">
                 <label class="form-label" for="title">Title *</label>
-                <input type="text" class="form-control" id="title" name="title" required 
-                       placeholder="Enter a descriptive title for your ad">
+                <input class="form-control" id="title" name="title" placeholder="Enter a descriptive title for your ad" required 
+                       type="text">
             </div>
             <div class="col-md-4">
                 <label class="form-label" for="price">Price (LKR) *</label>
-                <input type="number" class="form-control" id="price" name="price" required 
-                       placeholder="0.00" step="0.01" min="0">
+                <input class="form-control" id="price" min="0" name="price" placeholder="0.00" 
+                       required step="0.01" type="number">
             </div>
         </div>
         
         <div class="mb-3">
             <label class="form-label" for="description">Description *</label>
-            <textarea class="form-control" id="description" name="description" rows="4" required
-                      placeholder="Provide detailed information about your item"></textarea>
+            <textarea class="form-control" id="description" name="description" placeholder="Provide detailed information about your item" required
+                      rows="4"></textarea>
         </div>
         
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label" for="location">Location *</label>
-                <input type="text" class="form-control" id="location" name="location" required 
-                       placeholder="City, District">
+                <label class="form-label" for="location">District *</label>
+                <input class="form-control" id="location" name="location" placeholder="e.g .,Galle" required 
+                       type="text">
+            </div>
+             <div class="col-md-6">
+                <label class="form-label" for="location">City *</label>
+                <input class="form-control" id="location" name="location" placeholder="e.g .,Wanduramba" required 
+                       type="text">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+         <div class="col-md-6">
+                <label class="form-label" for="location">Address *</label>
+                <input class="form-control" id="location" name="location" placeholder="enter your address here" required 
+                       type="text">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="contact">Contact Number *</label>
-                <input type="tel" class="form-control" id="contact" name="contact" required 
-                       placeholder="+94xxxxxxxxx">
+                <input class="form-control" id="contact" name="contact" placeholder="+94xxxxxxxxx" required 
+                       type="tel">
             </div>
         </div>
         
         <div class="mb-3">
             <label class="form-label" for="images">Images</label>
-            <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
+            <input accept="image/*" class="form-control" id="images" multiple name="images" type="file">
             <small class="text-muted">Upload up to 5 images (Max 5MB each)</small>
         </div>
     `;
@@ -1462,28 +1478,41 @@ function generateDynamicForm(categoryId) {
             const serviceCommonFields = `
                 <div class="mb-3">
                     <label class="form-label" for="title">Service Title *</label>
-                    <input type="text" class="form-control" id="title" name="title" required 
-                           placeholder="Enter your service title">
+                    <input class="form-control" id="title" name="title" placeholder="Enter your service title" required 
+                           type="text">
                 </div>
                 
                 <div class="mb-3">
                     <label class="form-label" for="description">Service Description *</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" required
-                              placeholder="Describe your service in detail"></textarea>
+                    <textarea class="form-control" id="description" name="description" placeholder="Describe your service in detail" required
+                              rows="4"></textarea>
                 </div>
                 
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="location">Service Location *</label>
-                        <input type="text" class="form-control" id="location" name="location" required 
-                               placeholder="City, District">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="contact">Contact Number *</label>
-                        <input type="tel" class="form-control" id="contact" name="contact" required 
-                               placeholder="+94xxxxxxxxx">
-                    </div>
-                </div>
+               <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="location">District *</label>
+                <input class="form-control" id="location" name="location" placeholder="e.g .,Galle" required 
+                       type="text">
+            </div>
+             <div class="col-md-6">
+                <label class="form-label" for="location">City *</label>
+                <input class="form-control" id="location" name="location" placeholder="e.g .,Wanduramba" required 
+                       type="text">
+            </div>
+        </div>
+        
+        <div class="row mb-3">
+         <div class="col-md-6">
+                <label class="form-label" for="location">Address *</label>
+                <input class="form-control" id="location" name="location" placeholder="enter your address here" required 
+                       type="text">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="contact">Contact Number *</label>
+                <input class="form-control" id="contact" name="contact" placeholder="+94xxxxxxxxx" required 
+                       type="tel">
+            </div>
+        </div>
             `;
 
             formHTML = serviceCommonFields + `
@@ -1610,7 +1639,6 @@ function generateDynamicForm(categoryId) {
             break;
 
         default:
-            // For categories without specific fields, just use common fields
             formHTML = commonFields + `
                 <hr class="my-4">
                 <h5 class="mb-3">Additional Details</h5>
@@ -1647,7 +1675,6 @@ function generateDynamicForm(categoryId) {
             break;
     }
 
-    // Add negotiable price option for all categories
     formHTML += `
         <div class="mb-3">
             <div class="form-check">
