@@ -7,6 +7,7 @@ import com.ijse.adlync.entity.*;
 import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
 import com.ijse.adlync.repository.*;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -85,9 +86,13 @@ public class PostServiceImpl {
         return entity;
     }
 
+    @Transactional
     public String createAnimalPost(AnimalRequestDTO requestDTO, String username) {
         System.out.println(username);
-        UserEntity userEntity = userRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
         PostEntity postEntity = new PostEntity();
         postEntity.setDescription(requestDTO.getPostRequestDTO().getDescription());
         postEntity.setTitle(requestDTO.getPostRequestDTO().getTitle());
@@ -103,13 +108,18 @@ public class PostServiceImpl {
                     return image;
                 })
                 .collect(Collectors.toList());
-
         postEntity.setImages(images);
+
         LocationEntity locationEntity = new LocationEntity();
         locationEntity.setAddress(requestDTO.getPostRequestDTO().getAddress());
         locationEntity.setCity(requestDTO.getPostRequestDTO().getCity());
         locationEntity.setDistrict(requestDTO.getPostRequestDTO().getDistrict());
         postEntity.setLocation(locationEntity);
+
+        postEntity.setPrice(requestDTO.getPostRequestDTO().getPrice());
+        postEntity.setStatus(requestDTO.getPostRequestDTO().getStatus());
+
+        PostEntity savedPost = repository.save(postEntity);
 
         AnimalEntity animalEntity = new AnimalEntity();
         animalEntity.setAge(requestDTO.getAge());
@@ -117,14 +127,14 @@ public class PostServiceImpl {
         animalEntity.setSpecies(requestDTO.getSpecies());
         animalEntity.setBreed(requestDTO.getBreed());
         animalEntity.setVaccination_status(requestDTO.getVaccination_status());
+        animalEntity.setPost(savedPost);
 
-        AnimalEntity save = animalRepository.save(animalEntity);
+        AnimalEntity savedAnimal = animalRepository.save(animalEntity);
 
-        postEntity.setAnimal(save);
+        savedPost.setAnimal(savedAnimal);
+        repository.save(savedPost);
 
-        postEntity.setPrice(requestDTO.getPostRequestDTO().getPrice());
-        postEntity.setStatus(requestDTO.getPostRequestDTO().getStatus());
-        repository.save(postEntity);
         return "save success";
     }
+
 }

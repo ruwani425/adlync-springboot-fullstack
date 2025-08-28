@@ -70,9 +70,9 @@ public class AnimalServiceImpl {
     private AnimalEntity toEntity(AnimalRequestDTO dto) {
         AnimalEntity entity = new AnimalEntity();
         PostEntity post = new PostEntity();
-        CategoryEntity category = new CategoryEntity();
-        category.setName(CategoryEntityNameEnum.ANIMAL);
-        post.setPost_id(dto.getPostRequestDTO().getPost_id());
+//        CategoryEntity category = new CategoryEntity();
+//        category.setName(CategoryEntityNameEnum.ANIMAL);
+//        post.setPost_id(dto.getPostRequestDTO().getPost_id());
 
         entity.setSpecies(dto.getSpecies());
         entity.setBreed(dto.getBreed());

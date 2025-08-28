@@ -97,9 +97,10 @@ public class PostController {
         String username = "";
         if (authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7); // remove "Bearer "
-            // parse token manually or via JWT util
             username = jwtUtil.extractUsername(token);
         }
+        System.out.println(requestDTO.toString());
+        System.out.println(requestDTO.getPostRequestDTO().getDescription());
         return service.createAnimalPost(requestDTO, username);
 //        return ResponseEntity.ok(response);
     }

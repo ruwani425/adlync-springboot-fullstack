@@ -130,21 +130,6 @@ $(document).ready(function () {
     updatePaymentAmount();
 });
 
-function getCookie(name) {
-    const nameEQ = name + "=";
-    const ca = document.cookie.split(';');
-    for (let i = 0; i < ca.length; i++) {
-        let c = ca[i];
-        while (c.charAt(0) === ' ') {
-            c = c.substring(1);
-        }
-        if (c.indexOf(nameEQ) === 0) {
-            return c.substring(nameEQ.length);
-        }
-    }
-    return null;
-}
-
 function savePost() {
     let storedData = localStorage.getItem("adFormData");
     if (!storedData) {
@@ -152,7 +137,9 @@ function savePost() {
         return;
     }
     let adData = JSON.parse(storedData);
-    let category = adData.category;
+    // let category = adData.category;
+    let category=localStorage.getItem("selectedCategory")
+    console.log(category)
 
     const endpoints = {
         agriculture: 'http://localhost:8080/api/agricultures',
@@ -160,7 +147,7 @@ function savePost() {
         fashion: 'http://localhost:8080/api/fashion',
         sports: 'http://localhost:8080/api/sports',
         vehicles: 'http://localhost:8080/api/vehicles',
-        animals: 'http://localhost:8080/api/animals',
+        animals: 'http://localhost:8080/api/posts/create-animal',
         properties: 'http://localhost:8080/api/properties',
         jobs: 'http://localhost:8080/api/jobs',
         services: 'http://localhost:8080/api/services',
@@ -179,7 +166,6 @@ function savePost() {
         return;
     }
     var token = getCookie('token');
-
 
     if (token == null) {
         alert("Authentication token not found. Please login again.");

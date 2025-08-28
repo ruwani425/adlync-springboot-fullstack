@@ -149,7 +149,7 @@ function renderCategories() {
         $(".category-card").removeClass("selected");
         $(this).addClass("selected");
         selectedCategory = $(this).data("category");
-
+        localStorage.setItem("selectedCategory", selectedCategory);
         $("#continueBtn").prop("disabled", false);
     });
 }
@@ -209,6 +209,7 @@ $(document).ready(function () {
         $("#step2").removeClass("active");
     });
 
+    // In postad.js - modify the form submission part for animals
     $("#submitBtn").on("click", function () {
         const form = $("#dynamicForm")[0];
         const formData = new FormData(form);
@@ -226,8 +227,33 @@ $(document).ready(function () {
         if (isValid) {
             const formDataObj = Object.fromEntries(formData);
             formDataObj["category"] = selectedCategory;
-            localStorage.setItem("adFormData", JSON.stringify(formDataObj));
-            window.location.href="../pages/paymentform.html"
+
+            // Special handling for animals category
+            if (selectedCategory === 'animals') {
+                const animalData = {
+                    species: formDataObj.animal_type || formDataObj.species,
+                    breed: formDataObj.breed,
+                    age: parseInt(formDataObj.age) || null,
+                    gender: formDataObj.gender,
+                    vaccination_status: formDataObj.vaccinated,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: [] // Handle images separately if needed
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(animalData));
+            } else {
+                localStorage.setItem("adFormData", JSON.stringify(formDataObj));
+            }
+
+            window.location.href = "../pages/paymentform.html";
             console.log("Form data with category:", formDataObj);
 
             $("#step2").removeClass("active").addClass("completed");
@@ -274,21 +300,21 @@ function generateDynamicForm(categoryId) {
         
         <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label" for="location">District *</label>
-                <input class="form-control" id="location" name="location" placeholder="e.g .,Galle" required 
+                <label class="form-label" for="district">District *</label>
+                <input class="form-control" id="district" name="district" placeholder="e.g .,Galle" required 
                        type="text">
             </div>
              <div class="col-md-6">
-                <label class="form-label" for="location">City *</label>
-                <input class="form-control" id="location" name="location" placeholder="e.g .,Wanduramba" required 
+                <label class="form-label" for="city">City *</label>
+                <input class="form-control" id="city" name="city" placeholder="e.g .,Wanduramba" required 
                        type="text">
             </div>
         </div>
         
         <div class="row mb-3">
          <div class="col-md-6">
-                <label class="form-label" for="location">Address *</label>
-                <input class="form-control" id="location" name="location" placeholder="enter your address here" required 
+                <label class="form-label" for="address">Address *</label>
+                <input class="form-control" id="address" name="address" placeholder="enter your address here" required 
                        type="text">
             </div>
             <div class="col-md-6">
@@ -1256,8 +1282,8 @@ function generateDynamicForm(categoryId) {
                         <label class="form-label" for="gender">Gender</label>
                         <select class="form-select" id="gender" name="gender">
                             <option value="">Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="MALE">MALE</option>
+                            <option value="FEMALE">FEMALE</option>
                         </select>
                     </div>
                 </div>
@@ -1490,21 +1516,21 @@ function generateDynamicForm(categoryId) {
                 
                <div class="row mb-3">
             <div class="col-md-6">
-                <label class="form-label" for="location">District *</label>
-                <input class="form-control" id="location" name="location" placeholder="e.g .,Galle" required 
+                <label class="form-label" for="district">District *</label>
+                <input class="form-control" id="district" name="district" placeholder="e.g .,Galle" required 
                        type="text">
             </div>
              <div class="col-md-6">
-                <label class="form-label" for="location">City *</label>
-                <input class="form-control" id="location" name="location" placeholder="e.g .,Wanduramba" required 
+                <label class="form-label" for="city">City *</label>
+                <input class="form-control" id="city" name="city" placeholder="e.g .,Wanduramba" required 
                        type="text">
             </div>
         </div>
         
         <div class="row mb-3">
          <div class="col-md-6">
-                <label class="form-label" for="location">Address *</label>
-                <input class="form-control" id="location" name="location" placeholder="enter your address here" required 
+                <label class="form-label" for="address">Address *</label>
+                <input class="form-control" id="address" name="address" placeholder="enter your address here" required 
                        type="text">
             </div>
             <div class="col-md-6">

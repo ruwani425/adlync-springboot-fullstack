@@ -1,7 +1,10 @@
 package com.ijse.adlync.config;
 
+import com.ijse.adlync.entity.Advertisement_typeEntity;
 import com.ijse.adlync.entity.CategoryEntity;
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
+import com.ijse.adlync.repository.Advertisement_typeRepository;
 import com.ijse.adlync.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,10 +16,13 @@ public class StartupMessage implements CommandLineRunner {
 
     @Autowired
     private CategoryRepository categoryRepository;
+    @Autowired
+    private Advertisement_typeRepository advertisement_typeRepository;
 
     @Override
     public void run(String... args) throws Exception {
         initializeCategories();
+        initializeAdvertisementTypes();
 
         System.out.println("\n" +
                 "╔══════════════════════════════════════════════════════════════╗\n" +
@@ -34,7 +40,7 @@ public class StartupMessage implements CommandLineRunner {
 
     private void initializeCategories() {
         try {
-            System.out.println("🔧 Initializing categories...");
+            System.out.println("Initializing categories...");
 
             long existingCategoriesCount = categoryRepository.count();
 
@@ -43,15 +49,34 @@ public class StartupMessage implements CommandLineRunner {
                     CategoryEntity category = new CategoryEntity();
                     category.setName(categoryName);
                     categoryRepository.save(category);
-                    System.out.println("✅ Created category: " + categoryName);
+                    System.out.println("Created category: " + categoryName);
                 }
-                System.out.println("🎉 Successfully initialized " + CategoryEntityNameEnum.values().length + " categories!");
+                System.out.println("Successfully initialized " + CategoryEntityNameEnum.values().length + " categories!");
             } else {
-                System.out.println("ℹ️  Categories already exist (" + existingCategoriesCount + " found). Skipping initialization.");
+                System.out.println("Categories already exist (" + existingCategoriesCount + " found). Skipping initialization.");
             }
 
         } catch (Exception e) {
-            System.err.println("❌ Error initializing categories: " + e.getMessage());
+            System.err.println("Error initializing categories: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
+    private void initializeAdvertisementTypes() {
+        try {
+            System.out.println("Initializing advertisement-types...");
+            long exitingAdvertisementTypesCount = advertisement_typeRepository.count();
+            if (exitingAdvertisementTypesCount == 0) {
+                for (Advertisement_typeEntityTypeEnum type : Advertisement_typeEntityTypeEnum.values()) {
+                    Advertisement_typeEntity advertisementType = new Advertisement_typeEntity();
+                    advertisementType.setType(type);
+                    advertisement_typeRepository.save(advertisementType);
+                    System.out.println("Created advertisement type: " + type);
+                }
+                System.out.println("Successfully initialized advertisement-types!" + Advertisement_typeEntityTypeEnum.values().length + "advertisement types !");
+            }
+        } catch (Exception e) {
+            System.err.println("Error initializing advertisement-types: " + e.getMessage());
             e.printStackTrace();
         }
     }
