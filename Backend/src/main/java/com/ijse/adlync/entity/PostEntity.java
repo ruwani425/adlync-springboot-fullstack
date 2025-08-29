@@ -56,7 +56,6 @@ public class PostEntity {
     @JoinColumn(name = "advertisement_type_id")
     private Advertisement_typeEntity advertisement_type;
 
-    // Changed from @ManyToOne to @OneToOne with cascade
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "location_id")
     private LocationEntity location;

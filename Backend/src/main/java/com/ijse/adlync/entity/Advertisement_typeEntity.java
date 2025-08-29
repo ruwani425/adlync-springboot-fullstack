@@ -26,10 +26,6 @@ public class Advertisement_typeEntity {
     @Enumerated(EnumType.STRING)
     private Advertisement_typeEntityTypeEnum type;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
-    private PostEntity post;
-
     @OneToMany(mappedBy = "advertisement_type", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostEntity> posts = new ArrayList<>();
 }
