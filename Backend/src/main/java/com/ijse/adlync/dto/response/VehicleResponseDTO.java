@@ -23,6 +23,5 @@ public class VehicleResponseDTO {
     private VehicleEntityFuel_typeEnum fuel_type;
     private String transmission;
     private String condition;
-    private VehicleParkingEnum parking;
     private PostResponseDTO postResponseDTO;
 }

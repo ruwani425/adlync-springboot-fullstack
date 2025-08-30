@@ -14,7 +14,6 @@
 <body>
 <div class="container">
     <div class="payment-container">
-        <!-- Loading Overlay -->
         <div class="loading-overlay" id="loadingOverlay">
             <div class="text-center">
                 <div class="spinner mb-3"></div>
@@ -23,7 +22,6 @@
         </div>
 
         <div class="card">
-            <!-- Payment Header -->
             <div class="payment-header">
                 <div class="payment-icon">
                     <i class="bi bi-credit-card"></i>
@@ -33,20 +31,17 @@
             </div>
 
             <div class="card-body p-4">
-                <!-- Fee Summary -->
                 <div class="fee-summary">
                     <h4>Advertisement Posting Fee</h4>
                     <div class="fee-amount" id="feeAmount">LKR 750.00</div>
                     <small class="opacity-75">One-time payment • Secure & Encrypted</small>
                 </div>
 
-                <!-- Payment Method Selection -->
                 <h5 class="mb-4">
                     <i class="bi bi-shield-check text-success me-2"></i>
                     Choose Payment Method
                 </h5>
 
-                <!-- Card Payment Option -->
                 <div class="payment-method-card" data-method="card" onclick="selectPaymentMethod('card')">
                     <div class="form-check">
                         <input class="form-check-input" id="cardPayment" name="paymentMethod" type="radio" value="card">
@@ -72,7 +67,6 @@
                     </div>
                 </div>
 
-                <!-- Bank Transfer Option -->
                 <div class="payment-method-card" data-method="bank" onclick="selectPaymentMethod('bank')">
                     <div class="form-check">
                         <input class="form-check-input" id="bankPayment" name="paymentMethod" type="radio" value="bank">
@@ -97,7 +91,6 @@
                     </div>
                 </div>
 
-                <!-- Card Payment Details -->
                 <div id="cardPaymentForm" style="display: none;">
                     <div class="payment-details">
                         <div class="text-center">
@@ -127,7 +120,6 @@
                     </div>
                 </div>
 
-                <!-- Bank Transfer Details -->
                 <div id="bankSlipForm" style="display: none;">
                     <div class="payment-details">
                         <div class="alert alert-info mb-4" role="alert">
@@ -243,7 +235,6 @@
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
                 <div class="text-center mt-5">
                     <button class="btn btn-payment btn-lg px-5" id="proceedPaymentBtn" onclick="processPayment()"
                             style="display: none;" type="button">
@@ -254,7 +245,6 @@
                     </button>
                 </div>
 
-                <!-- Success Message -->
                 <div class="success-message mt-4" id="successMessage">
                     <div class="mb-3">
                         <i class="bi bi-check-circle-fill fs-1"></i>

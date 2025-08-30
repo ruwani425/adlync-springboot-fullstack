@@ -40,9 +40,6 @@ public class VehicleEntity {
     @Column(name = "`condition`")
     private String condition;
 
-    @Enumerated(EnumType.STRING)
-    private VehicleParkingEnum parking;
-
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "post_id", referencedColumnName = "post_id")
     private PostEntity post;

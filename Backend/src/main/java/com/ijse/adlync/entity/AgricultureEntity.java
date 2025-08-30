@@ -38,6 +38,6 @@ public class AgricultureEntity {
     private AgricultureEntityConditionEnum condition;
 
     @OneToOne
-    @JoinColumn(name = "post_id", nullable = false, unique = true) // Owning side
+    @JoinColumn(name = "post_id", nullable = false, unique = true)
     private PostEntity post;
 }

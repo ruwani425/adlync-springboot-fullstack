@@ -209,7 +209,6 @@ $(document).ready(function () {
         $("#step2").removeClass("active");
     });
 
-    // In postad.js - modify the form submission part for animals
     $("#submitBtn").on("click", function () {
         const form = $("#dynamicForm")[0];
         const formData = new FormData(form);
@@ -228,7 +227,6 @@ $(document).ready(function () {
             const formDataObj = Object.fromEntries(formData);
             formDataObj["category"] = selectedCategory;
 
-            // Special handling for animals category
             if (selectedCategory === 'animals') {
                 const animalData = {
                     species: formDataObj.animal_type || formDataObj.species,
@@ -245,10 +243,349 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: [] // Handle images separately if needed
+                        images: []
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(animalData));
+            } else if (selectedCategory === 'vehicles') {
+                const vehicleData = {
+                    vehicleType: formDataObj.vehicle_type,
+                    mileage: formDataObj.mileage,
+                    year: formDataObj.year,
+                    brand: formDataObj.brand,
+                    model: formDataObj.model,
+                    fueltype: formDataObj.fuel_type,
+                    transmission: formDataObj.transmission,
+                    condition: formDataObj.condition,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(vehicleData));
+            } else if (selectedCategory === 'electronics') {
+                const electronicData = {
+                    type: formDataObj.type,
+                    brand: formDataObj.brand,
+                    model: formDataObj.model,
+                    warranty: formDataObj.warranty,
+                    condition: formDataObj.condition,
+                    accessories: formDataObj.accessories,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(electronicData));
+            } else if (selectedCategory === 'properties') {
+                const propertiesData = {
+                    type: formDataObj.type,
+                    landsize: formDataObj.land_size,
+                    bedroom: formDataObj.bedroom,
+                    barthroom: formDataObj.barthroom,
+                    furnished: formDataObj.furnished,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(propertiesData));
+            } else if (selectedCategory === 'jobs') {
+                const jobsData = {
+                    position: formDataObj.position,
+                    company: formDataObj.company,
+                    salarymin: formDataObj.salary_min,
+                    salarymax: formDataObj.salary_max,
+                    industry: formDataObj.industry,
+                    jobtype: formDataObj.job_type,
+                    requirements: formDataObj.requirements,
+                    expiriancelevel: formDataObj.expiriance_level,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(jobsData));
+            } else if (selectedCategory === 'services') {
+                const serviceData = {
+                    servicetype: formDataObj.service_type,
+                    providername: formDataObj.provider_name,
+                    availability: formDataObj.availability,
+                    charges: formDataObj.charges,
+                    servicearea: formDataObj.service_area,
+                    qualifications: formDataObj.qualifications,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(serviceData));
+            } else if (selectedCategory === 'sports') {
+                const sportsData = {
+                    equipmenttype: formDataObj.equipment_type,
+                    brand: formDataObj.brand,
+                    condition: formDataObj.condition,
+                    size: formDataObj.size,
+                    additionalinformation: formDataObj.additional_information,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(sportsData));
+            } else if (selectedCategory === 'agriculture') {
+                const agricultureData = {
+                    producttype: formDataObj.product_type,
+                    quantity: formDataObj.quantity,
+                    season: formDataObj.season,
+                    variety: formDataObj.variety,
+                    productiondate: formDataObj.production_Date,
+                    certifications: formDataObj.certifications,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(agricultureData));
+            } else if (selectedCategory === 'kids') {
+                const kidsData = {
+                    itemtype: formDataObj.item_type,
+                    agerange: formDataObj.age_range,
+                    brand: formDataObj.brand,
+                    condition: formDataObj.condition,
+                    size: formDataObj.size,
+                    gender: formDataObj.gender,
+                    safetyinformation: formDataObj.safety_information,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(kidsData));
+            } else if (selectedCategory === 'fashion') {
+                const fashionData = {
+                    itemtype: formDataObj.item_type,
+                    brand: formDataObj.brand,
+                    size: formDataObj.size,
+                    gender: formDataObj.gender,
+                    condition: formDataObj.condition,
+                    color: formDataObj.color,
+                    material: formDataObj.material,
+                    stylenote: formDataObj.style_note,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(fashionData));
+            } else if (selectedCategory === 'entertainment') {
+
+                const entertainmentData = {
+                    type: formDataObj.type,
+                    format: formDataObj.format,
+                    brand: formDataObj.brand,
+                    genre: formDataObj.genre,
+                    releaseyear: formDataObj.release_year,
+                    rating: formDataObj.rating,
+                    creator: formDataObj.creator,
+                    condition: formDataObj.condition,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(entertainmentData));
+
+            } else if (selectedCategory === 'education') {
+                const educationData = {
+                    coursename: formDataObj.course_name,
+                    institute: formDataObj.institute,
+                    duration: formDataObj.duration,
+                    qulificationoffered: formDataObj.qulification_offered,
+                    subject_area: formDataObj.subject_area,
+                    studymood: formDataObj.study_mood,
+                    educationlevel: formDataObj.education_level,
+                    schedule: formDataObj.schedule,
+                    requirements: formDataObj.requirements,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(educationData));
+            } else if (selectedCategory === 'mobile') {
+                const mobileData = {
+                    storage: formDataObj.storage,
+                    condition: formDataObj.condition,
+                    warrantystatus: formDataObj.warranty_status,
+                    ram: formDataObj.ram,
+                    brand: formDataObj.brand,
+                    model: formDataObj.model,
+                    colour: formDataObj.colour,
+                    includedAccessories: formDataObj.included_accessories,
+                    additional_information: formDataObj.additional_information,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(mobileData));
+
+            } else if (selectedCategory === 'work_overseas') {
+                const workOverSeasData = {
+                    position: formDataObj.position,
+                    country: formDataObj.country,
+                    salary: formDataObj.salary,
+                    requirements: formDataObj.requirements,
+                    contractduration: formDataObj.contract_duration,
+                    companyoragencyname: formDataObj.company_or_agency_name,
+                    visa_status: formDataObj.visa_status,
+                    accommodation: formDataObj.accommodation,
+                    additionalbenefits: formDataObj.additional_benefits,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(workOverSeasData));
+
+            } else if (selectedCategory === 'home_garden') {
+                const homeGardenDetail = {
+                    itemtype: formDataObj.item_type,
+                    material: formDataObj.material,
+                    dimensions: formDataObj.dimensions,
+                    condition: formDataObj.condition,
+                    brand: formDataObj.brand,
+                    color: formDataObj.color,
+                    weight: formDataObj.weight,
+                    assemblyrequired: formDataObj.assembly_required,
+                    special_features: formDataObj.special_features,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(homeGardenDetail));
+
+            } else if (selectedCategory === 'essentials') {
+                const essentials = {
+                    brand: formDataObj.brand,
+                    quantity: formDataObj.quantity,
+                    expirydate: formDataObj.expiry_date,
+                    producttype: formDataObj.product_type,
+                    storageinstructions: formDataObj.storage_instructions,
+                    condition: formDataObj.condition,
+                    postRequestDTO: {
+                        title: formDataObj.title,
+                        description: formDataObj.description,
+                        contact_number: formDataObj.contact,
+                        price: parseFloat(formDataObj.price),
+                        status: "PENDING",
+                        city: formDataObj.city,
+                        district: formDataObj.district,
+                        address: formDataObj.address,
+                        images: []
+                    }
+                };
+                localStorage.setItem("adFormData", JSON.stringify(essentials));
             } else {
                 localStorage.setItem("adFormData", JSON.stringify(formDataObj));
             }
