@@ -139,7 +139,6 @@ $('#loginForm').on('submit', function (e) {
     })
 });
 
-// Auto-focus on login identifier field when page loads
 $(document).ready(function () {
     $('#loginIdentifier').focus();
 });

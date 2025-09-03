@@ -61,59 +61,63 @@ $(function () {
     checkAuth();
 });
 
-$(function () {
-    var token = getCookie("token");
-    if (token != null) {
-        $('#postAdBtn').on('click', function () {
-            window.location.href = 'pages/postad.html';
-        });
-    } else {
-        $('#postAdBtn').on('click', function () {
-            window.location.href = 'pages/signup.html';
-        });
-    }
-});
-
-$(function () {
-    $('#signInBtn').on('click', function () {
-        window.location.href = 'pages/signin.html';
-    });
-});
-
-// Check login state
 function checkAuth() {
     const $authBtn = $('#signInBtn');
     const $postAdBtn = $('#postAdBtn');
-
     const token = getCookie("token");
+
+    $authBtn.off('click');
+    $postAdBtn.off('click');
+
     if (token) {
-        // Logged in
         $authBtn.text("Logout")
             .removeClass("btn-outline-primary")
-            .addClass("btn-danger");
+            .addClass("btn-danger")
+            .show();
 
-        $authBtn.off("click").on("click", function () {
-            // Clear cookie
-            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-            // Reload page to reset UI
-            location.href = "index.html";
+        $authBtn.on('click', function () {
+            if ($authBtn.text().trim() === "Logout") {
+                //clear cookie
+                document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+                checkAuth();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Logged Out',
+                    text: 'You have been successfully logged out.',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+                setTimeout(() => {
+                    location.href = "index.html";
+                }, 1500);
+            }
         });
 
-        $postAdBtn.off("click").on("click", function () {
+        $postAdBtn.on('click', function () {
             location.href = "pages/postad.html";
         });
 
     } else {
         $authBtn.text("Sign In")
             .removeClass("btn-danger")
-            .addClass("btn-outline-primary");
+            .addClass("btn-outline-primary")
+            .show();
 
-        $authBtn.off("click").on("click", function () {
-            location.href = "pages/signin.html";
+        $authBtn.on('click', function () {
+            if ($authBtn.text().trim() === "Sign In") {
+                location.href = "pages/signin.html";
+            }
         });
 
-        $postAdBtn.off("click").on("click", function () {
+        $postAdBtn.on('click', function () {
             location.href = "pages/signup.html";
         });
     }
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
 }
