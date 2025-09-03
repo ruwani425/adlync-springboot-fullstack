@@ -2,6 +2,9 @@ package com.ijse.adlync.service;
 
 import com.ijse.adlync.dto.request.AnimalRequestDTO;
 import com.ijse.adlync.dto.request.PostRequestDTO;
+import com.ijse.adlync.dto.request.PropertyRequestDTO;
+import com.ijse.adlync.dto.request.VehicleRequestDTO;
+import com.ijse.adlync.dto.response.ImageResponseDTO;
 import com.ijse.adlync.dto.response.PostResponseDTO;
 import com.ijse.adlync.entity.*;
 import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
@@ -30,6 +33,8 @@ public class PostServiceImpl {
     private LocationRepository locationRepository;
     @Autowired
     private AnimalRepository animalRepository;
+    @Autowired
+    private VehicleRepository vehicleRepository;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -75,6 +80,25 @@ public class PostServiceImpl {
         dto.setStatus(entity.getStatus());
         dto.setTitle(entity.getTitle());
         dto.setDescription(entity.getDescription());
+        dto.setContact_number(entity.getContact_number());
+        dto.setPrice(entity.getPrice());
+
+        // Add image mapping
+        if (entity.getImages() != null) {
+            List<ImageResponseDTO> imageDTOs = entity.getImages().stream()
+                    .map(this::toImageResponseDTO)
+                    .collect(Collectors.toList());
+            dto.setImages(imageDTOs);
+        }
+
+        return dto;
+    }
+
+    private ImageResponseDTO toImageResponseDTO(ImageEntity entity) {
+        ImageResponseDTO dto = new ImageResponseDTO();
+        dto.setImage_id(entity.getImage_id());
+        dto.setImage_url(entity.getImage_url());
+        dto.setPost_id(entity.getPost().getPost_id());
         return dto;
     }
 
@@ -100,7 +124,7 @@ public class PostServiceImpl {
         postEntity.setAdvertisement_type(advertisement_typeRepository.findByType(Advertisement_typeEntityTypeEnum.SELL));
         postEntity.setUser(userEntity);
         postEntity.setContact_number(requestDTO.getPostRequestDTO().getContact_number());
-
+        System.out.println(requestDTO.getPostRequestDTO().getContact_number() + "+  contact");
         List<ImageEntity> images = requestDTO.getPostRequestDTO().getImages().stream()
                 .map(imgDto -> {
                     ImageEntity image = modelMapper.map(imgDto, ImageEntity.class);
@@ -137,4 +161,86 @@ public class PostServiceImpl {
         return "save success";
     }
 
+    @Transactional
+    public String createVehiclePost(VehicleRequestDTO requestDTO, String username) {
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        PostEntity postEntity = new PostEntity();
+        postEntity.setDescription(requestDTO.getPostRequestDTO().getDescription());
+        postEntity.setTitle(requestDTO.getPostRequestDTO().getTitle());
+        postEntity.setCategory(categoryRepository.findByName(CategoryEntityNameEnum.VEHICLE));
+        postEntity.setAdvertisement_type(advertisement_typeRepository.findByType(requestDTO.getAdvertisementType()));
+        postEntity.setUser(userEntity);
+        postEntity.setContact_number(requestDTO.getPostRequestDTO().getContact_number());
+
+        List<ImageEntity> images = requestDTO.getPostRequestDTO().getImages().stream()
+                .map(imgDto -> {
+                    ImageEntity image = modelMapper.map(imgDto, ImageEntity.class);
+                    image.setPost(postEntity);
+                    return image;
+                })
+                .collect(Collectors.toList());
+        postEntity.setImages(images);
+
+        LocationEntity locationEntity = new LocationEntity();
+        locationEntity.setAddress(requestDTO.getPostRequestDTO().getAddress());
+        locationEntity.setCity(requestDTO.getPostRequestDTO().getCity());
+        locationEntity.setDistrict(requestDTO.getPostRequestDTO().getDistrict());
+        postEntity.setLocation(locationEntity);
+
+        postEntity.setPrice(requestDTO.getPostRequestDTO().getPrice());
+        postEntity.setStatus(requestDTO.getPostRequestDTO().getStatus());
+
+        PostEntity savedPost = repository.save(postEntity);
+        VehicleEntity vehicleEntity = new VehicleEntity();
+        vehicleEntity.setBrand(requestDTO.getBrand());
+        vehicleEntity.setModel(requestDTO.getModel());
+        vehicleEntity.setVehicle_type(requestDTO.getVehicle_type());
+        vehicleEntity.setCondition(requestDTO.getCondition());
+        vehicleEntity.setFuel_type(requestDTO.getFuel_type());
+        vehicleEntity.setMileage(requestDTO.getMileage());
+        vehicleEntity.setTransmission(requestDTO.getTransmission());
+        vehicleEntity.setYear(requestDTO.getYear());
+        vehicleEntity.setPost(savedPost);
+
+        VehicleEntity savedVehicle = vehicleRepository.save(vehicleEntity);
+        savedPost.setVehicle(savedVehicle);
+        repository.save(savedPost);
+        return "save success";
+    }
+
+    public String createPropertyPost(PropertyRequestDTO requestDTO, String username) {
+        UserEntity userEntity = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+        PostEntity postEntity = new PostEntity();
+        postEntity.setDescription(requestDTO.getPostRequestDTO().getDescription());
+        postEntity.setTitle(requestDTO.getPostRequestDTO().getTitle());
+        postEntity.setCategory(categoryRepository.findByName(CategoryEntityNameEnum.VEHICLE));
+        postEntity.setAdvertisement_type(advertisement_typeRepository.findByType(requestDTO.getAdvertisement_type()));
+        postEntity.setUser(userEntity);
+        postEntity.setContact_number(requestDTO.getPostRequestDTO().getContact_number());
+        List<ImageEntity> images = requestDTO.getPostRequestDTO().getImages().stream()
+                .map(imgDto -> {
+                    ImageEntity image = modelMapper.map(imgDto, ImageEntity.class);
+                    image.setPost(postEntity);
+                    return image;
+                })
+                .collect(Collectors.toList());
+        postEntity.setImages(images);
+
+        LocationEntity locationEntity = new LocationEntity();
+        locationEntity.setAddress(requestDTO.getPostRequestDTO().getAddress());
+        locationEntity.setCity(requestDTO.getPostRequestDTO().getCity());
+        locationEntity.setDistrict(requestDTO.getPostRequestDTO().getDistrict());
+        postEntity.setLocation(locationEntity);
+
+        postEntity.setPrice(requestDTO.getPostRequestDTO().getPrice());
+        postEntity.setStatus(requestDTO.getPostRequestDTO().getStatus());
+
+        PostEntity savedPost = repository.save(postEntity);
+        PropertyEntity propertyEntity = new PropertyEntity();
+
+
+        return null;
+    }
 }

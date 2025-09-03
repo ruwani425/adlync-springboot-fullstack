@@ -17,7 +17,7 @@ public class VehicleResponseDTO {
     private Long vehicle_id;
     private String vehicle_type;
     private String mileage;
-    private Date year;
+    private Long year;
     private String brand;
     private String model;
     private VehicleEntityFuel_typeEnum fuel_type;

@@ -21,6 +21,12 @@ body {
     color: var(--emerald-600) !important;
 }
 
+.btn-danger {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #fff !important;
+}
+
 .btn-emerald {
     background: var(--emerald-600);
     color: #fff;

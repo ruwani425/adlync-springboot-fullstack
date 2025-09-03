@@ -116,6 +116,10 @@ const categories = [
 let currentPage = 1;
 const itemsPerPage = 12;
 let selectedCategory = '';
+let selectedImageFiles = [];
+
+// let uploadedImageUrls = [];
+
 
 function initializeCategories() {
     renderCategories();
@@ -167,6 +171,60 @@ function resetSelection() {
     $("#continueBtn").prop("disabled", true);
 }
 
+function handleImageSelection(input) {
+    const files = input.files;
+    if (files && files.length > 0) {
+        if (validateImages(files)) {
+            handleFileSelection(files);
+            $("#uploadImagesBtn").show();
+        } else {
+            $(input).val('');
+        }
+    }
+}
+
+
+function validateImages(files) {
+    const maxSize = 5 * 1024 * 1024;
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+    if (files.length > 5) {
+        alert('Maximum 5 images allowed.');
+        return false;
+    }
+
+    for (let file of files) {
+        if (file.size > maxSize) {
+            alert(`File "${file.name}" is too large. Maximum size is 5MB.`);
+            return false;
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+            alert(`File "${file.name}" is not a valid image type. Allowed types: JPEG, PNG, GIF, WebP.`);
+            return false;
+        }
+    }
+    return true;
+}
+
+async function uploadImages() {
+    try {
+        const urls = await uploadImagesToFirebase(selectedImageFiles);
+        uploadedImageUrls = urls;
+
+        console.log("Uploaded image URLs:", urls);
+
+    } catch (error) {
+        console.error("Upload failed:", error);
+        $("#uploadImagesBtn").prop("disabled", false).text("Upload Images").css("background-color", "#dc3545");
+        $("#imageUploadStatus").html(`
+            <div class="alert alert-danger">
+                <strong>Error!</strong> Image upload failed. Please try again.
+            </div>
+        `);
+    }
+}
+
 $(document).ready(function () {
     initializeCategories();
 
@@ -209,7 +267,7 @@ $(document).ready(function () {
         $("#step2").removeClass("active");
     });
 
-    $("#submitBtn").on("click", function () {
+    $("#submitBtn").on("click", async function () {
         const form = $("#dynamicForm")[0];
         const formData = new FormData(form);
 
@@ -224,8 +282,17 @@ $(document).ready(function () {
         });
 
         if (isValid) {
+            $("#submitBtn").prop("disabled", true).text("Processing...");
+
             const formDataObj = Object.fromEntries(formData);
             formDataObj["category"] = selectedCategory;
+
+            const urls = await uploadImagesToFirebase(selectedImageFiles);
+
+            // Add uploaded image URLs to the form data
+            const imageRequestDTOs = urls.map(url => ({
+                image_url: url
+            }));
 
             if (selectedCategory === 'animals') {
                 const animalData = {
@@ -243,20 +310,22 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
+                console.log(animalData)
                 localStorage.setItem("adFormData", JSON.stringify(animalData));
             } else if (selectedCategory === 'vehicles') {
                 const vehicleData = {
-                    vehicleType: formDataObj.vehicle_type,
+                    vehicle_type: formDataObj.vehicle_type,
                     mileage: formDataObj.mileage,
                     year: formDataObj.year,
                     brand: formDataObj.brand,
                     model: formDataObj.model,
-                    fueltype: formDataObj.fuel_type,
+                    fuel_type: formDataObj.fuel_type,
                     transmission: formDataObj.transmission,
                     condition: formDataObj.condition,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -266,7 +335,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(vehicleData));
@@ -287,7 +356,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(electronicData));
@@ -307,7 +376,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(propertiesData));
@@ -330,7 +399,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(jobsData));
@@ -351,7 +420,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(serviceData));
@@ -371,7 +440,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(sportsData));
@@ -392,7 +461,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(agricultureData));
@@ -414,7 +483,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(kidsData));
@@ -437,7 +506,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(fashionData));
@@ -461,7 +530,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(entertainmentData));
@@ -486,7 +555,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(educationData));
@@ -510,7 +579,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(mobileData));
@@ -535,7 +604,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(workOverSeasData));
@@ -560,7 +629,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(homeGardenDetail));
@@ -582,7 +651,7 @@ $(document).ready(function () {
                         city: formDataObj.city,
                         district: formDataObj.district,
                         address: formDataObj.address,
-                        images: []
+                        images: imageRequestDTOs
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(essentials));
@@ -601,10 +670,194 @@ $(document).ready(function () {
     });
 });
 
+function displaySelectedImages(input) {
+    const selectedImagesDiv = document.getElementById('selected-images');
+    const existingImages = selectedImagesDiv.querySelectorAll('.image-card').length;
+    const maxImages = 5;
+
+    if (input.files && input.files.length > 0) {
+        const filesToShow = Math.min(input.files.length, maxImages - existingImages);
+
+        if (input.files.length + existingImages > maxImages) {
+            const warning = document.createElement('div');
+            warning.className = 'alert alert-warning py-2 mb-3';
+            warning.innerHTML = `<small><strong>Note:</strong> Only the first ${maxImages} images will be uploaded.</small>`;
+            selectedImagesDiv.insertBefore(warning, selectedImagesDiv.firstChild);
+            setTimeout(() => warning.remove(), 3000); // Auto-remove warning after 3 seconds
+        }
+
+        let imageContainer = selectedImagesDiv.querySelector('.image-container');
+        if (!imageContainer) {
+            imageContainer = document.createElement('div');
+            imageContainer.className = 'd-flex flex-row flex-nowrap overflow-auto gap-3 image-container'; // Horizontal layout
+            selectedImagesDiv.appendChild(imageContainer);
+        }
+
+        for (let i = 0; i < filesToShow; i++) {
+            setTimeout(() => {
+                const file = input.files[i];
+
+                selectedImageFiles.push(file);
+
+                if (!file.type.startsWith('image/')) {
+                    showToast(`File ${file.name} is not an image and will not be displayed.`);
+                    return;
+                }
+
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`Image ${file.name} exceeds 5MB limit and will not be displayed.`);
+                    return;
+                }
+
+                const colDiv = document.createElement('div');
+                colDiv.className = 'image-card';
+                colDiv.style.width = '150px';
+                colDiv.style.flexShrink = '0';
+                colDiv.style.opacity = '0';
+                colDiv.style.transition = 'opacity 0.3s ease-in'; // Fade-in animation
+                setTimeout(() => colDiv.style.opacity = '1', 100); // Trigger fade-in
+
+                const card = document.createElement('div');
+                card.className = 'card h-100 shadow-sm';
+                card.style.transition = 'transform 0.2s, box-shadow 0.2s';
+                card.onmouseenter = function () {
+                    this.style.transform = 'translateY(-2px)';
+                    this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                };
+                card.onmouseleave = function () {
+                    this.style.transform = 'translateY(0)';
+                    this.style.boxShadow = '';
+                };
+
+                const imageWrapper = document.createElement('div');
+                imageWrapper.className = 'position-relative overflow-hidden';
+                imageWrapper.style.height = '120px';
+
+                const img = document.createElement('img');
+                img.className = 'card-img-top w-100 h-100';
+                img.style.objectFit = 'cover';
+                img.style.transition = 'transform 0.3s';
+
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+
+                img.onmouseenter = function () {
+                    this.style.transform = 'scale(1.05)';
+                };
+                img.onmouseleave = function () {
+                    this.style.transform = 'scale(1)';
+                };
+
+                const cardBody = document.createElement('div');
+                cardBody.className = 'card-body p-2';
+
+                const fileName = document.createElement('small');
+                fileName.className = 'text-muted d-block text-truncate mb-1';
+                fileName.textContent = file.name;
+                fileName.style.fontSize = '11px';
+                fileName.title = file.name;
+
+                const fileSize = document.createElement('small');
+                fileSize.className = 'text-success fw-bold';
+                fileSize.innerHTML = `<i class="fas fa-file-image me-1"></i>${(file.size / 1024 / 1024).toFixed(2)} MB`;
+                fileSize.style.fontSize = '10px';
+
+                const imageNumber = document.createElement('div');
+                imageNumber.className = 'position-absolute top-0 start-0 bg-primary text-white px-2 py-1 rounded-end';
+                imageNumber.style.fontSize = '10px';
+                imageNumber.style.fontWeight = 'bold';
+                imageNumber.textContent = `${existingImages + i + 1}`;
+
+                const removeButton = document.createElement('button');
+                removeButton.className = 'btn btn-sm btn-danger position-absolute top-0 end-0 m-1';
+                removeButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                removeButton.title = 'Remove this image';
+                removeButton.onclick = function () {
+                    if (confirm(`Are you sure you want to remove ${file.name}?`)) {
+                        colDiv.remove();
+                        const newFileList = new DataTransfer();
+                        for (let j = 0; j < input.files.length; j++) {
+                            if (j !== i) {
+                                newFileList.items.add(input.files[j]);
+                            }
+                        }
+                        input.files = newFileList.files;
+                        updateImageNumbers(imageContainer);
+                        updateSummary(selectedImagesDiv, imageContainer);
+                        showToast(`Image ${file.name} removed.`);
+                    }
+                };
+
+                imageWrapper.appendChild(img);
+                imageWrapper.appendChild(imageNumber);
+                imageWrapper.appendChild(removeButton);
+                cardBody.appendChild(fileName);
+                cardBody.appendChild(fileSize);
+                card.appendChild(imageWrapper);
+                card.appendChild(cardBody);
+                colDiv.appendChild(card);
+                imageContainer.appendChild(colDiv);
+
+                updateSummary(selectedImagesDiv, imageContainer);
+            }, i * 300);
+        }
+    }
+}
+
+function updateImageNumbers(imageContainer) {
+    const imageCards = imageContainer.querySelectorAll('.image-card');
+    imageCards.forEach((card, index) => {
+        const imageNumber = card.querySelector('.position-absolute.bg-primary');
+        if (imageNumber) {
+            imageNumber.textContent = `${index + 1}`;
+        }
+    });
+}
+
+function updateSummary(selectedImagesDiv, imageContainer) {
+    let summary = selectedImagesDiv.querySelector('.summary');
+    const imageCount = imageContainer.querySelectorAll('.image-card').length;
+
+    if (!summary) {
+        summary = document.createElement('div');
+        summary.className = 'summary mt-3 p-2 bg-light rounded';
+        selectedImagesDiv.appendChild(summary);
+    }
+
+    summary.innerHTML = `
+        <small class="text-muted">
+            <i class="fas fa-info-circle me-1"></i>
+            <strong>Upload Summary:</strong> ${imageCount} image(s) ready to upload
+            ${imageCount === 5 ? ' <span class="text-success">(Maximum reached)</span>' : ''}
+        </small>
+    `;
+}
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast align-items-center text-white bg-success border-0';
+    toast.style.position = 'fixed';
+    toast.style.top = '20px';
+    toast.style.right = '20px';
+    toast.style.zIndex = '1000';
+    toast.innerHTML = `
+        <div class="d-flex">
+            <div class="toast-body">${message}</div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    `;
+    document.body.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    setTimeout(() => toast.remove(), 3000);
+}
+
 function generateDynamicForm(categoryId) {
     const categoryData = categories.find(cat => cat.id === categoryId);
 
-    // Update the category badge
     $("#selectedCategoryBadge").html(`
         <div class="category-badge">
             <i class="${categoryData.icon}"></i>
@@ -614,7 +867,6 @@ function generateDynamicForm(categoryId) {
 
     let formHTML = '';
 
-    // Common fields for all categories
     const commonFields = `
         <div class="row mb-3">
             <div class="col-md-8">
@@ -661,14 +913,17 @@ function generateDynamicForm(categoryId) {
             </div>
         </div>
         
-        <div class="mb-3">
-            <label class="form-label" for="images">Images</label>
-            <input accept="image/*" class="form-control" id="images" multiple name="images" type="file">
-            <small class="text-muted">Upload up to 5 images (Max 5MB each)</small>
-        </div>
+      <div class="mb-3">
+        <label class="form-label" for="images">Images</label>
+        <input accept="image/*" class="form-control" id="images" multiple name="images" onchange="displaySelectedImages(this)" type="file">
+        <small class="text-muted">Upload up to 5 images (Max 5MB each)</small>
+        <div class="mt-2" id="selected-images"></div>
+     </div>
+     <div>
+     <button onclick="uploadImages()" type="button">upload</button>
+    </div>
     `;
 
-    // Category-specific fields
     switch (categoryId) {
         case 'vehicles':
             formHTML = commonFields + `
@@ -688,37 +943,52 @@ function generateDynamicForm(categoryId) {
                         </select>
                     </div>
                     <div class="col-md-6">
+                        <label class="form-label" for="brand">Make/Brand *</label>
+                        <input class="form-control" id="brand" name="brand" placeholder="e.g., Toyota, Honda" required 
+                               type="text">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label" for="advertisement">Advertisement Type *</label>
+                        <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                            <option value="">Select Advertisement Type</option>
+                            <option value="RENT">Rent</option>
+                            <option value="SELL">Sell</option>
+                        </select>
+                    </div>
+                    <div class="col-md-6">
                         <label class="form-label" for="make">Make/Brand *</label>
-                        <input type="text" class="form-control" id="make" name="make" required 
-                               placeholder="e.g., Toyota, Honda">
+                        <input class="form-control" id="make" name="make" placeholder="e.g., Toyota, Honda" required 
+                               type="text">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="model">Model *</label>
-                        <input type="text" class="form-control" id="model" name="model" required 
-                               placeholder="e.g., Corolla, Civic">
+                        <input class="form-control" id="model" name="model" placeholder="e.g., Corolla, Civic" required 
+                               type="text">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="year">Year *</label>
-                        <input type="number" class="form-control" id="year" name="year" required 
-                               min="1900" max="2025" placeholder="2020">
+                        <input class="form-control" id="year" max="2025" min="1900" name="year" 
+                               placeholder="2020" required type="number">
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="mileage">Mileage (km)</label>
-                        <input type="number" class="form-control" id="mileage" name="mileage" 
-                               placeholder="Enter mileage">
+                        <input class="form-control" id="mileage" name="mileage" placeholder="Enter mileage" 
+                               type="number">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="fuel_type">Fuel Type *</label>
                         <select class="form-select" id="fuel_type" name="fuel_type" required>
                             <option value="">Select Fuel Type</option>
-                            <option value="petrol">Petrol</option>
-                            <option value="diesel">Diesel</option>
-                            <option value="electric">Electric</option>
-                            <option value="hybrid">Hybrid</option>
+                            <option value="PETROL">Petrol</option>
+                            <option value="DIESEL">Diesel</option>
+                            <option value="ELECTRONIC">Electric</option>
+                            <option value="HYBRID">Hybrid</option>
                         </select>
                     </div>
                 </div>

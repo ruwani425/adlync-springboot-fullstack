@@ -1,15 +1,13 @@
 package com.ijse.adlync.dto.request;
 
 import com.ijse.adlync.entity.enums.AnimalEntityGenderEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AnimalRequestDTO {
 
     private String species;

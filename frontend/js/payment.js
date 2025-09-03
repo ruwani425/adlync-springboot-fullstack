@@ -146,7 +146,7 @@ function savePost() {
         electronics: 'http://localhost:8080/api/electronics',
         fashion: 'http://localhost:8080/api/fashion',
         sports: 'http://localhost:8080/api/sports',
-        vehicles: 'http://localhost:8080/api/vehicles',
+        vehicles: 'http://localhost:8080/api/posts/create-vehicle',
         animals: 'http://localhost:8080/api/posts/create-animal',
         properties: 'http://localhost:8080/api/properties',
         jobs: 'http://localhost:8080/api/jobs',
@@ -180,9 +180,10 @@ function savePost() {
             'Content-Type': 'application/json'
         },
         data: JSON.stringify(adData),
-        // contentType: 'application/json',
-        // dataType: 'json',
         success: function (response) {
+            localStorage.removeItem("adFormData");
+            $('#loadingOverlay').hide();
+
             Swal.fire({
                 icon: 'success',
                 title: 'Your advertisement request was sent successfully',
@@ -190,11 +191,14 @@ function savePost() {
                 showConfirmButton: false,
                 timer: 1500
             });
-            localStorage.removeItem("adFormData");
-            window.location.href = "../index.html";
+            setTimeout(() => {
+                window.location.href = "../index.html";
+            }, 1600);
         },
         error: function (xhr) {
             const errorMsg = xhr.responseJSON?.message || 'Request failed. Please try again.';
+            $('#loadingOverlay').hide();
+
             Swal.fire({
                 icon: 'error',
                 title: 'Request Failed',

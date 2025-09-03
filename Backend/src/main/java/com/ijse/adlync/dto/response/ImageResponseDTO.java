@@ -1,16 +1,15 @@
 package com.ijse.adlync.dto.response;
 
+import lombok.*;
+
 import java.time.LocalDateTime;
 
-/**
- * <b>Header</b>
- * <p>
- * Description
- * </p>
- *
- * @author Ruwani Ranthika
- * @since 2025-08-24
- */
+@Getter
+@Setter
+@ToString
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImageResponseDTO {
     private Long image_id;
     private String image_url;

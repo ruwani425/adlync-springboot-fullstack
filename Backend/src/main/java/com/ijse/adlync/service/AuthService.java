@@ -20,19 +20,26 @@ public class AuthService {
     private final JwtUtil jwtUtil;
 
     public LoginResponseDTO authenticate(LoginRequestDTO loginRequestDTO) {
-        UserEntity userEntity =
-                userRepository.findByUsername(loginRequestDTO.getUsername())
-                        .orElseThrow(
-                                () -> new UsernameNotFoundException
-                                        ("Username not found"));
-        if (!passwordEncoder.matches(
-                loginRequestDTO.getPassword(),
-                userEntity.getPassword())) {
-            throw new BadCredentialsException("Incorrect password");
+        UserEntity userEntity;
+
+        if (loginRequestDTO.getUsername().contains("@")) {
+            // login with email
+            userEntity = userRepository.findByEmail(loginRequestDTO.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("Email not found"));
+        } else {
+            // login with username
+            userEntity = userRepository.findByUsername(loginRequestDTO.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("Username not found"));
         }
+
+        if (!passwordEncoder.matches(loginRequestDTO.getPassword(), userEntity.getPassword())) {
+            throw new BadCredentialsException("Invalid username/email or password");
+        }
+
         String token = jwtUtil.generateToken(userEntity);
-        return new LoginResponseDTO(token);
+        return new LoginResponseDTO(token, userEntity.getRole());
     }
+
 
     public String register(RegisterRequestDTO registerRequestDTO) {
 
@@ -53,10 +60,6 @@ public class AuthService {
             throw new RuntimeException("Username already exists");
         }
 
-        if (userRepository.findByUsername(
-                registerRequestDTO.getUsername()).isPresent()) {
-            throw new RuntimeException("Username already exists");
-        }
         UserEntity userEntity = UserEntity.builder()
                 .username(registerRequestDTO.getUsername())
                 .password(passwordEncoder.encode(registerRequestDTO.getPassword()))

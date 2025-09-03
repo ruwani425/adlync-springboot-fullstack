@@ -11,6 +11,5 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Advertisement_typeRequestDTO {
-
     private Advertisement_typeEntityTypeEnum type;
 }

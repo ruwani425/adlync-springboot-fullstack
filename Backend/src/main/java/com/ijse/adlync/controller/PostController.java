@@ -2,6 +2,8 @@ package com.ijse.adlync.controller;
 
 import com.ijse.adlync.dto.request.AnimalRequestDTO;
 import com.ijse.adlync.dto.request.PostRequestDTO;
+import com.ijse.adlync.dto.request.PropertyRequestDTO;
+import com.ijse.adlync.dto.request.VehicleRequestDTO;
 import com.ijse.adlync.dto.response.PostResponseDTO;
 import com.ijse.adlync.service.PostServiceImpl;
 import com.ijse.adlync.util.JwtUtil;
@@ -96,12 +98,48 @@ public class PostController {
     public String createAnimal(@Parameter(description = "Post data to create") @RequestBody AnimalRequestDTO requestDTO, @RequestHeader("Authorization") String authorizationHeader) {
         String username = "";
         if (authorizationHeader.startsWith("Bearer ")) {
-            String token = authorizationHeader.substring(7); // remove "Bearer "
+            String token = authorizationHeader.substring(7);
             username = jwtUtil.extractUsername(token);
         }
         System.out.println(requestDTO.toString());
         System.out.println(requestDTO.getPostRequestDTO().getDescription());
         return service.createAnimalPost(requestDTO, username);
 //        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/create-vehicle")
+    @Operation(summary = "create post", description = "create a post")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully created Post"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public String createVehicle(@Parameter(description = "Post data to create") @RequestBody VehicleRequestDTO requestDTO, @RequestHeader("Authorization") String authorizationHeader) {
+        String username = "";
+        if (authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            username = jwtUtil.extractUsername(token);
+        }
+        System.out.println(requestDTO.toString());
+        System.out.println(requestDTO.getPostRequestDTO().getDescription());
+        return service.createVehiclePost(requestDTO, username);
+    }
+
+    @PostMapping("create-property")
+    @Operation(summary = "create post", description = "create a post")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully created Post"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public String createProperty(@Parameter(description = "Post data to create") @RequestBody PropertyRequestDTO requestDTO, @RequestHeader("Authorization") String authorizationHeader) {
+        String username = "";
+        if (authorizationHeader.startsWith("Bearer ")) {
+            String token = authorizationHeader.substring(7);
+            username = jwtUtil.extractUsername(token);
+        }
+        System.out.println(requestDTO.toString());
+        System.out.println(requestDTO.getPostRequestDTO().getDescription());
+        return service.createPropertyPost(requestDTO,username);
     }
 }

@@ -1,5 +1,6 @@
 package com.ijse.adlync.dto.request;
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.PropertyEntityFurnishedEnum;
 import com.ijse.adlync.entity.enums.PropertyEntityTypeEnum;
 import lombok.AllArgsConstructor;
@@ -19,5 +20,6 @@ public class PropertyRequestDTO {
     private String bedroom;
     private String barthroom;
     private PropertyEntityFurnishedEnum furnished;
+    private Advertisement_typeEntityTypeEnum advertisement_type;
     private PostRequestDTO postRequestDTO;
 }

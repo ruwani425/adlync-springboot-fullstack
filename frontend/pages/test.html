@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Image to Firebase</title>
+</head>
+<body>
+<h2>Upload Image to Firebase Storage</h2>
+
+<input type="file" id="fileInput" />
+<button id="uploadBtn">Upload</button>
+
+<p id="status"></p>
+<img id="preview" width="200"/>
+
+<!-- Firebase SDKs (Compat version for v8-style syntax) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.4/firebase-storage-compat.js"></script>
+
+<script>
+    // Your Firebase config
+    const firebaseConfig = {
+        apiKey: "AIzaSyCP8U0SU_P6mQ7YuYdlfFI8AJS_cO8lTsA",
+        authDomain: "g-exxplore.firebaseapp.com",
+        databaseURL: "https://g-exxplore-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "g-exxplore",
+        storageBucket: "g-exxplore.appspot.com",
+        messagingSenderId: "171368449973",
+        appId: "1:171368449973:web:93e92f9f028dad13503bfc",
+        measurementId: "G-SNSBKHN49T"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+
+    // Upload Function
+    document.getElementById("uploadBtn").addEventListener("click", () => {
+        const file = document.getElementById("fileInput").files[0];
+        if (!file) {
+            alert("Please select a file first!");
+            return;
+        }
+
+        const storageRef = storage.ref("uploads/" + file.name);
+        const uploadTask = storageRef.put(file);
+
+        uploadTask.on("state_changed",
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                document.getElementById("status").innerText = "Upload is " + progress.toFixed(0) + "% done";
+            },
+            (error) => {
+                document.getElementById("status").innerText = "Error: " + error;
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    document.getElementById("status").innerText = "Upload complete!";
+                    document.getElementById("preview").src = downloadURL;
+                });
+            }
+        );
+    });
+</script>
+</body>
+</html>

@@ -58,15 +58,16 @@ $(function () {
         .appendTo('head');
 
     updateDots();
+    checkAuth();
 });
 
 $(function () {
     var token = getCookie("token");
-    if (token != null){
+    if (token != null) {
         $('#postAdBtn').on('click', function () {
             window.location.href = 'pages/postad.html';
         });
-    }else{
+    } else {
         $('#postAdBtn').on('click', function () {
             window.location.href = 'pages/signup.html';
         });
@@ -79,3 +80,40 @@ $(function () {
     });
 });
 
+// Check login state
+function checkAuth() {
+    const $authBtn = $('#signInBtn');
+    const $postAdBtn = $('#postAdBtn');
+
+    const token = getCookie("token");
+    if (token) {
+        // Logged in
+        $authBtn.text("Logout")
+            .removeClass("btn-outline-primary")
+            .addClass("btn-danger");
+
+        $authBtn.off("click").on("click", function () {
+            // Clear cookie
+            document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+            // Reload page to reset UI
+            location.href = "index.html";
+        });
+
+        $postAdBtn.off("click").on("click", function () {
+            location.href = "pages/postad.html";
+        });
+
+    } else {
+        $authBtn.text("Sign In")
+            .removeClass("btn-danger")
+            .addClass("btn-outline-primary");
+
+        $authBtn.off("click").on("click", function () {
+            location.href = "pages/signin.html";
+        });
+
+        $postAdBtn.off("click").on("click", function () {
+            location.href = "pages/signup.html";
+        });
+    }
+}

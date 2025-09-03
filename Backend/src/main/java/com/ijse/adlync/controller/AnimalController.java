@@ -52,6 +52,7 @@ public class AnimalController {
         @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<AnimalResponseDTO> createAnimal(@Parameter(description = "Animal data to create") @RequestBody AnimalRequestDTO requestDTO) {
+        System.out.println(requestDTO.toString());
         AnimalResponseDTO response = service.create(requestDTO);
         return ResponseEntity.ok(response);
     }

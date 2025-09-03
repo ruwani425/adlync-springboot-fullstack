@@ -1,14 +1,11 @@
 package com.ijse.adlync.entity;
 
 import com.ijse.adlync.entity.enums.VehicleEntityFuel_typeEnum;
-import com.ijse.adlync.entity.enums.VehicleParkingEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Date;
 
 @Entity
 @Getter
@@ -26,7 +23,7 @@ public class VehicleEntity {
 
     private String mileage;
 
-    private Date year;
+    private Long year;
 
     private String brand;
 

@@ -59,7 +59,7 @@ function isValidLoginIdentifier(identifier) {
 $('#loginForm').on('submit', function (e) {
     e.preventDefault();
 
-    const loginIdentifier = $('#loginIdentifier').val().trim();
+    const loginIdentifier = $('#loginIdentifier').val().trim(); //loginIdentifier - username eka
     const password = $('#password').val();
 
     // Clear previous validation
@@ -108,6 +108,7 @@ $('#loginForm').on('submit', function (e) {
         dataType: 'json',
         success: function (response) {
             let token = response.data.token;
+            var role = response.data.role;
             //1day walin cookie eka expire wenawa
             setCookie("token", token, 1)
             console.log(document.cookie)
@@ -118,7 +119,11 @@ $('#loginForm').on('submit', function (e) {
                 showConfirmButton: false,
                 timer: 1500
             });
-            window.location.href = "../index.html"
+            if (role === "ADMIN") {
+                window.location.href = "../pages/ad";
+            } else if (role === "USER"){
+                window.location.href = "../index.html";
+            }
         },
         error: function (xhr) {
             const errorMsg = xhr.responseJSON?.message || 'login failed. Please try again.';

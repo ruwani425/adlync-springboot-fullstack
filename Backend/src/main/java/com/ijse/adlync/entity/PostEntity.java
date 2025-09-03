@@ -23,17 +23,17 @@ public class PostEntity {
     @Column(unique = true)
     private Long post_id;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PostEntityStatusEnum status;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String description;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
     private String contact_number;
 
     private double price;
@@ -113,6 +113,5 @@ public class PostEntity {
     private Home_and_gardenEntity home_and_garden;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @OrderBy("display_order ASC, upload_date ASC")
     private List<ImageEntity> images = new ArrayList<>();
 }

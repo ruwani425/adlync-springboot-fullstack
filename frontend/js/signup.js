@@ -69,7 +69,7 @@ $('#signupForm').on('submit', function (e) {
             username: formData.username,
             email: formData.email,
             password: formData.password,
-            role: 'USER' // Add role
+            role: 'USER'
         }),
         contentType: 'application/json',
         dataType: 'json',
