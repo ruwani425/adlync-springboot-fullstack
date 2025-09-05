@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.Work_over_seasRequestDTO;
 import com.ijse.adlync.dto.response.Work_over_seasResponseDTO;
-import com.ijse.adlync.service.Work_over_seasServiceImpl;
+import com.ijse.adlync.service.impl.Work_over_seasServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -198,6 +198,19 @@ function showTerms() {
 function showPrivacy() {
     showAlert('Privacy Policy would open in a new window', 'info');
 }
+function togglePassword(fieldId, iconId) {
+    const $field = $('#' + fieldId);
+    const $icon = $('#' + iconId);
+
+    if ($field.attr('type') === 'password') {
+        $field.attr('type', 'text');
+        $icon.attr('class', 'bi bi-eye-slash');
+    } else {
+        $field.attr('type', 'password');
+        $icon.attr('class', 'bi bi-eye');
+    }
+}
+
 
 $(document).ready(function () {
     $('#fullName').focus();

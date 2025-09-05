@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.ReportRequestDTO;
 import com.ijse.adlync.dto.response.ReportResponseDTO;
-import com.ijse.adlync.service.ReportServiceImpl;
+import com.ijse.adlync.service.impl.ReportServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

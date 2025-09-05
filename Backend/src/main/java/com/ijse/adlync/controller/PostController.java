@@ -5,7 +5,8 @@ import com.ijse.adlync.dto.request.PostRequestDTO;
 import com.ijse.adlync.dto.request.PropertyRequestDTO;
 import com.ijse.adlync.dto.request.VehicleRequestDTO;
 import com.ijse.adlync.dto.response.PostResponseDTO;
-import com.ijse.adlync.service.PostServiceImpl;
+import com.ijse.adlync.service.PostService;
+import com.ijse.adlync.service.impl.PostServiceImpl;
 import com.ijse.adlync.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -24,7 +25,7 @@ import java.util.List;
 public class PostController {
 
     @Autowired
-    private PostServiceImpl service;
+    private PostService service;
     @Autowired
     private JwtUtil jwtUtil;
 

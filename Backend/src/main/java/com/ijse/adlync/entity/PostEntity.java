@@ -85,6 +85,9 @@ public class PostEntity {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private ElectronicEntity electronic;
 
+    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    private EntertaintmentEntity entertainment;
+
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private EducationEntity education;
 

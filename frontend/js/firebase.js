@@ -1,4 +1,3 @@
-// Firebase configuration
 const firebaseConfig = {
     apiKey: "AIzaSyCP8U0SU_P6mQ7YuYdlfFI8AJS_cO8lTsA",
     authDomain: "g-exxplore.firebaseapp.com",
@@ -10,21 +9,17 @@ const firebaseConfig = {
     measurementId: "G-SNSBKHN49T"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 
-// Global variables for image management
 let selectedFiles = [];
 let uploadedImageUrls = [];
 
-// Function to handle file selection
 function handleFileSelection(files) {
     selectedFiles = Array.from(files);
     displayImagePreviews();
 }
 
-// Function to display image previews
 function displayImagePreviews() {
     const previewContainer = document.getElementById('imagePreviewContainer');
     previewContainer.innerHTML = '';
@@ -44,13 +39,11 @@ function displayImagePreviews() {
     });
 }
 
-// Function to remove an image from selection
 function removeImage(index) {
     selectedFiles.splice(index, 1);
     displayImagePreviews();
 }
 
-// Function to upload all images to Firebase
 async function uploadImagesToFirebase(selected) {
     console.log(selected)
     if (selected.length === 0) {
@@ -102,7 +95,6 @@ async function uploadImagesToFirebase(selected) {
     }
 }
 
-// Function to validate image files
 function validateImages(files) {
     const maxSize = 5 * 1024 * 1024; // 5MB
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];

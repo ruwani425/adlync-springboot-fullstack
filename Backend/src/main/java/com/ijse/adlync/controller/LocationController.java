@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.LocationRequestDTO;
 import com.ijse.adlync.dto.response.LocationResponseDTO;
-import com.ijse.adlync.service.LocationServiceImpl;
+import com.ijse.adlync.service.impl.LocationServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

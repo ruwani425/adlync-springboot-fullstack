@@ -1,12 +1,13 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.service.Advertisement_typeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.Advertisement_typeRequestDTO;
 import com.ijse.adlync.dto.response.Advertisement_typeResponseDTO;
-import com.ijse.adlync.service.Advertisement_typeServiceImpl;
+import com.ijse.adlync.service.impl.Advertisement_typeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class Advertisement_typeController {
 
     @Autowired
-    private Advertisement_typeServiceImpl service;
+    private Advertisement_typeService service;
 
     @GetMapping
     @Operation(summary = "Get all Advertisement_types", description = "Retrieve a list of all Advertisement_type entities")

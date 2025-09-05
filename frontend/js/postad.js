@@ -918,10 +918,7 @@ function generateDynamicForm(categoryId) {
         <input accept="image/*" class="form-control" id="images" multiple name="images" onchange="displaySelectedImages(this)" type="file">
         <small class="text-muted">Upload up to 5 images (Max 5MB each)</small>
         <div class="mt-2" id="selected-images"></div>
-     </div>
-     <div>
-     <button onclick="uploadImages()" type="button">upload</button>
-    </div>
+      </div>
     `;
 
     switch (categoryId) {

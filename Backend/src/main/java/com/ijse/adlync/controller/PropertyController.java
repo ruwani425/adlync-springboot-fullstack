@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.PropertyRequestDTO;
 import com.ijse.adlync.dto.response.PropertyResponseDTO;
-import com.ijse.adlync.service.PropertyServiceImpl;
+import com.ijse.adlync.service.impl.PropertyServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

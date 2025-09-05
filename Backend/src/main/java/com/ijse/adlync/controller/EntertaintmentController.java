@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.EntertaintmentRequestDTO;
 import com.ijse.adlync.dto.response.EntertaintmentResponseDTO;
-import com.ijse.adlync.service.EntertaintmentServiceImpl;
+import com.ijse.adlync.service.impl.EntertaintmentServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

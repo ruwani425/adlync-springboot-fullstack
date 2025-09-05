@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.Fashion_and_beautyRequestDTO;
 import com.ijse.adlync.dto.response.Fashion_and_beautyResponseDTO;
-import com.ijse.adlync.service.Fashion_and_beautyServiceImpl;
+import com.ijse.adlync.service.impl.Fashion_and_beautyServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

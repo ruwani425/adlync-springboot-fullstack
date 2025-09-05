@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.Home_and_gardenRequestDTO;
 import com.ijse.adlync.dto.response.Home_and_gardenResponseDTO;
-import com.ijse.adlync.service.Home_and_gardenServiceImpl;
+import com.ijse.adlync.service.impl.Home_and_gardenServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import com.ijse.adlync.dto.request.ServicesRequestDTO;
 import com.ijse.adlync.dto.response.ServicesResponseDTO;
-import com.ijse.adlync.service.ServicesServiceImpl;
+import com.ijse.adlync.service.impl.ServicesServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
