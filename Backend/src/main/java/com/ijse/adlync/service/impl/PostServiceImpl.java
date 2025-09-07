@@ -354,7 +354,7 @@ public class PostServiceImpl implements PostService {
                 requestDTO.getPostRequestDTO(),
                 username,
                 CategoryEntityNameEnum.KIDS,
-                requestDTO.getAdvertisementType()
+                Advertisement_typeEntityTypeEnum.SELL
         );
         PostEntity savedPost = repository.save(postEntity);
         KidsEntity kidsEntity = new KidsEntity();

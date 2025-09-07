@@ -457,12 +457,13 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(sportsData));
             } else if (selectedCategory === 'agriculture') {
                 const agricultureData = {
-                    producttype: formDataObj.product_type,
+                    product_type: formDataObj.product_type,
                     quantity: formDataObj.quantity,
                     season: formDataObj.season,
                     variety: formDataObj.variety,
-                    productiondate: formDataObj.production_Date,
+                    production_Date: formDataObj.harvest_date,
                     certifications: formDataObj.certifications,
+                    condition:formDataObj.condition,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -478,13 +479,13 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(agricultureData));
             } else if (selectedCategory === 'kids') {
                 const kidsData = {
-                    itemtype: formDataObj.item_type,
-                    agerange: formDataObj.age_range,
+                    item_type: formDataObj.item_type,
+                    age_range: formDataObj.age_range,
                     brand: formDataObj.brand,
                     condition: formDataObj.condition,
                     size: formDataObj.size,
                     gender: formDataObj.gender,
-                    safetyinformation: formDataObj.safety_information,
+                    safety_information: formDataObj.safety_info,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -1750,10 +1751,10 @@ function generateDynamicForm(categoryId) {
                 <label class="form-label" for="gender">Gender *</label>
                 <select class="form-select" id="gender" name="gender" required>
                     <option value="">Select Gender</option>
-                    <option value="men">Men</option>
-                    <option value="women">Women</option>
-                    <option value="unisex">Unisex</option>
-                    <option value="kids">Kids</option>
+                    <option value="MEN">Men</option>
+                    <option value="WOMEN">Women</option>
+                    <option value="UNISEX">Unisex</option>
+                    <option value="KIDS">Kids</option>
                 </select>
             </div>
             <div class="col-md-4">
@@ -1841,7 +1842,6 @@ function generateDynamicForm(categoryId) {
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="condition">Condition *</label>
-                <select class="form-select" id="condition" name="condition" required>
                    <select class="form-select" id="condition" name="condition" required>
                         <option value="">Select Condition</option>
                         <option value="BRAND_NEW">Brand New</option>
@@ -1870,9 +1870,9 @@ function generateDynamicForm(categoryId) {
                 <label class="form-label" for="gender">Gender</label>
                 <select class="form-select" id="gender" name="gender">
                     <option value="">Select Gender</option>
-                    <option value="boys">Boys</option>
-                    <option value="girls">Girls</option>
-                    <option value="unisex">Unisex</option>
+                    <option value="BOYS">Boys</option>
+                    <option value="GIRLS">Girls</option>
+                    <option value="UNISEX">Unisex</option>
                 </select>
             </div>
         </div>
