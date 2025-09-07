@@ -394,12 +394,12 @@ $(document).ready(function () {
                 const jobsData = {
                     position: formDataObj.position,
                     company: formDataObj.company,
-                    salarymin: formDataObj.salary_min,
-                    salarymax: formDataObj.salary_max,
+                    salary_min: parseFloat(formDataObj.salary_min),
+                    salary_max: parseFloat(formDataObj.salary_max),
                     industry: formDataObj.industry,
-                    jobtype: formDataObj.job_type,
+                    job_type: formDataObj.job_type,
                     requirements: formDataObj.requirements,
-                    expiriancelevel: formDataObj.expiriance_level,
+                    expiriance_level: formDataObj.experience_level,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,

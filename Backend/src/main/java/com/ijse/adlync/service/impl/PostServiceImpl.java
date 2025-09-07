@@ -30,6 +30,16 @@ public class PostServiceImpl implements PostService {
     private final AgricultureRepository agricultureRepository;
     private final EducationRepository educationRepository;
     private final ElectronicRepository electronicRepository;
+    private final JobRepository jobRepository;
+    private final KidsRepository kidsRepository;
+    private final EntertaintmentRepository entertaintmentRepository;
+    private final EssentialsRepository essentialsRepository;
+    private final Fashion_and_beautyRepository fashion_and_beautyRepository;
+    private final Home_and_gardenRepository home_and_gardenRepository;
+    private final MobileRepository mobileRepository;
+    private final ServicesRepository servicesRepository;
+    private final SportRepository sportRepository;
+    private final Work_over_seasRepository work_over_seasRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -239,7 +249,7 @@ public class PostServiceImpl implements PostService {
         entertaintmentEntity.setCondition(requestDTO.getCondition());
         entertaintmentEntity.setPost(savedPost);
 
-        savedPost.setEntertainment(entertaintmentEntity);
+        savedPost.setEntertainment(entertaintmentRepository.save(entertaintmentEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -261,7 +271,7 @@ public class PostServiceImpl implements PostService {
         essentialsEntity.setCondition(requestDTO.getCondition());
         essentialsEntity.setPost(savedPost);
 
-        savedPost.setEssentials(essentialsEntity);
+        savedPost.setEssentials(essentialsRepository.save(essentialsEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -285,7 +295,7 @@ public class PostServiceImpl implements PostService {
         beautyEntity.setGender(requestDTO.getGender());
         beautyEntity.setPost(savedPost);
 
-        savedPost.setFashion_and_beauty(beautyEntity);
+        savedPost.setFashion_and_beauty(fashion_and_beautyRepository.save(beautyEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -310,7 +320,7 @@ public class PostServiceImpl implements PostService {
         homeEntity.setWeight(requestDTO.getWeight());
         homeEntity.setPost(savedPost);
 
-        savedPost.setHome_and_garden(homeEntity);
+        savedPost.setHome_and_garden(home_and_gardenRepository.save(homeEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -334,7 +344,7 @@ public class PostServiceImpl implements PostService {
         jobEntity.setJob_type(requestDTO.getJob_type());
         jobEntity.setPost(savedPost);
 
-        savedPost.setJob(jobEntity);
+        savedPost.setJob(jobRepository.save(jobEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -357,7 +367,7 @@ public class PostServiceImpl implements PostService {
         kidsEntity.setSize(requestDTO.getSize());
         kidsEntity.setPost(savedPost);
 
-        savedPost.setKids(kidsEntity);
+        savedPost.setKids(kidsRepository.save(kidsEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -382,7 +392,7 @@ public class PostServiceImpl implements PostService {
         mobileEntity.setWarranty_status(requestDTO.getWarranty_status());
         mobileEntity.setPost(savedPost);
 
-        savedPost.setMobile(mobileEntity);
+        savedPost.setMobile(mobileRepository.save(mobileEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -404,7 +414,7 @@ public class PostServiceImpl implements PostService {
         servicesEntity.setAvailability(requestDTO.getAvailability());
         servicesEntity.setPost(savedPost);
 
-        savedPost.setServices(servicesEntity);
+        savedPost.setServices(servicesRepository.save(servicesEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -425,7 +435,7 @@ public class PostServiceImpl implements PostService {
         sportEntity.setSize(requestDTO.getSize());
         sportEntity.setPost(savedPost);
 
-        savedPost.setSport(sportEntity);
+        savedPost.setSport(sportRepository.save(sportEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
@@ -450,7 +460,7 @@ public class PostServiceImpl implements PostService {
         work_over_seasEntity.setVisa_status(requestDTO.getVisa_status());
         work_over_seasEntity.setPost(savedPost);
 
-        savedPost.setWork_over_seas(work_over_seasEntity);
+        savedPost.setWork_over_seas(work_over_seasRepository.save(work_over_seasEntity));
         return toResponseDTO(repository.save(savedPost));
     }
 
