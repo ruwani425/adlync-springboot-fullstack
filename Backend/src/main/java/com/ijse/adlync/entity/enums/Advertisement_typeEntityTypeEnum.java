@@ -4,5 +4,6 @@ public enum Advertisement_typeEntityTypeEnum {
     RENT,
     SELL,
     JOB,
-    SERVICE
+    SERVICE,
+    LEASE
 }

@@ -1,6 +1,7 @@
 package com.ijse.adlync.entity.enums;
 
 public enum PropertyEntityFurnishedEnum {
-    YES,
-    NO
+    FURNISHED,
+    FULLY_FURNISHED,
+    SEMI_FURNISHED,
 }

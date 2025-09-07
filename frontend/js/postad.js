@@ -371,11 +371,12 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(electronicData));
             } else if (selectedCategory === 'properties') {
                 const propertiesData = {
-                    type: formDataObj.type,
-                    landsize: formDataObj.land_size,
-                    bedroom: formDataObj.bedroom,
-                    barthroom: formDataObj.barthroom,
-                    furnished: formDataObj.furnished,
+                    type: formDataObj.property_type,
+                    land_size: formDataObj.area,
+                    bedroom: parseInt(formDataObj.bedrooms) || 0,
+                    barthroom: parseInt(formDataObj.bathrooms) || 0,
+                    furnished: formDataObj.furnishing,
+                    advertisement_type: formDataObj.listing_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -2014,21 +2015,23 @@ function generateDynamicForm(categoryId) {
                         <label class="form-label" for="property_type">Property Type *</label>
                         <select class="form-select" id="property_type" name="property_type" required>
                             <option value="">Select Property Type</option>
-                            <option value="house">House</option>
-                            <option value="apartment">Apartment</option>
-                            <option value="land">Land</option>
-                            <option value="commercial">Commercial</option>
-                            <option value="office">Office Space</option>
-                            <option value="warehouse">Warehouse</option>
+                                <option value="HOME">House</option>
+                                <option value="APARTMENT">Apartment</option>
+                                <option value="LAND">Land</option>
+                                <option value="COMMERCIAL">Commercial</option>
+                                <option value="OFFICE">Office Space</option>
+                                <option value="VILLA">Villa</option>
+                                <option value="SHOP">Shop</option>
+                                <option value="WAREHOUSE">Warehouse</option>
                         </select>
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="listing_type">Listing Type *</label>
                         <select class="form-select" id="listing_type" name="listing_type" required>
                             <option value="">Select Listing Type</option>
-                            <option value="sale">For Sale</option>
-                            <option value="rent">For Rent</option>
-                            <option value="lease">For Lease</option>
+                            <option value="SAle">For Sale</option>
+                            <option value="RENT">For Rent</option>
+                            <option value="LEASE">For Lease</option>
                         </select>
                     </div>
                 </div>
@@ -2054,9 +2057,9 @@ function generateDynamicForm(categoryId) {
                         <label class="form-label" for="furnishing">Furnishing Status</label>
                         <select class="form-select" id="furnishing" name="furnishing">
                             <option value="">Select Furnishing</option>
-                            <option value="furnished">Fully Furnished</option>
-                            <option value="semi_furnished">Semi Furnished</option>
-                            <option value="unfurnished">Unfurnished</option>
+                            <option value="FURNISHED">Fully Furnished</option>
+                            <option value="SEMI_FURNISHED">Semi Furnished</option>
+                            <option value="UNFURNISHED">Unfurnished</option>
                         </select>
                     </div>
                     <div class="col-md-6">
