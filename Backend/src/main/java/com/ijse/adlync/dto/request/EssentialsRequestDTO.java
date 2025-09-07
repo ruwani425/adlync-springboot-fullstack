@@ -1,5 +1,6 @@
 package com.ijse.adlync.dto.request;
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.EssentialItemConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,6 @@ public class EssentialsRequestDTO {
     private String product_type;
     private String storage_instructions;
     private EssentialItemConditionEnum condition;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private PostRequestDTO postRequestDTO;
 }

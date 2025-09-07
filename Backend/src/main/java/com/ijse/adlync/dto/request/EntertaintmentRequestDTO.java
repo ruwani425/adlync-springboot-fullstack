@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.request;
 
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.EntertainmentItemConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +24,6 @@ public class EntertaintmentRequestDTO {
     private String rating;
     private String creator;
     private EntertainmentItemConditionEnum condition;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private PostRequestDTO postRequestDTO;
 }

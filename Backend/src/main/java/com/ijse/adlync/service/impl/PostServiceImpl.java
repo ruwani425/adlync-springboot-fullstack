@@ -1,9 +1,6 @@
 package com.ijse.adlync.service.impl;
 
-import com.ijse.adlync.dto.request.AnimalRequestDTO;
-import com.ijse.adlync.dto.request.PostRequestDTO;
-import com.ijse.adlync.dto.request.PropertyRequestDTO;
-import com.ijse.adlync.dto.request.VehicleRequestDTO;
+import com.ijse.adlync.dto.request.*;
 import com.ijse.adlync.dto.response.ImageResponseDTO;
 import com.ijse.adlync.dto.response.PostResponseDTO;
 import com.ijse.adlync.entity.*;
@@ -23,35 +20,40 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
-    private PostRepository repository;
-    private UserRepository userRepository;
-    private CategoryRepository categoryRepository;
-    private Advertisement_typeRepository advertisement_typeRepository;
-    private LocationRepository locationRepository;
-    private AnimalRepository animalRepository;
-    private VehicleRepository vehicleRepository;
-    private PropertyRepository propertyRepository;
+    private final PostRepository repository;
+    private final UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
+    private final Advertisement_typeRepository advertisement_typeRepository;
+    private final AnimalRepository animalRepository;
+    private final VehicleRepository vehicleRepository;
+    private final PropertyRepository propertyRepository;
+    private final AgricultureRepository agricultureRepository;
+    private final EducationRepository educationRepository;
+    private final ElectronicRepository electronicRepository;
+    private final ModelMapper modelMapper;
 
-    private ModelMapper modelMapper;
-
+    @Override
     public List<PostResponseDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    @Override
     public PostResponseDTO findById(Long id) {
         PostEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("PostEntity not found with id: " + id));
         return toResponseDTO(entity);
     }
 
+    @Override
     public PostResponseDTO create(PostRequestDTO requestDTO) {
         PostEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
         return toResponseDTO(entity);
     }
 
+    @Override
     public PostResponseDTO update(Long id, PostRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("PostEntity not found with id: " + id);
@@ -62,12 +64,396 @@ public class PostServiceImpl implements PostService {
         return toResponseDTO(entity);
     }
 
+    @Override
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("PostEntity not found with id: " + id);
         }
         repository.deleteById(id);
     }
+
+    @Transactional
+    @Override
+    public PostResponseDTO createAnimalPost(AnimalRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.ANIMAL,
+                Advertisement_typeEntityTypeEnum.SELL
+        );
+        PostEntity savedPost = repository.save(postEntity);
+
+        AnimalEntity animalEntity = new AnimalEntity();
+        animalEntity.setAge(requestDTO.getAge());
+        animalEntity.setGender(requestDTO.getGender());
+        animalEntity.setSpecies(requestDTO.getSpecies());
+        animalEntity.setBreed(requestDTO.getBreed());
+        animalEntity.setVaccination_status(requestDTO.getVaccination_status());
+        animalEntity.setPost(savedPost);
+
+        savedPost.setAnimal(animalRepository.save(animalEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Transactional
+    @Override
+    public PostResponseDTO createVehiclePost(VehicleRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.VEHICLE,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+
+        VehicleEntity vehicleEntity = new VehicleEntity();
+        vehicleEntity.setBrand(requestDTO.getBrand());
+        vehicleEntity.setModel(requestDTO.getModel());
+        vehicleEntity.setVehicle_type(requestDTO.getVehicle_type());
+        vehicleEntity.setCondition(requestDTO.getCondition());
+        vehicleEntity.setFuel_type(requestDTO.getFuel_type());
+        vehicleEntity.setMileage(requestDTO.getMileage());
+        vehicleEntity.setTransmission(requestDTO.getTransmission());
+        vehicleEntity.setYear(requestDTO.getYear());
+        vehicleEntity.setPost(savedPost);
+
+        savedPost.setVehicle(vehicleRepository.save(vehicleEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Transactional
+    @Override
+    public PostResponseDTO createPropertyPost(PropertyRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.PROPERTY,
+                requestDTO.getAdvertisement_type()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+
+        PropertyEntity propertyEntity = new PropertyEntity();
+        propertyEntity.setBarthroom(requestDTO.getBarthroom());
+        propertyEntity.setBedroom(requestDTO.getBedroom());
+        propertyEntity.setType(requestDTO.getType());
+        propertyEntity.setFurnished(requestDTO.getFurnished());
+        propertyEntity.setLand_size(requestDTO.getLand_size());
+        propertyEntity.setPost(savedPost);
+
+        savedPost.setProperty(propertyRepository.save(propertyEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Transactional
+    @Override
+    public PostResponseDTO createAgriculturePost(AgricultureRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.AGRICULTURE,
+                Advertisement_typeEntityTypeEnum.SELL
+        );
+        PostEntity savedPost = repository.save(postEntity);
+
+        AgricultureEntity agricultureEntity = new AgricultureEntity();
+        agricultureEntity.setCondition(requestDTO.getCondition());
+        agricultureEntity.setCertifications(requestDTO.getCertifications());
+        agricultureEntity.setSeason(requestDTO.getSeason());
+        agricultureEntity.setProduction_Date(requestDTO.getProduction_Date());
+        agricultureEntity.setQuantity(requestDTO.getQuantity());
+        agricultureEntity.setVariety(requestDTO.getVariety());
+        agricultureEntity.setProduct_type(requestDTO.getProduct_type());
+        agricultureEntity.setPost(savedPost);
+
+        savedPost.setAgriculture(agricultureRepository.save(agricultureEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Transactional
+    @Override
+    public PostResponseDTO createEducationPost(EducationRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.EDUCATION,
+                Advertisement_typeEntityTypeEnum.SERVICE
+        );
+        PostEntity savedPost = repository.save(postEntity);
+
+        EducationEntity educationEntity = new EducationEntity();
+        educationEntity.setCourse_name(requestDTO.getCourse_name());
+        educationEntity.setDuration(requestDTO.getDuration());
+        educationEntity.setEducation_level(requestDTO.getEducation_level());
+        educationEntity.setInstitute(requestDTO.getInstitute());
+        educationEntity.setQulification_offered(requestDTO.getQulification_offered());
+        educationEntity.setRequirements(requestDTO.getRequirements());
+        educationEntity.setSchedule(requestDTO.getSchedule());
+        educationEntity.setStudy_mood(requestDTO.getStudy_mood());
+        educationEntity.setSubject_area(requestDTO.getSubject_area());
+        educationEntity.setPost(savedPost);
+
+        savedPost.setEducation(educationRepository.save(educationEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createElectronicPost(ElectronicRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.ELECTRONIC,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        ElectronicEntity electronicEntity = new ElectronicEntity();
+        electronicEntity.setType(requestDTO.getType());
+        System.out.println(requestDTO.getType());
+        electronicEntity.setModel(requestDTO.getModel());
+        electronicEntity.setBrand(requestDTO.getBrand());
+        electronicEntity.setAccessories(requestDTO.getAccessories());
+        electronicEntity.setWarranty(requestDTO.getWarranty());
+        electronicEntity.setCondition(requestDTO.getCondition());
+        electronicEntity.setPost(savedPost);
+
+        savedPost.setElectronic(electronicRepository.save(electronicEntity));
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createEntertaintmentPost(EntertaintmentRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.ENTERTAINTMENT,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        EntertaintmentEntity entertaintmentEntity = new EntertaintmentEntity();
+        entertaintmentEntity.setType(requestDTO.getType());
+        entertaintmentEntity.setRelease_year(requestDTO.getRelease_year());
+        entertaintmentEntity.setBrand(requestDTO.getBrand());
+        entertaintmentEntity.setCreator(requestDTO.getCreator());
+        entertaintmentEntity.setFormat(requestDTO.getFormat());
+        entertaintmentEntity.setGenre(requestDTO.getGenre());
+        entertaintmentEntity.setRating(requestDTO.getRating());
+        entertaintmentEntity.setCondition(requestDTO.getCondition());
+        entertaintmentEntity.setPost(savedPost);
+
+        savedPost.setEntertainment(entertaintmentEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createEssentialPost(EssentialsRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.ESSENTIALS,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        EssentialsEntity essentialsEntity = new EssentialsEntity();
+        essentialsEntity.setQuantity(requestDTO.getQuantity());
+        essentialsEntity.setExpiry_date(requestDTO.getExpiry_date());
+        essentialsEntity.setBrand(requestDTO.getBrand());
+        essentialsEntity.setProduct_type(requestDTO.getProduct_type());
+        essentialsEntity.setStorage_instructions(requestDTO.getStorage_instructions());
+        essentialsEntity.setCondition(requestDTO.getCondition());
+        essentialsEntity.setPost(savedPost);
+
+        savedPost.setEssentials(essentialsEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createFashionAndBeautyPost(Fashion_and_beautyRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.FASHION_AND_BEAUTY,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        Fashion_and_beautyEntity beautyEntity = new Fashion_and_beautyEntity();
+        beautyEntity.setBrand(requestDTO.getBrand());
+        beautyEntity.setColor(requestDTO.getColor());
+        beautyEntity.setCondition(requestDTO.getCondition());
+        beautyEntity.setItem_type(requestDTO.getItem_type());
+        beautyEntity.setMaterial(requestDTO.getMaterial());
+        beautyEntity.setSize(requestDTO.getSize());
+        beautyEntity.setStyle_note(requestDTO.getStyle_note());
+        beautyEntity.setGender(requestDTO.getGender());
+        beautyEntity.setPost(savedPost);
+
+        savedPost.setFashion_and_beauty(beautyEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createHomeAndGardenPost(Home_and_gardenRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.HOME_AND_GARDEN,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        Home_and_gardenEntity homeEntity = new Home_and_gardenEntity();
+        homeEntity.setAssembly_required(requestDTO.getAssembly_required());
+        homeEntity.setBrand(requestDTO.getBrand());
+        homeEntity.setColor(requestDTO.getColor());
+        homeEntity.setCondition(requestDTO.getCondition());
+        homeEntity.setDimensions(requestDTO.getDimensions());
+        homeEntity.setItem_type(requestDTO.getItem_type());
+        homeEntity.setMaterial(requestDTO.getMaterial());
+        homeEntity.setSpecial_features(requestDTO.getSpecial_features());
+        homeEntity.setWeight(requestDTO.getWeight());
+        homeEntity.setPost(savedPost);
+
+        savedPost.setHome_and_garden(homeEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createJobPost(JobRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.JOB,
+                Advertisement_typeEntityTypeEnum.JOB
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        JobEntity jobEntity = new JobEntity();
+        jobEntity.setSalary_max(requestDTO.getSalary_max());
+        jobEntity.setSalary_min(requestDTO.getSalary_min());
+        jobEntity.setCompany(requestDTO.getCompany());
+        jobEntity.setExpiriance_level(requestDTO.getExpiriance_level());
+        jobEntity.setIndustry(requestDTO.getIndustry());
+        jobEntity.setPosition(requestDTO.getPosition());
+        jobEntity.setRequirements(requestDTO.getRequirements());
+        jobEntity.setJob_type(requestDTO.getJob_type());
+        jobEntity.setPost(savedPost);
+
+        savedPost.setJob(jobEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createKidsPost(KidsRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.KIDS,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        KidsEntity kidsEntity = new KidsEntity();
+        kidsEntity.setGender(requestDTO.getGender());
+        kidsEntity.setAge_range(requestDTO.getAge_range());
+        kidsEntity.setBrand(requestDTO.getBrand());
+        kidsEntity.setCondition(requestDTO.getCondition());
+        kidsEntity.setItem_type(requestDTO.getItem_type());
+        kidsEntity.setSafety_information(requestDTO.getSafety_information());
+        kidsEntity.setSize(requestDTO.getSize());
+        kidsEntity.setPost(savedPost);
+
+        savedPost.setKids(kidsEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createMobilePost(MobileRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.MOBILE,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        MobileEntity mobileEntity = new MobileEntity();
+        mobileEntity.setBrand(requestDTO.getBrand());
+        mobileEntity.setAdditional_information(requestDTO.getAdditional_information());
+        mobileEntity.setColour(requestDTO.getColour());
+        mobileEntity.setCondition(requestDTO.getCondition());
+        mobileEntity.setIncluded_accessories(requestDTO.getIncluded_accessories());
+        mobileEntity.setModel(requestDTO.getModel());
+        mobileEntity.setRam(requestDTO.getRam());
+        mobileEntity.setStorage(requestDTO.getStorage());
+        mobileEntity.setWarranty_status(requestDTO.getWarranty_status());
+        mobileEntity.setPost(savedPost);
+
+        savedPost.setMobile(mobileEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createServicePost(ServicesRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.SERVICES,
+                Advertisement_typeEntityTypeEnum.SERVICE
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        ServicesEntity servicesEntity = new ServicesEntity();
+        servicesEntity.setCharges(requestDTO.getCharges());
+        servicesEntity.setProvider_name(requestDTO.getProvider_name());
+        servicesEntity.setQualifications(requestDTO.getQualifications());
+        servicesEntity.setService_area(requestDTO.getService_area());
+        servicesEntity.setService_type(requestDTO.getService_type());
+        servicesEntity.setAvailability(requestDTO.getAvailability());
+        servicesEntity.setPost(savedPost);
+
+        savedPost.setServices(servicesEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createSportPost(SportRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.SPORT,
+                requestDTO.getAdvertisementType()
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        SportEntity sportEntity = new SportEntity();
+        sportEntity.setAdditional_information(requestDTO.getAdditional_information());
+        sportEntity.setBrand(requestDTO.getBrand());
+        sportEntity.setCondition(requestDTO.getCondition());
+        sportEntity.setEquipment_type(requestDTO.getEquipment_type());
+        sportEntity.setSize(requestDTO.getSize());
+        sportEntity.setPost(savedPost);
+
+        savedPost.setSport(sportEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
+    @Override
+    public PostResponseDTO createWorkOverSeaPost(Work_over_seasRequestDTO requestDTO, String username) {
+        PostEntity postEntity = buildBasePost(
+                requestDTO.getPostRequestDTO(),
+                username,
+                CategoryEntityNameEnum.WORK_OVERSEAS,
+                Advertisement_typeEntityTypeEnum.JOB
+        );
+        PostEntity savedPost = repository.save(postEntity);
+        Work_over_seasEntity work_over_seasEntity = new Work_over_seasEntity();
+        work_over_seasEntity.setAccommodation(requestDTO.getAccommodation());
+        work_over_seasEntity.setAdditional_benefits(requestDTO.getAdditional_benefits());
+        work_over_seasEntity.setCompany_or_agency_name(requestDTO.getCompany_name());
+        work_over_seasEntity.setContract_duration(requestDTO.getContract_duration());
+        work_over_seasEntity.setCountry(requestDTO.getCountry());
+        work_over_seasEntity.setPosition(requestDTO.getPosition());
+        work_over_seasEntity.setRequirements(requestDTO.getRequirements());
+        work_over_seasEntity.setSalary(requestDTO.getSalary());
+        work_over_seasEntity.setVisa_status(requestDTO.getVisa_status());
+        work_over_seasEntity.setPost(savedPost);
+
+        savedPost.setWork_over_seas(work_over_seasEntity);
+        return toResponseDTO(repository.save(savedPost));
+    }
+
 
     private PostResponseDTO toResponseDTO(PostEntity entity) {
         PostResponseDTO dto = new PostResponseDTO();
@@ -117,7 +503,8 @@ public class PostServiceImpl implements PostService {
         postEntity.setAdvertisement_type(advertisement_typeRepository.findByType(adTypeEnum));
         postEntity.setUser(userEntity);
         postEntity.setContact_number(dto.getContact_number());
-
+        postEntity.setPrice(dto.getPrice());
+        postEntity.setStatus(dto.getStatus());
         List<ImageEntity> images = dto.getImages().stream()
                 .map(imgDto -> {
                     ImageEntity image = modelMapper.map(imgDto, ImageEntity.class);
@@ -132,88 +519,6 @@ public class PostServiceImpl implements PostService {
         locationEntity.setCity(dto.getCity());
         locationEntity.setDistrict(dto.getDistrict());
         postEntity.setLocation(locationEntity);
-
-        postEntity.setPrice(dto.getPrice());
-        postEntity.setStatus(dto.getStatus());
-
         return postEntity;
-    }
-
-    @Transactional
-    public String createAnimalPost(AnimalRequestDTO requestDTO, String username) {
-        PostEntity postEntity = buildBasePost(
-                requestDTO.getPostRequestDTO(),
-                username,
-                CategoryEntityNameEnum.ANIMAL,
-                Advertisement_typeEntityTypeEnum.SELL
-        );
-        PostEntity savedPost = repository.save(postEntity);
-
-        AnimalEntity animalEntity = new AnimalEntity();
-        animalEntity.setAge(requestDTO.getAge());
-        animalEntity.setGender(requestDTO.getGender());
-        animalEntity.setSpecies(requestDTO.getSpecies());
-        animalEntity.setBreed(requestDTO.getBreed());
-        animalEntity.setVaccination_status(requestDTO.getVaccination_status());
-        animalEntity.setPost(savedPost);
-
-        AnimalEntity savedAnimal = animalRepository.save(animalEntity);
-        savedPost.setAnimal(savedAnimal);
-        repository.save(savedPost);
-
-        return "save success";
-    }
-
-    @Transactional
-    public String createVehiclePost(VehicleRequestDTO requestDTO, String username) {
-        PostEntity postEntity = buildBasePost(
-                requestDTO.getPostRequestDTO(),
-                username,
-                CategoryEntityNameEnum.VEHICLE,
-                requestDTO.getAdvertisementType()
-        );
-        PostEntity savedPost = repository.save(postEntity);
-
-        VehicleEntity vehicleEntity = new VehicleEntity();
-        vehicleEntity.setBrand(requestDTO.getBrand());
-        vehicleEntity.setModel(requestDTO.getModel());
-        vehicleEntity.setVehicle_type(requestDTO.getVehicle_type());
-        vehicleEntity.setCondition(requestDTO.getCondition());
-        vehicleEntity.setFuel_type(requestDTO.getFuel_type());
-        vehicleEntity.setMileage(requestDTO.getMileage());
-        vehicleEntity.setTransmission(requestDTO.getTransmission());
-        vehicleEntity.setYear(requestDTO.getYear());
-        vehicleEntity.setPost(savedPost);
-
-        VehicleEntity savedVehicle = vehicleRepository.save(vehicleEntity);
-        savedPost.setVehicle(savedVehicle);
-        repository.save(savedPost);
-
-        return "save success";
-    }
-
-    @Transactional
-    public String createPropertyPost(PropertyRequestDTO requestDTO, String username) {
-        PostEntity postEntity = buildBasePost(
-                requestDTO.getPostRequestDTO(),
-                username,
-                CategoryEntityNameEnum.PROPERTY,
-                requestDTO.getAdvertisement_type()
-        );
-        PostEntity savedPost = repository.save(postEntity);
-
-        PropertyEntity propertyEntity = new PropertyEntity();
-        propertyEntity.setBarthroom(requestDTO.getBarthroom());
-        propertyEntity.setBedroom(requestDTO.getBedroom());
-        propertyEntity.setType(requestDTO.getType());
-        propertyEntity.setFurnished(requestDTO.getFurnished());
-        propertyEntity.setLand_size(requestDTO.getLand_size());
-        propertyEntity.setPost(savedPost);
-
-        PropertyEntity savedProperty = propertyRepository.save(propertyEntity);
-        savedPost.setProperty(savedProperty);
-        repository.save(savedPost);
-
-        return "saved success";
     }
 }

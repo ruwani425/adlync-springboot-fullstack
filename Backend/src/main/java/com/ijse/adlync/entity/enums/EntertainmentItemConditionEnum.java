@@ -4,7 +4,6 @@ public enum EntertainmentItemConditionEnum {
     NEW,
     USED_GOOD,
     REFURBISHED,
-    ANTIQUE,
     DAMAGED,
-    FOR_PARTS;
+    FOR_PARTS
 }

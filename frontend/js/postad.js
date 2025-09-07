@@ -340,13 +340,22 @@ $(document).ready(function () {
                 };
                 localStorage.setItem("adFormData", JSON.stringify(vehicleData));
             } else if (selectedCategory === 'electronics') {
+
+                let accessoriesArray = [];
+                if (formDataObj.accessories) {
+                    accessoriesArray = formDataObj.accessories
+                        .split(',')
+                        .map(item => item.trim())
+                        .filter(item => item);
+                }
                 const electronicData = {
-                    type: formDataObj.type,
+                    type: formDataObj.electronic_type,
                     brand: formDataObj.brand,
                     model: formDataObj.model,
                     warranty: formDataObj.warranty,
                     condition: formDataObj.condition,
-                    accessories: formDataObj.accessories,
+                    accessories: accessoriesArray,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -1036,8 +1045,8 @@ function generateDynamicForm(categoryId) {
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="quantity">Quantity *</label>
-                        <input type="text" class="form-control" id="quantity" name="quantity" required 
-                               placeholder="e.g., 50kg, 100 pieces, 10 liters">
+                        <input class="form-control" id="quantity" name="quantity" placeholder="e.g., 50kg, 100 pieces, 10 liters" required 
+                               type="text">
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -1055,38 +1064,34 @@ function generateDynamicForm(categoryId) {
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="condition">Condition *</label>
-                        <select class="form-select" id="condition" name="condition" required>
-                            <option value="">Select Condition</option>
-                            <option value="fresh">Fresh</option>
-                            <option value="dry">Dry</option>
-                            <option value="frozen">Frozen</option>
-                            <option value="processed">Processed</option>
-                            <option value="raw">Raw</option>
-                            <option value="organic">Organic</option>
-                            <option value="in_storage">In Storage</option>
-                            <option value="ready_to_sell">Ready to Sell</option>
-                            <option value="brand_new">Brand New</option>
-                            <option value="used_good">Used (Good Condition)</option>
-                            <option value="refurbished">Refurbished</option>
-                            <option value="needs_repair">Needs Repair</option>
+                      <select class="form-select" id="condition" name="condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="FRESH">Fresh</option>
+                        <option value="DRY">Dry</option>
+                        <option value="FROZEN">Frozen</option>
+                        <option value="PROCESSED">Processed</option>
+                        <option value="RAW">Raw</option>
+                        <option value="ORGANIC">Organic</option>
+                        <option value="IN_STORAGE">In Storage</option>
+                        <option value="READY_TO_SELL">Ready to Sell</option>
                         </select>
                     </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label class="form-label" for="variety">Variety/Brand</label>
-                        <input type="text" class="form-control" id="variety" name="variety" 
-                               placeholder="e.g., BG 300, Red Lady, Basmati">
+                        <input class="form-control" id="variety" name="variety" placeholder="e.g., BG 300, Red Lady, Basmati" 
+                               type="text">
                     </div>
                     <div class="col-md-6">
                         <label class="form-label" for="harvest_date">Harvest/Production Date</label>
-                        <input type="date" class="form-control" id="harvest_date" name="harvest_date">
+                        <input class="form-control" id="harvest_date" name="harvest_date" type="date">
                     </div>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="certifications">Certifications</label>
-                    <input type="text" class="form-control" id="certifications" name="certifications" 
-                           placeholder="e.g., Organic Certified, GAP Certified">
+                    <input class="form-control" id="certifications" name="certifications" placeholder="e.g., Organic Certified, GAP Certified" 
+                           type="text">
                 </div>
             `;
             break;
@@ -1294,35 +1299,36 @@ function generateDynamicForm(categoryId) {
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="brand">Brand *</label>
-                <input type="text" class="form-control" id="brand" name="brand" required 
-                       placeholder="e.g., Nestlé, Unilever, Keells">
+                <input class="form-control" id="brand" name="brand" placeholder="e.g., Nestlé, Unilever, Keells" required 
+                       type="text">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="quantity">Quantity *</label>
-                <input type="text" class="form-control" id="quantity" name="quantity" required 
-                       placeholder="e.g., 1kg, 500ml, 12 pieces">
+                <input class="form-control" id="quantity" name="quantity" placeholder="e.g., 1kg, 500ml, 12 pieces" required 
+                       type="text">
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="expiry_date">Expiry Date</label>
-                <input type="date" class="form-control" id="expiry_date" name="expiry_date">
+                <input class="form-control" id="expiry_date" name="expiry_date" type="date">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="condition">Condition *</label>
-                <select class="form-select" id="condition" name="condition" required>
+               <select class="form-select" id="condition" name="condition" required>
                     <option value="">Select Condition</option>
-                    <option value="fresh">Fresh</option>
-                    <option value="sealed">Sealed/Unopened</option>
-                    <option value="opened">Opened</option>
-                    <option value="near_expiry">Near Expiry</option>
-                    <option value="frozen">Frozen</option>
-                    <option value="dry">Dry Goods</option>
-                    <option value="organic">Organic</option>
-                    <option value="processed">Processed</option>
-                    <option value="bulk_pack">Bulk Pack</option>
-                    <option value="sample_size">Sample Size</option>
-                </select>
+                    <option value="FRESH">Fresh</option>
+                    <option value="SEALED">Sealed/Unopened</option>
+                    <option value="OPENED">Opened</option>
+                    <option value="NEAR_EXPIRY">Near Expiry</option>
+                    <option value="FROZEN">Frozen</option>
+                    <option value="DRY">Dry Goods</option>
+                    <option value="ORGANIC">Organic</option>
+                    <option value="PROCESSED">Processed</option>
+                    <option value="BULK_PACK">Bulk Pack</option>
+                    <option value="SAMPLE_SIZE">Sample Size</option>
+              </select>
+
             </div>
         </div>
         <div class="mb-3">
@@ -1346,8 +1352,8 @@ function generateDynamicForm(categoryId) {
         </div>
         <div class="mb-3">
             <label class="form-label" for="storage_instructions">Storage Instructions</label>
-            <textarea class="form-control" id="storage_instructions" name="storage_instructions" rows="2"
-                      placeholder="Storage requirements, temperature conditions, special handling instructions"></textarea>
+            <textarea class="form-control" id="storage_instructions" name="storage_instructions" placeholder="Storage requirements, temperature conditions, special handling instructions"
+                      rows="2"></textarea>
         </div>
     `;
             break;
@@ -1408,44 +1414,44 @@ function generateDynamicForm(categoryId) {
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="dimensions">Dimensions *</label>
-                <input type="text" class="form-control" id="dimensions" name="dimensions" required 
-                       placeholder="e.g., 120cm x 80cm x 75cm, L: 2m W: 1m H: 1.5m">
+                <input class="form-control" id="dimensions" name="dimensions" placeholder="e.g., 120cm x 80cm x 75cm, L: 2m W: 1m H: 1.5m" required 
+                       type="text">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="condition">Condition *</label>
                 <select class="form-select" id="condition" name="condition" required>
                     <option value="">Select Condition</option>
-                    <option value="brand_new">Brand New</option>
-                    <option value="like_new">Like New</option>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="worn">Worn</option>
-                    <option value="needs_repair">Needs Repair</option>
-                    <option value="antique">Antique</option>
-                    <option value="vintage">Vintage</option>
-                    <option value="refurbished">Refurbished</option>
-                    <option value="damaged">Damaged</option>
+                    <option value="BRAND_NEW">Brand New</option>
+                    <option value="LIKE_NEW">Like New</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="WORN">Worn</option>
+                    <option value="NEEDS_REPAIR">Needs Repair</option>
+                    <option value="ANTIQUE">Antique</option>
+                    <option value="VINTAGE">Vintage</option>
+                    <option value="REFURBISHED">Refurbished</option>
+                    <option value="DAMAGED">Damaged</option>
                 </select>
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="brand">Brand</label>
-                <input type="text" class="form-control" id="brand" name="brand" 
-                       placeholder="e.g., IKEA, Singer, Damro, Abans">
+                <input class="form-control" id="brand" name="brand" placeholder="e.g., IKEA, Singer, Damro, Abans" 
+                       type="text">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="color">Color</label>
-                <input type="text" class="form-control" id="color" name="color" 
-                       placeholder="e.g., Brown, White, Black, Natural">
+                <input class="form-control" id="color" name="color" placeholder="e.g., Brown, White, Black, Natural" 
+                       type="text">
             </div>
         </div>
         <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="weight">Weight (if applicable)</label>
-                <input type="text" class="form-control" id="weight" name="weight" 
-                       placeholder="e.g., 25kg, Heavy, Light">
+                <input class="form-control" id="weight" name="weight" placeholder="e.g., 25kg, Heavy, Light" 
+                       type="text">
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="assembly">Assembly Required</label>
@@ -1460,8 +1466,8 @@ function generateDynamicForm(categoryId) {
         </div>
         <div class="mb-3">
             <label class="form-label" for="features">Special Features</label>
-            <textarea class="form-control" id="features" name="features" rows="2"
-                      placeholder="Any special features, functionality, or unique characteristics"></textarea>
+            <textarea class="form-control" id="features" name="features" placeholder="Any special features, functionality, or unique characteristics"
+                      rows="2"></textarea>
         </div>
     `;
             break;
@@ -1576,94 +1582,108 @@ function generateDynamicForm(categoryId) {
 
         case 'entertainment':
             formHTML = commonFields + `
-        <hr class="my-4">
-        <h5 class="mb-3">Entertainment Details</h5>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="type">Entertainment Type *</label>
-                <select class="form-select" id="type" name="type" required>
-                    <option value="">Select Type</option>
-                    <option value="movies">Movies</option>
-                    <option value="music">Music</option>
-                    <option value="games">Games</option>
-                    <option value="books">Books</option>
-                    <option value="magazines">Magazines</option>
-                    <option value="tv_shows">TV Shows</option>
-                    <option value="concerts">Concerts</option>
-                    <option value="events">Events</option>
-                    <option value="theater">Theater</option>
-                    <option value="comedy">Comedy</option>
-                    <option value="sports_events">Sports Events</option>
-                    <option value="festivals">Festivals</option>
-                    <option value="workshops">Workshops</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="format">Format *</label>
-                <select class="form-select" id="format" name="format" required>
-                    <option value="">Select Format</option>
-                    <option value="dvd">DVD</option>
-                    <option value="blu_ray">Blu-ray</option>
-                    <option value="cd">CD</option>
-                    <option value="vinyl">Vinyl</option>
-                    <option value="digital">Digital</option>
-                    <option value="streaming">Streaming</option>
-                    <option value="hardcover">Hardcover</option>
-                    <option value="paperback">Paperback</option>
-                    <option value="ebook">E-book</option>
-                    <option value="board_game">Board Game</option>
-                    <option value="card_game">Card Game</option>
-                    <option value="video_game">Video Game</option>
-                    <option value="live_event">Live Event</option>
-                    <option value="online_event">Online Event</option>
-                    <option value="ticket">Ticket</option>
-                    <option value="subscription">Subscription</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+    <hr class="my-4">
+    <h5 class="mb-3">Entertainment Details</h5>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="type">Entertainment Type *</label>
+            <select class="form-select" id="type" name="type" required>
+                <option value="">Select Type</option>
+                <option value="movies">Movies</option>
+                <option value="music">Music</option>
+                <option value="games">Games</option>
+                <option value="books">Books</option>
+                <option value="magazines">Magazines</option>
+                <option value="tv_shows">TV Shows</option>
+                <option value="concerts">Concerts</option>
+                <option value="events">Events</option>
+                <option value="theater">Theater</option>
+                <option value="comedy">Comedy</option>
+                <option value="sports_events">Sports Events</option>
+                <option value="festivals">Festivals</option>
+                <option value="workshops">Workshops</option>
+                <option value="other">Other</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="brand">Brand/Publisher *</label>
-                <input type="text" class="form-control" id="brand" name="brand" required 
-                       placeholder="e.g., Sony, Universal, Nintendo, Marvel">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="genre">Genre</label>
-                <input type="text" class="form-control" id="genre" name="genre" 
-                       placeholder="e.g., Action, Comedy, Rock, Adventure">
-            </div>
+        <div class="col-md-6">
+            <label class="form-label" for="format">Format *</label>
+            <select class="form-select" id="format" name="format" required>
+                <option value="">Select Format</option>
+                <option value="dvd">DVD</option>
+                <option value="blu_ray">Blu-ray</option>
+                <option value="cd">CD</option>
+                <option value="vinyl">Vinyl</option>
+                <option value="digital">Digital</option>
+                <option value="streaming">Streaming</option>
+                <option value="hardcover">Hardcover</option>
+                <option value="paperback">Paperback</option>
+                <option value="ebook">E-book</option>
+                <option value="board_game">Board Game</option>
+                <option value="card_game">Card Game</option>
+                <option value="video_game">Video Game</option>
+                <option value="live_event">Live Event</option>
+                <option value="online_event">Online Event</option>
+                <option value="ticket">Ticket</option>
+                <option value="subscription">Subscription</option>
+                <option value="other">Other</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="release_year">Release Year</label>
-                <input type="number" class="form-control" id="release_year" name="release_year" 
-                       min="1900" max="2025" placeholder="2023">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="rating">Rating</label>
-                <select class="form-select" id="rating" name="rating">
-                    <option value="">Select Rating</option>
-                    <option value="G">G (General)</option>
-                    <option value="PG">PG (Parental Guidance)</option>
-                    <option value="PG13">PG-13</option>
-                    <option value="R">R (Restricted)</option>
-                    <option value="NC17">NC-17</option>
-                    <option value="E">E (Everyone)</option>
-                    <option value="E10">E10+ (Everyone 10+)</option>
-                    <option value="T">T (Teen)</option>
-                    <option value="M">M (Mature)</option>
-                    <option value="AO">AO (Adults Only)</option>
-                    <option value="not_rated">Not Rated</option>
-                </select>
-            </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="brand">Brand/Publisher *</label>
+            <input type="text" class="form-control" id="brand" name="brand" required 
+                   placeholder="e.g., Sony, Universal, Nintendo, Marvel">
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="artist_author">Artist/Author/Creator</label>
-            <input type="text" class="form-control" id="artist_author" name="artist_author" 
-                   placeholder="Name of artist, author, director, or creator">
+        <div class="col-md-6">
+            <label class="form-label" for="genre">Genre</label>
+            <input type="text" class="form-control" id="genre" name="genre" 
+                   placeholder="e.g., Action, Comedy, Rock, Adventure">
         </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label" for="release_year">Release Year</label>
+            <input type="number" class="form-control" id="release_year" name="release_year" 
+                   min="1900" max="2025" placeholder="2023">
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="rating">Rating</label>
+            <select class="form-select" id="rating" name="rating">
+                <option value="">Select Rating</option>
+                <option value="G">G (General)</option>
+                <option value="PG">PG (Parental Guidance)</option>
+                <option value="PG13">PG-13</option>
+                <option value="R">R (Restricted)</option>
+                <option value="NC17">NC-17</option>
+                <option value="E">E (Everyone)</option>
+                <option value="E10">E10+ (Everyone 10+)</option>
+                <option value="T">T (Teen)</option>
+                <option value="M">M (Mature)</option>
+                <option value="AO">AO (Adults Only)</option>
+                <option value="not_rated">Not Rated</option>
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label" for="condition">Condition *</label>
+            <select class="form-select" id="condition" name="condition" required>
+                <option value="">Select Condition</option>
+                <option value="NEW">New</option>
+                <option value="USED_GOOD">Used (Good Condition)</option>
+                <option value="REFURBISHED">Refurbished</option>
+                <option value="DAMAGED">Damaged</option>
+                <option value="FOR_PARTS">For Parts Only</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="artist_author">Artist/Author/Creator</label>
+        <input type="text" class="form-control" id="artist_author" name="artist_author" 
+               placeholder="Name of artist, author, director, or creator">
+    </div>
     `;
             break;
 
@@ -1738,14 +1758,15 @@ function generateDynamicForm(categoryId) {
                 <label class="form-label" for="condition">Condition *</label>
                 <select class="form-select" id="condition" name="condition" required>
                     <option value="">Select Condition</option>
-                    <option value="brand_new">Brand New</option>
-                    <option value="new_with_tags">New with Tags</option>
-                    <option value="like_new">Like New</option>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="vintage">Vintage</option>
-                    <option value="damaged">Damaged</option>
+                    <option value="BRAND_NEW">Brand New</option>
+                    <option value="NEW_WITH_TAGS">New with Tags</option>
+                    <option value="LIKE_NEW">Like New</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="VINTAGE">Vintage</option>
+                    <option value="DAMAGED">Damaged</option>
+
                 </select>
             </div>
         </div>
@@ -1819,15 +1840,22 @@ function generateDynamicForm(categoryId) {
             <div class="col-md-6">
                 <label class="form-label" for="condition">Condition *</label>
                 <select class="form-select" id="condition" name="condition" required>
-                    <option value="">Select Condition</option>
-                    <option value="brand_new">Brand New</option>
-                    <option value="like_new">Like New</option>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="worn">Worn</option>
-                    <option value="needs_repair">Needs Repair</option>
-                </select>
+                   <select class="form-select" id="condition" name="condition" required>
+                        <option value="">Select Condition</option>
+                        <option value="BRAND_NEW">Brand New</option>
+                        <option value="LIKE_NEW">Like New</option>
+                        <option value="EXCELLENT">Excellent</option>
+                        <option value="GOOD">Good</option>
+                        <option value="FAIR">Fair</option>
+                        <option value="WORN">Worn</option>
+                        <option value="NEEDS_REPAIR">Needs Repair</option>
+                        <option value="NEW">New</option>
+                        <option value="USED_GOOD">Used (Good Condition)</option>
+                        <option value="REFURBISHED">Refurbished</option>
+                        <option value="OPEN_BOX">Open Box</option>
+                        <option value="DAMAGED">Damaged</option>
+                        <option value="FOR_PARTS">For Parts Only</option>
+                    </select>
             </div>
         </div>
         <div class="row mb-3">
@@ -1905,67 +1933,78 @@ function generateDynamicForm(categoryId) {
 
         case 'electronics':
             formHTML = commonFields + `
-                <hr class="my-4">
-                <h5 class="mb-3">Electronic Details</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="electronic_type">Electronic Type *</label>
-                        <select class="form-select" id="electronic_type" name="electronic_type" required>
-                            <option value="">Select Type</option>
-                            <option value="mobile">Mobile Phone</option>
-                            <option value="laptop">Laptop</option>
-                            <option value="desktop">Desktop</option>
-                            <option value="tablet">Tablet</option>
-                            <option value="tv">Television</option>
-                            <option value="audio">Audio Equipment</option>
-                            <option value="camera">Camera</option>
-                            <option value="gaming">Gaming</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="brand">Brand *</label>
-                        <input type="text" class="form-control" id="brand" name="brand" required 
-                               placeholder="e.g., Apple, Samsung">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="model">Model</label>
-                        <input type="text" class="form-control" id="model" name="model" 
-                               placeholder="Enter model name/number">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="warranty">Warranty Status</label>
-                        <select class="form-select" id="warranty" name="warranty">
-                            <option value="">Select Warranty Status</option>
-                            <option value="yes">Under Warranty</option>
-                            <option value="no">No Warranty</option>
-                            <option value="expired">Warranty Expired</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="condition">Condition *</label>
-                        <select class="form-select" id="condition" name="condition" required>
-                            <option value="">Select Condition</option>
-                            <option value="brand_new">Brand New</option>
-                            <option value="excellent">Excellent</option>
-                            <option value="good">Good</option>
-                            <option value="fair">Fair</option>
-                            <option value="for_parts">For Parts</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="accessories">Included Accessories</label>
-                        <input type="text" class="form-control" id="accessories" name="accessories" 
-                               placeholder="e.g., Charger, Box, Earphones">
-                    </div>
-                </div>
-            `;
+        <hr class="my-4">
+        <h5 class="mb-3">Electronic Details</h5>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+                <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                    <option value="">Select Advertisement Type</option>
+                    <option value="SELL">For Sale</option>
+                    <option value="RENT">For Rent</option>
+                    <option value="SERVICE">Service</option>
+                    <option value="JOB">Job</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="electronic_type">Electronic Type *</label>
+                <select class="form-select" id="electronic_type" name="electronic_type" required>
+                    <option value="">Select Type</option>
+                    <option value="mobile">Mobile Phone</option>
+                    <option value="laptop">Laptop</option>
+                    <option value="desktop">Desktop</option>
+                    <option value="tablet">Tablet</option>
+                    <option value="tv">Television</option>
+                    <option value="audio">Audio Equipment</option>
+                    <option value="camera">Camera</option>
+                    <option value="gaming">Gaming</option>
+                    <option value="other">Other</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="brand">Brand *</label>
+                <input type="text" class="form-control" id="brand" name="brand" required 
+                       placeholder="e.g., Apple, Samsung">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="model">Model</label>
+                <input type="text" class="form-control" id="model" name="model" 
+                       placeholder="Enter model name/number">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="warranty">Warranty Status</label>
+                <select class="form-select" id="warranty" name="warranty">
+                    <option value="">Select Warranty Status</option>
+                    <option value="yes">Under Warranty</option>
+                    <option value="no">No Warranty</option>
+                    <option value="expired">Warranty Expired</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="condition">Condition *</label>
+                <select class="form-select" id="condition" name="condition" required>
+                    <option value="">Select Condition</option>
+                    <option value="BRAND_NEW">Brand New</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="FOR_PARTS">For Parts</option>
+                </select>
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-12">
+                <label class="form-label" for="accessories">Included Accessories</label>
+                <input type="text" class="form-control" id="accessories" name="accessories" 
+                       placeholder="e.g., Charger, Box, Earphones">
+            </div>
+        </div>
+    `;
             break;
-
         case 'properties':
             formHTML = commonFields + `
                 <hr class="my-4">
@@ -2237,8 +2276,8 @@ function generateDynamicForm(categoryId) {
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="brand">Brand *</label>
-                <input type="text" class="form-control" id="brand" name="brand" required 
-                       placeholder="e.g., Nike, Adidas, Wilson">
+                <input class="form-control" id="brand" name="brand" placeholder="e.g., Nike, Adidas, Wilson" required 
+                       type="text">
             </div>
         </div>
         <div class="row mb-3">
@@ -2246,24 +2285,24 @@ function generateDynamicForm(categoryId) {
                 <label class="form-label" for="condition">Condition *</label>
                 <select class="form-select" id="condition" name="condition" required>
                     <option value="">Select Condition</option>
-                    <option value="brand_new">Brand New</option>
-                    <option value="excellent">Excellent</option>
-                    <option value="good">Good</option>
-                    <option value="fair">Fair</option>
-                    <option value="worn">Worn</option>
-                    <option value="needs_repair">Needs Repair</option>
+                    <option value="BRAND_NEW">Brand New</option>
+                    <option value="EXCELLENT">Excellent</option>
+                    <option value="GOOD">Good</option>
+                    <option value="FAIR">Fair</option>
+                    <option value="WORN">Worn</option>
+                    <option value="NEEDS_REPAIR">Needs Repair</option>
                 </select>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="size">Size</label>
-                <input type="text" class="form-control" id="size" name="size" 
-                       placeholder="e.g., L, XL, 42, One Size">
+                <input class="form-control" id="size" name="size" placeholder="e.g., L, XL, 42, One Size" 
+                       type="text">
             </div>
         </div>
         <div class="mb-3">
             <label class="form-label" for="additional_info">Additional Information</label>
-            <textarea class="form-control" id="additional_info" name="additional_info" rows="2"
-                      placeholder="Any additional details about the equipment, usage, included accessories, etc."></textarea>
+            <textarea class="form-control" id="additional_info" name="additional_info" placeholder="Any additional details about the equipment, usage, included accessories, etc."
+                      rows="2"></textarea>
         </div>
     `;
             break;
@@ -2276,29 +2315,30 @@ function generateDynamicForm(categoryId) {
                     <label class="form-label" for="condition">Condition</label>
                     <select class="form-select" id="condition" name="condition">
                         <option value="">Select Condition</option>
-                        <option value="brand_new">Brand New</option>
-                        <option value="excellent">Excellent</option>
-                        <option value="good">Good</option>
-                        <option value="fair">Fair</option>
-                        <option value="poor">Poor</option>
-                        <option value="Fresh">Fresh</option>
-                        <option value="dry">Dry</option>
-                        <option value="frozen">Frozen</option>
-                        <option value="processed">Processed</option>
-                        <option value="raw">Raw</option>
-                        <option value="organic">Organic</option>
-                        <option value="in_storage">In Storage</option>
-                        <option value="ready_to_sell">Ready to Sell</option>
-                        <option value="new">New</option>
-                        <option value="used_good">Used (Good Condition)</option>
-                        <option value="refurbished">Refurbished</option>
-                        <option value="open_box">Open Box</option>
-                        <option value="damaged">Damaged</option>
-                        <option value="for_parts">For Parts Only</option>
-                        <option value="antique">Antique / Collectible</option>
+                        <option value="BRAND_NEW">Brand New</option>
+                        <option value="EXCELLENT">Excellent</option>
+                        <option value="GOOD">Good</option>
+                        <option value="FAIR">Fair</option>
+                        <option value="POOR">Poor</option>
+                        <option value="FRESH">Fresh</option>
+                        <option value="DRY">Dry</option>
+                        <option value="FROZEN">Frozen</option>
+                        <option value="PROCESSED">Processed</option>
+                        <option value="RAW">Raw</option>
+                        <option value="ORGANIC">Organic</option>
+                        <option value="IN_STORAGE">In Storage</option>
+                        <option value="READY_TO_SELL">Ready to Sell</option>
+                        <option value="NEW">New</option>
+                        <option value="USED_GOOD">Used (Good Condition)</option>
+                        <option value="REFURBISHED">Refurbished</option>
+                        <option value="OPEN_BOX">Open Box</option>
+                        <option value="DAMAGED">Damaged</option>
+                        <option value="FOR_PARTS">For Parts Only</option>
+                        <option value="ANTIQUE">Antique / Collectible</option>
                         <option value="OPENED">Opened</option>
                         <option value="NEAR_EXPIRY">Near Expiry</option>
                         <option value="EXPIRED">Expired</option>
+
                     </select>
                 </div>
             `;

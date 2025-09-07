@@ -20,5 +20,6 @@ public class Work_over_seasResponseDTO {
     private String visa_status;
     private String accommodation;
     private String benefits;
+    private String additional_benefits;
     private PostResponseDTO postResponseDTO;
 }

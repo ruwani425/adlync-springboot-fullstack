@@ -3,5 +3,10 @@ package com.ijse.adlync.entity.enums;
 public enum AgricultureEntityConditionEnum {
     FRESH,
     DRY,
-    PROCESSED
+    FROZEN,
+    PROCESSED,
+    RAW,
+    ORGANIC,
+    IN_STORAGE,
+    READY_TO_SELL
 }

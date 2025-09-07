@@ -142,22 +142,22 @@ function savePost() {
     console.log(category)
 
     const endpoints = {
-        agriculture: 'http://localhost:8080/api/agricultures',
-        electronics: 'http://localhost:8080/api/electronics',
-        fashion: 'http://localhost:8080/api/fashion',
-        sports: 'http://localhost:8080/api/sports',
+        agriculture: 'http://localhost:8080/api/posts/create-agriculture',
+        electronics: 'http://localhost:8080/api/posts/create-electronic',
+        fashion: 'http://localhost:8080/api/posts/create-fashion-and-beauty',
+        sports: 'http://localhost:8080/api/posts/create-sport',
         vehicles: 'http://localhost:8080/api/posts/create-vehicle',
         animals: 'http://localhost:8080/api/posts/create-animal',
-        properties: 'http://localhost:8080/api/properties',
-        jobs: 'http://localhost:8080/api/jobs',
-        services: 'http://localhost:8080/api/services',
-        kids: 'http://localhost:8080/api/kids',
-        entertainment: 'http://localhost:8080/api/entertainment',
-        education: 'http://localhost:8080/api/education',
-        mobile: 'http://localhost:8080/api/mobile',
-        work_overseas: 'http://localhost:8080/api/work_overseas',
-        home_garden: 'http://localhost:8080/api/home_garden',
-        essentials: 'http://localhost:8080/api/essentials'
+        properties: 'http://localhost:8080/api/posts/create-property',
+        jobs: 'http://localhost:8080/api/posts/create-job',
+        services: 'http://localhost:8080/api/posts/create-service',
+        kids: 'http://localhost:8080/api/posts/create-kids',
+        entertainment: 'http://localhost:8080/api/posts/create-entertainment',
+        education: 'http://localhost:8080/api/posts/create-education',
+        mobile: 'http://localhost:8080/api/posts/create-mobile',
+        work_overseas: 'http://localhost:8080/api/posts/create-work-over-sea',
+        home_garden: 'http://localhost:8080/api/posts/create-home-and-garden',
+        essentials: 'http://localhost:8080/api/posts/create-essential'
     };
 
     const apiUrl = endpoints[category];

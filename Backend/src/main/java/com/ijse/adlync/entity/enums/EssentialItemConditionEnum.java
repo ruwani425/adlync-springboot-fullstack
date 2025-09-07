@@ -1,10 +1,14 @@
 package com.ijse.adlync.entity.enums;
 
 public enum EssentialItemConditionEnum {
-    NEW,
-    USED_GOOD,
+    FRESH,
+    SEALED,
     OPENED,
     NEAR_EXPIRY,
-    EXPIRED,
-    DAMAGED;
+    FROZEN,
+    DRY,
+    ORGANIC,
+    PROCESSED,
+    BULK_PACK,
+    SAMPLE_SIZE
 }

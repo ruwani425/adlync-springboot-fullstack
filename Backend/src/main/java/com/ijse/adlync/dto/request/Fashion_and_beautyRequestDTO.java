@@ -1,5 +1,6 @@
 package com.ijse.adlync.dto.request;
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.Fashion_and_beautyEntityGenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,5 +21,6 @@ public class Fashion_and_beautyRequestDTO {
     private String color;
     private String material;
     private String style_note;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private PostRequestDTO postRequestDTO;
 }

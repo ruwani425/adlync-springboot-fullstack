@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.request;
 
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,5 +22,6 @@ public class Home_and_gardenRequestDTO {
     private String weight;
     private String assembly_required;
     private String special_features;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private PostRequestDTO postRequestDTO;
 }

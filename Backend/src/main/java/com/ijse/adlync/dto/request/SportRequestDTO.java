@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.request;
 
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,5 +18,6 @@ public class SportRequestDTO {
     private String condition;
     private String size;
     private String additional_information;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private PostRequestDTO postRequestDTO;
 }

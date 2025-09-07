@@ -1,6 +1,7 @@
 package com.ijse.adlync.dto.request;
 
 
+import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.ElectronicEntityConditionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +21,7 @@ public class ElectronicRequestDTO {
     private String model;
     private String warranty;
     private ElectronicEntityConditionEnum condition;
+    private Advertisement_typeEntityTypeEnum advertisementType;
     private ArrayList<String> accessories;
     private PostRequestDTO postRequestDTO;
 }
