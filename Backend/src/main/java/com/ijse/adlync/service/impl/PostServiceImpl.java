@@ -195,10 +195,10 @@ public class PostServiceImpl implements PostService {
         educationEntity.setDuration(requestDTO.getDuration());
         educationEntity.setEducation_level(requestDTO.getEducation_level());
         educationEntity.setInstitute(requestDTO.getInstitute());
-        educationEntity.setQulification_offered(requestDTO.getQulification_offered());
+        educationEntity.setQualification_offered(requestDTO.getQualification_offered());
         educationEntity.setRequirements(requestDTO.getRequirements());
         educationEntity.setSchedule(requestDTO.getSchedule());
-        educationEntity.setStudy_mood(requestDTO.getStudy_mood());
+        educationEntity.setStudy_mode(requestDTO.getStudy_mode());
         educationEntity.setSubject_area(requestDTO.getSubject_area());
         educationEntity.setPost(savedPost);
 
@@ -307,6 +307,7 @@ public class PostServiceImpl implements PostService {
                 CategoryEntityNameEnum.HOME_AND_GARDEN,
                 requestDTO.getAdvertisementType()
         );
+        System.out.println(requestDTO.getAdvertisementType());
         PostEntity savedPost = repository.save(postEntity);
         Home_and_gardenEntity homeEntity = new Home_and_gardenEntity();
         homeEntity.setAssembly_required(requestDTO.getAssembly_required());

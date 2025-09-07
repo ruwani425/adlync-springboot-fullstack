@@ -24,11 +24,11 @@ public class EducationEntity {
 
     private String duration;
 
-    private String qulification_offered;
+    private String qualification_offered;
 
     private String subject_area;
 
-    private String study_mood;
+    private String study_mode;
 
     private String education_level;
 

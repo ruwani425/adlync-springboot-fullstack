@@ -56,7 +56,7 @@ public class EducationServiceImpl {
         dto.setCourse_name(entity.getCourse_name());
         dto.setInstitute(entity.getInstitute());
         dto.setDuration(entity.getDuration());
-        dto.setQulification_offered(entity.getQulification_offered());
+        dto.setQualification_offered(entity.getQualification_offered());
         return dto;
     }
 
@@ -65,7 +65,7 @@ public class EducationServiceImpl {
         entity.setCourse_name(dto.getCourse_name());
         entity.setInstitute(dto.getInstitute());
         entity.setDuration(dto.getDuration());
-        entity.setQulification_offered(dto.getQulification_offered());
+        entity.setQualification_offered(dto.getQualification_offered());
         return entity;
     }
 }

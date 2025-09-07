@@ -463,7 +463,7 @@ $(document).ready(function () {
                     variety: formDataObj.variety,
                     production_Date: formDataObj.harvest_date,
                     certifications: formDataObj.certifications,
-                    condition:formDataObj.condition,
+                    condition: formDataObj.condition,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -501,14 +501,15 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(kidsData));
             } else if (selectedCategory === 'fashion') {
                 const fashionData = {
-                    itemtype: formDataObj.item_type,
+                    item_type: formDataObj.item_type,
                     brand: formDataObj.brand,
                     size: formDataObj.size,
                     gender: formDataObj.gender,
                     condition: formDataObj.condition,
                     color: formDataObj.color,
                     material: formDataObj.material,
-                    stylenote: formDataObj.style_note,
+                    style_note: formDataObj.style_note,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -529,10 +530,11 @@ $(document).ready(function () {
                     format: formDataObj.format,
                     brand: formDataObj.brand,
                     genre: formDataObj.genre,
-                    releaseyear: formDataObj.release_year,
+                    release_year: formDataObj.release_year,
                     rating: formDataObj.rating,
-                    creator: formDataObj.creator,
+                    creator: formDataObj.artist_author,
                     condition: formDataObj.condition,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -549,13 +551,13 @@ $(document).ready(function () {
 
             } else if (selectedCategory === 'education') {
                 const educationData = {
-                    coursename: formDataObj.course_name,
+                    course_name: formDataObj.course_name,
                     institute: formDataObj.institute,
                     duration: formDataObj.duration,
-                    qulificationoffered: formDataObj.qulification_offered,
+                    qualification_offered: formDataObj.qualification_offered,
                     subject_area: formDataObj.subject_area,
-                    studymood: formDataObj.study_mood,
-                    educationlevel: formDataObj.education_level,
+                    study_mode: formDataObj.study_mode,
+                    education_level: formDataObj.level,
                     schedule: formDataObj.schedule,
                     requirements: formDataObj.requirements,
                     postRequestDTO: {
@@ -575,13 +577,14 @@ $(document).ready(function () {
                 const mobileData = {
                     storage: formDataObj.storage,
                     condition: formDataObj.condition,
-                    warrantystatus: formDataObj.warranty_status,
+                    warranty_status: formDataObj.warranty,
                     ram: formDataObj.ram,
                     brand: formDataObj.brand,
                     model: formDataObj.model,
-                    colour: formDataObj.colour,
-                    includedAccessories: formDataObj.included_accessories,
-                    additional_information: formDataObj.additional_information,
+                    colour: formDataObj.color,
+                    included_accessories: formDataObj.accessories,
+                    additional_information: formDataObj.additional_info,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -602,11 +605,12 @@ $(document).ready(function () {
                     country: formDataObj.country,
                     salary: formDataObj.salary,
                     requirements: formDataObj.requirements,
-                    contractduration: formDataObj.contract_duration,
-                    companyoragencyname: formDataObj.company_or_agency_name,
+                    contract_duration: formDataObj.contract_duration,
+                    company_name: formDataObj.company_name,
                     visa_status: formDataObj.visa_status,
                     accommodation: formDataObj.accommodation,
-                    additionalbenefits: formDataObj.additional_benefits,
+                    additional_benefits: formDataObj.benefits,
+                    benefits: formDataObj.benefits,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -623,15 +627,16 @@ $(document).ready(function () {
 
             } else if (selectedCategory === 'home_garden') {
                 const homeGardenDetail = {
-                    itemtype: formDataObj.item_type,
+                    item_type: formDataObj.item_type,
                     material: formDataObj.material,
                     dimensions: formDataObj.dimensions,
                     condition: formDataObj.condition,
                     brand: formDataObj.brand,
                     color: formDataObj.color,
                     weight: formDataObj.weight,
-                    assemblyrequired: formDataObj.assembly_required,
-                    special_features: formDataObj.special_features,
+                    assembly_required: formDataObj.assembly,
+                    special_features: formDataObj.features,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -649,11 +654,12 @@ $(document).ready(function () {
             } else if (selectedCategory === 'essentials') {
                 const essentials = {
                     brand: formDataObj.brand,
-                    quantity: formDataObj.quantity,
-                    expirydate: formDataObj.expiry_date,
-                    producttype: formDataObj.product_type,
-                    storageinstructions: formDataObj.storage_instructions,
+                    quantity: parseInt(formDataObj.quantity),
+                    expiry_date: formDataObj.expiry_date,
+                    product_type: formDataObj.product_type,
+                    storage_instructions: formDataObj.storage_instructions,
                     condition: formDataObj.condition,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -1191,6 +1197,20 @@ function generateDynamicForm(categoryId) {
             <textarea class="form-control" id="additional_info" name="additional_info" placeholder="Any defects, special features, or additional details"
                       rows="2"></textarea>
         </div>
+
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+                <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                    <option value="">Select Type</option>
+                    <option value="SELL">Sell</option>
+                    <option value="RENT">Rent</option>
+                    <option value="LEASE">Lease</option>
+                    <option value="SERVICE">Service</option>
+                    <option value="JOB">Job</option>
+                </select>
+            </div>
+        </div>
     `;
             break;
 
@@ -1297,182 +1317,206 @@ function generateDynamicForm(categoryId) {
 
         case 'essentials':
             formHTML = commonFields + `
-        <hr class="my-4">
-        <h5 class="mb-3">Essentials Details</h5>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="brand">Brand *</label>
-                <input class="form-control" id="brand" name="brand" placeholder="e.g., Nestlé, Unilever, Keells" required 
-                       type="text">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="quantity">Quantity *</label>
-                <input class="form-control" id="quantity" name="quantity" placeholder="e.g., 1kg, 500ml, 12 pieces" required 
-                       type="text">
-            </div>
-        </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="expiry_date">Expiry Date</label>
-                <input class="form-control" id="expiry_date" name="expiry_date" type="date">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="condition">Condition *</label>
-               <select class="form-select" id="condition" name="condition" required>
-                    <option value="">Select Condition</option>
-                    <option value="FRESH">Fresh</option>
-                    <option value="SEALED">Sealed/Unopened</option>
-                    <option value="OPENED">Opened</option>
-                    <option value="NEAR_EXPIRY">Near Expiry</option>
-                    <option value="FROZEN">Frozen</option>
-                    <option value="DRY">Dry Goods</option>
-                    <option value="ORGANIC">Organic</option>
-                    <option value="PROCESSED">Processed</option>
-                    <option value="BULK_PACK">Bulk Pack</option>
-                    <option value="SAMPLE_SIZE">Sample Size</option>
-              </select>
-
-            </div>
-        </div>
-        <div class="mb-3">
-            <label class="form-label" for="product_type">Product Type</label>
-            <select class="form-select" id="product_type" name="product_type">
-                <option value="">Select Product Type</option>
-                <option value="food_beverages">Food & Beverages</option>
-                <option value="personal_care">Personal Care</option>
-                <option value="household">Household Items</option>
-                <option value="health_medicine">Health & Medicine</option>
-                <option value="baby_care">Baby Care</option>
-                <option value="cleaning_supplies">Cleaning Supplies</option>
-                <option value="groceries">Groceries</option>
-                <option value="snacks">Snacks</option>
-                <option value="dairy">Dairy Products</option>
-                <option value="meat_seafood">Meat & Seafood</option>
-                <option value="fruits_vegetables">Fruits & Vegetables</option>
-                <option value="bakery">Bakery Items</option>
-                <option value="other">Other</option>
+    <hr class="my-4">
+    <h5 class="mb-3">Essentials Details</h5>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+            <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                <option value="">Select Type</option>
+                <option value="RENT">Rent</option>
+                <option value="SELL">Sell</option>
+                <option value="JOB">Job</option>
+                <option value="SERVICE">Service</option>
+                <option value="LEASE">Lease</option>
             </select>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="storage_instructions">Storage Instructions</label>
-            <textarea class="form-control" id="storage_instructions" name="storage_instructions" placeholder="Storage requirements, temperature conditions, special handling instructions"
-                      rows="2"></textarea>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="brand">Brand *</label>
+            <input class="form-control" id="brand" name="brand" placeholder="e.g., Nestlé, Unilever, Keells" required 
+                   type="text">
         </div>
-    `;
+        <div class="col-md-6">
+            <label class="form-label" for="quantity">Quantity *</label>
+            <input class="form-control" id="quantity" name="quantity" placeholder="e.g., 1kg, 500ml, 12 pieces" required 
+                   type="text">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="expiry_date">Expiry Date</label>
+            <input class="form-control" id="expiry_date" name="expiry_date" type="date">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="condition">Condition *</label>
+            <select class="form-select" id="condition" name="condition" required>
+                <option value="">Select Condition</option>
+                <option value="FRESH">Fresh</option>
+                <option value="SEALED">Sealed/Unopened</option>
+                <option value="OPENED">Opened</option>
+                <option value="NEAR_EXPIRY">Near Expiry</option>
+                <option value="FROZEN">Frozen</option>
+                <option value="DRY">Dry Goods</option>
+                <option value="ORGANIC">Organic</option>
+                <option value="PROCESSED">Processed</option>
+                <option value="BULK_PACK">Bulk Pack</option>
+                <option value="SAMPLE_SIZE">Sample Size</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="product_type">Product Type</label>
+        <select class="form-select" id="product_type" name="product_type">
+            <option value="">Select Product Type</option>
+            <option value="food_beverages">Food & Beverages</option>
+            <option value="personal_care">Personal Care</option>
+            <option value="household">Household Items</option>
+            <option value="health_medicine">Health & Medicine</option>
+            <option value="baby_care">Baby Care</option>
+            <option value="cleaning_supplies">Cleaning Supplies</option>
+            <option value="groceries">Groceries</option>
+            <option value="snacks">Snacks</option>
+            <option value="dairy">Dairy Products</option>
+            <option value="meat_seafood">Meat & Seafood</option>
+            <option value="fruits_vegetables">Fruits & Vegetables</option>
+            <option value="bakery">Bakery Items</option>
+            <option value="other">Other</option>
+        </select>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="storage_instructions">Storage Instructions</label>
+        <textarea class="form-control" id="storage_instructions" name="storage_instructions" placeholder="Storage requirements, temperature conditions, special handling instructions"
+                  rows="2"></textarea>
+    </div>
+`;
             break;
 
         case 'home_garden':
             formHTML = commonFields + `
-        <hr class="my-4">
-        <h5 class="mb-3">Home & Garden Details</h5>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="item_type">Item Type *</label>
-                <select class="form-select" id="item_type" name="item_type" required>
-                    <option value="">Select Item Type</option>
-                    <option value="furniture">Furniture</option>
-                    <option value="appliances">Appliances</option>
-                    <option value="kitchen_items">Kitchen Items</option>
-                    <option value="bathroom_items">Bathroom Items</option>
-                    <option value="decor">Home Decor</option>
-                    <option value="lighting">Lighting</option>
-                    <option value="bedding">Bedding & Linens</option>
-                    <option value="curtains">Curtains & Blinds</option>
-                    <option value="carpets">Carpets & Rugs</option>
-                    <option value="plants">Plants</option>
-                    <option value="garden_tools">Garden Tools</option>
-                    <option value="outdoor_furniture">Outdoor Furniture</option>
-                    <option value="pots_planters">Pots & Planters</option>
-                    <option value="garden_supplies">Garden Supplies</option>
-                    <option value="storage">Storage Solutions</option>
-                    <option value="hardware">Hardware & Tools</option>
-                    <option value="safety_security">Safety & Security</option>
-                    <option value="cleaning_supplies">Cleaning Supplies</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="material">Material *</label>
-                <select class="form-select" id="material" name="material" required>
-                    <option value="">Select Material</option>
-                    <option value="wood">Wood</option>
-                    <option value="metal">Metal</option>
-                    <option value="plastic">Plastic</option>
-                    <option value="glass">Glass</option>
-                    <option value="fabric">Fabric</option>
-                    <option value="leather">Leather</option>
-                    <option value="ceramic">Ceramic</option>
-                    <option value="stone">Stone</option>
-                    <option value="concrete">Concrete</option>
-                    <option value="bamboo">Bamboo</option>
-                    <option value="rattan">Rattan</option>
-                    <option value="stainless_steel">Stainless Steel</option>
-                    <option value="aluminum">Aluminum</option>
-                    <option value="composite">Composite</option>
-                    <option value="mixed_materials">Mixed Materials</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
+    <hr class="my-4">
+    <h5 class="mb-3">Home & Garden Details</h5>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+            <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                <option value="">Select Type</option>
+                <option value="RENT">Rent</option>
+                <option value="SELL">Sell</option>
+                <option value="SERVICE">Service</option>
+                <option value="LEASE">Lease</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="dimensions">Dimensions *</label>
-                <input class="form-control" id="dimensions" name="dimensions" placeholder="e.g., 120cm x 80cm x 75cm, L: 2m W: 1m H: 1.5m" required 
-                       type="text">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="condition">Condition *</label>
-                <select class="form-select" id="condition" name="condition" required>
-                    <option value="">Select Condition</option>
-                    <option value="BRAND_NEW">Brand New</option>
-                    <option value="LIKE_NEW">Like New</option>
-                    <option value="EXCELLENT">Excellent</option>
-                    <option value="GOOD">Good</option>
-                    <option value="FAIR">Fair</option>
-                    <option value="WORN">Worn</option>
-                    <option value="NEEDS_REPAIR">Needs Repair</option>
-                    <option value="ANTIQUE">Antique</option>
-                    <option value="VINTAGE">Vintage</option>
-                    <option value="REFURBISHED">Refurbished</option>
-                    <option value="DAMAGED">Damaged</option>
-                </select>
-            </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="item_type">Item Type *</label>
+            <select class="form-select" id="item_type" name="item_type" required>
+                <option value="">Select Item Type</option>
+                <option value="furniture">Furniture</option>
+                <option value="appliances">Appliances</option>
+                <option value="kitchen_items">Kitchen Items</option>
+                <option value="bathroom_items">Bathroom Items</option>
+                <option value="decor">Home Decor</option>
+                <option value="lighting">Lighting</option>
+                <option value="bedding">Bedding & Linens</option>
+                <option value="curtains">Curtains & Blinds</option>
+                <option value="carpets">Carpets & Rugs</option>
+                <option value="plants">Plants</option>
+                <option value="garden_tools">Garden Tools</option>
+                <option value="outdoor_furniture">Outdoor Furniture</option>
+                <option value="pots_planters">Pots & Planters</option>
+                <option value="garden_supplies">Garden Supplies</option>
+                <option value="storage">Storage Solutions</option>
+                <option value="hardware">Hardware & Tools</option>
+                <option value="safety_security">Safety & Security</option>
+                <option value="cleaning_supplies">Cleaning Supplies</option>
+                <option value="other">Other</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="brand">Brand</label>
-                <input class="form-control" id="brand" name="brand" placeholder="e.g., IKEA, Singer, Damro, Abans" 
-                       type="text">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="color">Color</label>
-                <input class="form-control" id="color" name="color" placeholder="e.g., Brown, White, Black, Natural" 
-                       type="text">
-            </div>
+        <div class="col-md-6">
+            <label class="form-label" for="material">Material *</label>
+            <select class="form-select" id="material" name="material" required>
+                <option value="">Select Material</option>
+                <option value="wood">Wood</option>
+                <option value="metal">Metal</option>
+                <option value="plastic">Plastic</option>
+                <option value="glass">Glass</option>
+                <option value="fabric">Fabric</option>
+                <option value="leather">Leather</option>
+                <option value="ceramic">Ceramic</option>
+                <option value="stone">Stone</option>
+                <option value="concrete">Concrete</option>
+                <option value="bamboo">Bamboo</option>
+                <option value="rattan">Rattan</option>
+                <option value="stainless_steel">Stainless Steel</option>
+                <option value="aluminum">Aluminum</option>
+                <option value="composite">Composite</option>
+                <option value="mixed_materials">Mixed Materials</option>
+                <option value="other">Other</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="weight">Weight (if applicable)</label>
-                <input class="form-control" id="weight" name="weight" placeholder="e.g., 25kg, Heavy, Light" 
-                       type="text">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="assembly">Assembly Required</label>
-                <select class="form-select" id="assembly" name="assembly">
-                    <option value="">Select Assembly Status</option>
-                    <option value="fully_assembled">Fully Assembled</option>
-                    <option value="partial_assembly">Partial Assembly Required</option>
-                    <option value="full_assembly">Full Assembly Required</option>
-                    <option value="no_assembly">No Assembly Needed</option>
-                </select>
-            </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="dimensions">Dimensions *</label>
+            <input class="form-control" id="dimensions" name="dimensions" placeholder="e.g., 120cm x 80cm x 75cm" required 
+                   type="text">
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="features">Special Features</label>
-            <textarea class="form-control" id="features" name="features" placeholder="Any special features, functionality, or unique characteristics"
-                      rows="2"></textarea>
+        <div class="col-md-6">
+            <label class="form-label" for="condition">Condition *</label>
+            <select class="form-select" id="condition" name="condition" required>
+                <option value="">Select Condition</option>
+                <option value="BRAND_NEW">Brand New</option>
+                <option value="LIKE_NEW">Like New</option>
+                <option value="EXCELLENT">Excellent</option>
+                <option value="GOOD">Good</option>
+                <option value="FAIR">Fair</option>
+                <option value="WORN">Worn</option>
+                <option value="NEEDS_REPAIR">Needs Repair</option>
+                <option value="ANTIQUE">Antique</option>
+                <option value="VINTAGE">Vintage</option>
+                <option value="REFURBISHED">Refurbished</option>
+                <option value="DAMAGED">Damaged</option>
+            </select>
         </div>
-    `;
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="brand">Brand</label>
+            <input class="form-control" id="brand" name="brand" placeholder="e.g., IKEA, Singer, Damro, Abans" 
+                   type="text">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="color">Color</label>
+            <input class="form-control" id="color" name="color" placeholder="e.g., Brown, White, Black, Natural" 
+                   type="text">
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="weight">Weight (if applicable)</label>
+            <input class="form-control" id="weight" name="weight" placeholder="e.g., 25kg, Heavy, Light" 
+                   type="text">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="assembly">Assembly Required</label>
+            <select class="form-select" id="assembly" name="assembly">
+                <option value="">Select Assembly Status</option>
+                <option value="fully_assembled">Fully Assembled</option>
+                <option value="partial_assembly">Partial Assembly Required</option>
+                <option value="full_assembly">Full Assembly Required</option>
+                <option value="no_assembly">No Assembly Needed</option>
+            </select>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label class="form-label" for="features">Special Features</label>
+        <textarea class="form-control" id="features" name="features" placeholder="Any special features"
+                  rows="2"></textarea>
+    </div>
+`;
             break;
 
         case 'education':
@@ -1682,6 +1726,20 @@ function generateDynamicForm(categoryId) {
         </div>
     </div>
 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+            <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                <option value="">Select Advertisement Type</option>
+                <option value="SELL">For Sale</option>
+                <option value="RENT">For Rent</option>
+                <option value="LEASE">Lease</option>
+                <option value="SERVICE">Service</option>
+                <option value="JOB">Job</option>
+            </select>
+        </div>
+    </div>
+
     <div class="mb-3">
         <label class="form-label" for="artist_author">Artist/Author/Creator</label>
         <input type="text" class="form-control" id="artist_author" name="artist_author" 
@@ -1692,106 +1750,123 @@ function generateDynamicForm(categoryId) {
 
         case 'fashion':
             formHTML = commonFields + `
-        <hr class="my-4">
-        <h5 class="mb-3">Fashion & Beauty Details</h5>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="item_type">Item Type *</label>
-                <select class="form-select" id="item_type" name="item_type" required>
-                    <option value="">Select Item Type</option>
-                    <option value="clothing">Clothing</option>
-                    <option value="shoes">Shoes</option>
-                    <option value="bags">Bags</option>
-                    <option value="accessories">Accessories</option>
-                    <option value="jewelry">Jewelry</option>
-                    <option value="watches">Watches</option>
-                    <option value="cosmetics">Cosmetics</option>
-                    <option value="skincare">Skincare</option>
-                    <option value="haircare">Hair Care</option>
-                    <option value="perfume">Perfume</option>
-                    <option value="sunglasses">Sunglasses</option>
-                    <option value="belts">Belts</option>
-                    <option value="hats">Hats</option>
-                    <option value="scarves">Scarves</option>
-                    <option value="other">Other</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="brand">Brand *</label>
-                <input type="text" class="form-control" id="brand" name="brand" required 
-                       placeholder="e.g., Nike, Zara, L'Oreal, Chanel">
-            </div>
+    <hr class="my-4">
+    <h5 class="mb-3">Fashion & Beauty Details</h5>
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="item_type">Item Type *</label>
+            <select class="form-select" id="item_type" name="item_type" required>
+                <option value="">Select Item Type</option>
+                <option value="clothing">Clothing</option>
+                <option value="shoes">Shoes</option>
+                <option value="bags">Bags</option>
+                <option value="accessories">Accessories</option>
+                <option value="jewelry">Jewelry</option>
+                <option value="watches">Watches</option>
+                <option value="cosmetics">Cosmetics</option>
+                <option value="skincare">Skincare</option>
+                <option value="haircare">Hair Care</option>
+                <option value="perfume">Perfume</option>
+                <option value="sunglasses">Sunglasses</option>
+                <option value="belts">Belts</option>
+                <option value="hats">Hats</option>
+                <option value="scarves">Scarves</option>
+                <option value="other">Other</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-4">
-                <label class="form-label" for="size">Size *</label>
-                <select class="form-select" id="size" name="size" required>
-                    <option value="">Select Size</option>
-                    <option value="XS">XS</option>
-                    <option value="S">S</option>
-                    <option value="M">M</option>
-                    <option value="L">L</option>
-                    <option value="XL">XL</option>
-                    <option value="XXL">XXL</option>
-                    <option value="XXXL">XXXL</option>
-                    <option value="5">5</option>
-                    <option value="6">6</option>
-                    <option value="7">7</option>
-                    <option value="8">8</option>
-                    <option value="9">9</option>
-                    <option value="10">10</option>
-                    <option value="11">11</option>
-                    <option value="12">12</option>
-                    <option value="one_size">One Size</option>
-                    <option value="free_size">Free Size</option>
-                    <option value="custom">Custom Size</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="gender">Gender *</label>
-                <select class="form-select" id="gender" name="gender" required>
-                    <option value="">Select Gender</option>
-                    <option value="MEN">Men</option>
-                    <option value="WOMEN">Women</option>
-                    <option value="UNISEX">Unisex</option>
-                    <option value="KIDS">Kids</option>
-                </select>
-            </div>
-            <div class="col-md-4">
-                <label class="form-label" for="condition">Condition *</label>
-                <select class="form-select" id="condition" name="condition" required>
-                    <option value="">Select Condition</option>
-                    <option value="BRAND_NEW">Brand New</option>
-                    <option value="NEW_WITH_TAGS">New with Tags</option>
-                    <option value="LIKE_NEW">Like New</option>
-                    <option value="EXCELLENT">Excellent</option>
-                    <option value="GOOD">Good</option>
-                    <option value="FAIR">Fair</option>
-                    <option value="VINTAGE">Vintage</option>
-                    <option value="DAMAGED">Damaged</option>
+        <div class="col-md-6">
+            <label class="form-label" for="brand">Brand *</label>
+            <input type="text" class="form-control" id="brand" name="brand" required 
+                   placeholder="e.g., Nike, Zara, L'Oreal, Chanel">
+        </div>
+    </div>
 
-                </select>
-            </div>
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label class="form-label" for="size">Size *</label>
+            <select class="form-select" id="size" name="size" required>
+                <option value="">Select Size</option>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+                <option value="XXXL">XXXL</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="one_size">One Size</option>
+                <option value="free_size">Free Size</option>
+                <option value="custom">Custom Size</option>
+            </select>
         </div>
-        <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="color">Color</label>
-                <input type="text" class="form-control" id="color" name="color" 
-                       placeholder="e.g., Black, Red, Multi-color">
-            </div>
-            <div class="col-md-6">
-                <label class="form-label" for="material">Material</label>
-                <input type="text" class="form-control" id="material" name="material" 
-                       placeholder="e.g., Cotton, Leather, Silk, Synthetic">
-            </div>
+        <div class="col-md-4">
+            <label class="form-label" for="gender">Gender *</label>
+            <select class="form-select" id="gender" name="gender" required>
+                <option value="">Select Gender</option>
+                <option value="MEN">Men</option>
+                <option value="WOMEN">Women</option>
+                <option value="UNISEX">Unisex</option>
+                <option value="KIDS">Kids</option>
+            </select>
         </div>
-        <div class="mb-3">
-            <label class="form-label" for="style_notes">Style Notes</label>
-            <textarea class="form-control" id="style_notes" name="style_notes" rows="2"
-                      placeholder="Additional style details, fit information, or special features"></textarea>
+        <div class="col-md-4">
+            <label class="form-label" for="condition">Condition *</label>
+            <select class="form-select" id="condition" name="condition" required>
+                <option value="">Select Condition</option>
+                <option value="BRAND_NEW">Brand New</option>
+                <option value="NEW_WITH_TAGS">New with Tags</option>
+                <option value="LIKE_NEW">Like New</option>
+                <option value="EXCELLENT">Excellent</option>
+                <option value="GOOD">Good</option>
+                <option value="FAIR">Fair</option>
+                <option value="VINTAGE">Vintage</option>
+                <option value="DAMAGED">Damaged</option>
+            </select>
         </div>
-    `;
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="color">Color</label>
+            <input type="text" class="form-control" id="color" name="color" 
+                   placeholder="e.g., Black, Red, Multi-color">
+        </div>
+        <div class="col-md-6">
+            <label class="form-label" for="material">Material</label>
+            <input type="text" class="form-control" id="material" name="material" 
+                   placeholder="e.g., Cotton, Leather, Silk, Synthetic">
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+            <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                <option value="">Select Advertisement Type</option>
+                <option value="SELL">For Sale</option>
+                <option value="RENT">For Rent</option>
+                <option value="LEASE">Lease</option>
+                <option value="SERVICE">Service</option>
+                <option value="JOB">Job</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label" for="style_notes">Style Notes</label>
+        <textarea class="form-control" id="style_notes" name="style_note" rows="2"
+                  placeholder="Additional style details, fit information, or special features"></textarea>
+    </div>
+`;
             break;
+
 
         case 'kids':
             formHTML = commonFields + `

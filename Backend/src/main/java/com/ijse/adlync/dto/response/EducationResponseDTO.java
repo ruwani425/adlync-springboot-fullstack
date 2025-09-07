@@ -14,9 +14,9 @@ public class EducationResponseDTO {
     private String course_name;
     private String institute;
     private String duration;
-    private String qulification_offered;
+    private String qualification_offered;
     private String subject_area;
-    private String study_mood;
+    private String study_mode;
     private String education_level;
     private String schedule;
     private String requirements;
