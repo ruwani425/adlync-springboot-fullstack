@@ -426,6 +426,7 @@ public class PostServiceImpl implements PostService {
                 CategoryEntityNameEnum.SPORT,
                 requestDTO.getAdvertisementType()
         );
+        System.out.println(requestDTO.getAdvertisementType());
         PostEntity savedPost = repository.save(postEntity);
         SportEntity sportEntity = new SportEntity();
         sportEntity.setAdditional_information(requestDTO.getAdditional_information());

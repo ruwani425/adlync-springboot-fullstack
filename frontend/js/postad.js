@@ -415,11 +415,11 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(jobsData));
             } else if (selectedCategory === 'services') {
                 const serviceData = {
-                    servicetype: formDataObj.service_type,
-                    providername: formDataObj.provider_name,
+                    service_type: formDataObj.service_type,
+                    provider_name: formDataObj.provider_name,
                     availability: formDataObj.availability,
                     charges: formDataObj.charges,
-                    servicearea: formDataObj.service_area,
+                    service_area: formDataObj.service_area,
                     qualifications: formDataObj.qualifications,
                     postRequestDTO: {
                         title: formDataObj.title,
@@ -436,11 +436,12 @@ $(document).ready(function () {
                 localStorage.setItem("adFormData", JSON.stringify(serviceData));
             } else if (selectedCategory === 'sports') {
                 const sportsData = {
-                    equipmenttype: formDataObj.equipment_type,
+                    equipment_type: formDataObj.equipment_type,
                     brand: formDataObj.brand,
                     condition: formDataObj.condition,
                     size: formDataObj.size,
-                    additionalinformation: formDataObj.additional_information,
+                    additional_information: formDataObj.additional_info,
+                    advertisementType: formDataObj.advertisement_type,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
@@ -2147,109 +2148,64 @@ function generateDynamicForm(categoryId) {
             break;
 
         case 'services':
-            const serviceCommonFields = `
-                <div class="mb-3">
-                    <label class="form-label" for="title">Service Title *</label>
-                    <input class="form-control" id="title" name="title" placeholder="Enter your service title" required 
-                           type="text">
-                </div>
-                
-                <div class="mb-3">
-                    <label class="form-label" for="description">Service Description *</label>
-                    <textarea class="form-control" id="description" name="description" placeholder="Describe your service in detail" required
-                              rows="4"></textarea>
-                </div>
-                
-               <div class="row mb-3">
-            <div class="col-md-6">
-                <label class="form-label" for="district">District *</label>
-                <input class="form-control" id="district" name="district" placeholder="e.g .,Galle" required 
-                       type="text">
-            </div>
-             <div class="col-md-6">
-                <label class="form-label" for="city">City *</label>
-                <input class="form-control" id="city" name="city" placeholder="e.g .,Wanduramba" required 
-                       type="text">
-            </div>
-        </div>
-        
+            formHTML = commonFields + `
+        <hr class="my-4">
+        <h5 class="mb-3">Service Details</h5>
         <div class="row mb-3">
-         <div class="col-md-6">
-                <label class="form-label" for="address">Address *</label>
-                <input class="form-control" id="address" name="address" placeholder="enter your address here" required 
-                       type="text">
+            <div class="col-md-6">
+                <label class="form-label" for="service_type">Service Type *</label>
+                <select class="form-select" id="service_type" name="service_type" required>
+                    <option value="">Select Service Type</option>
+                    <option value="home_repair">Home Repair</option>
+                    <option value="cleaning">Cleaning</option>
+                    <option value="plumbing">Plumbing</option>
+                    <option value="electrical">Electrical</option>
+                    <option value="gardening">Gardening</option>
+                    <option value="tutoring">Tutoring</option>
+                    <option value="beauty">Beauty & Wellness</option>
+                    <option value="transport">Transport</option>
+                    <option value="catering">Catering</option>
+                    <option value="photography">Photography</option>
+                    <option value="event_planning">Event Planning</option>
+                    <option value="other">Other</option>
+                </select>
             </div>
             <div class="col-md-6">
-                <label class="form-label" for="contact">Contact Number *</label>
-                <input class="form-control" id="contact" name="contact" placeholder="+94xxxxxxxxx" required 
-                       type="tel">
+                <label class="form-label" for="provider_name">Provider Name *</label>
+                <input type="text" class="form-control" id="provider_name" name="provider_name" required
+                       placeholder="Your name or company name">
             </div>
         </div>
-            `;
-
-            formHTML = serviceCommonFields + `
-                <hr class="my-4">
-                <h5 class="mb-3">Service Details</h5>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="service_type">Service Type *</label>
-                        <select class="form-select" id="service_type" name="service_type" required>
-                            <option value="">Select Service Type</option>
-                            <option value="home_repair">Home Repair</option>
-                            <option value="cleaning">Cleaning</option>
-                            <option value="plumbing">Plumbing</option>
-                            <option value="electrical">Electrical</option>
-                            <option value="gardening">Gardening</option>
-                            <option value="tutoring">Tutoring</option>
-                            <option value="beauty">Beauty & Wellness</option>
-                            <option value="transport">Transport</option>
-                            <option value="catering">Catering</option>
-                            <option value="photography">Photography</option>
-                            <option value="event_planning">Event Planning</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="provider_name">Provider Name *</label>
-                        <input type="text" class="form-control" id="provider_name" name="provider_name" required
-                               placeholder="Your name or company name">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="charges">Service Charges (LKR) *</label>
-                        <input type="text" class="form-control" id="charges" name="charges" required 
-                               placeholder="e.g., 5000/hour, 15000/day, Negotiable">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="availability">Availability *</label>
-                        <input type="text" class="form-control" id="availability" name="availability" required
-                               placeholder="e.g., Mon-Fri 9AM-5PM, Weekends">
-                    </div>
-                </div>
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <label class="form-label" for="experience_years">Experience (Years)</label>
-                        <input type="number" class="form-control" id="experience_years" name="experience_years" 
-                               min="0" placeholder="Years of experience">
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="service_area">Service Areas</label>
-                        <input type="text" class="form-control" id="service_area" name="service_area" 
-                               placeholder="Areas you provide service">
-                    </div>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="qualifications">Qualifications & Certifications</label>
-                    <textarea class="form-control" id="qualifications" name="qualifications" rows="2"
-                              placeholder="List your relevant qualifications, certifications, or licenses"></textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="images">Service Images</label>
-                    <input type="file" class="form-control" id="images" name="images" multiple accept="image/*">
-                    <small class="text-muted">Upload images of your work, certificates, or service setup (Max 5MB each)</small>
-                </div>
-            `;
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="charges">Service Charges (LKR) *</label>
+                <input type="text" class="form-control" id="charges" name="charges" required 
+                       placeholder="e.g., 5000/hour, 15000/day, Negotiable">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="availability">Availability *</label>
+                <input type="text" class="form-control" id="availability" name="availability" required
+                       placeholder="e.g., Mon-Fri 9AM-5PM, Weekends">
+            </div>
+        </div>
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="experience_years">Experience (Years)</label>
+                <input type="number" class="form-control" id="experience_years" name="experience_years" 
+                       min="0" placeholder="Years of experience">
+            </div>
+            <div class="col-md-6">
+                <label class="form-label" for="service_area">Service Areas</label>
+                <input type="text" class="form-control" id="service_area" name="service_area" 
+                       placeholder="Areas you provide service">
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="qualifications">Qualifications & Certifications</label>
+            <textarea class="form-control" id="qualifications" name="qualifications" rows="2"
+                      placeholder="List your relevant qualifications, certifications, or licenses"></textarea>
+        </div>
+    `;
             break;
 
         case 'sports':
@@ -2257,6 +2213,17 @@ function generateDynamicForm(categoryId) {
         <hr class="my-4">
         <h5 class="mb-3">Sports Equipment Details</h5>
         <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label" for="advertisement_type">Advertisement Type *</label>
+                <select class="form-select" id="advertisement_type" name="advertisement_type" required>
+                    <option value="">Select Advertisement Type</option>
+                    <option value="RENT">For Rent</option>
+                    <option value="SELL">For Sale</option>
+                    <option value="JOB">Job</option>
+                    <option value="SERVICE">Service</option>
+                    <option value="LEASE">Lease</option>
+                </select>
+            </div>
             <div class="col-md-6">
                 <label class="form-label" for="equipment_type">Equipment Type *</label>
                 <select class="form-select" id="equipment_type" name="equipment_type" required>
@@ -2277,13 +2244,13 @@ function generateDynamicForm(categoryId) {
                     <option value="other">Other Sports Equipment</option>
                 </select>
             </div>
+        </div>
+        <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="brand">Brand *</label>
                 <input class="form-control" id="brand" name="brand" placeholder="e.g., Nike, Adidas, Wilson" required 
                        type="text">
             </div>
-        </div>
-        <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="condition">Condition *</label>
                 <select class="form-select" id="condition" name="condition" required>
@@ -2296,6 +2263,8 @@ function generateDynamicForm(categoryId) {
                     <option value="NEEDS_REPAIR">Needs Repair</option>
                 </select>
             </div>
+        </div>
+        <div class="row mb-3">
             <div class="col-md-6">
                 <label class="form-label" for="size">Size</label>
                 <input class="form-control" id="size" name="size" placeholder="e.g., L, XL, 42, One Size" 

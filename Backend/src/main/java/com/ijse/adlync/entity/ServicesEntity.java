@@ -1,6 +1,5 @@
 package com.ijse.adlync.entity;
 
-import com.ijse.adlync.entity.enums.ServicesEntityAvailabilityEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,8 +22,7 @@ public class ServicesEntity {
 
     private String provider_name;
 
-    @Enumerated(EnumType.STRING)
-    private ServicesEntityAvailabilityEnum availability;
+    private String availability;
 
     private String charges;
 

@@ -1,6 +1,5 @@
 package com.ijse.adlync.dto.response;
 
-import com.ijse.adlync.entity.enums.ServicesEntityAvailabilityEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ public class ServicesResponseDTO {
     private Long service_id;
     private String service_type;
     private String provider_name;
-    private ServicesEntityAvailabilityEnum availability;
+    private String availability;
     private String charges;
     private String service_area;
     private String qualifications;
