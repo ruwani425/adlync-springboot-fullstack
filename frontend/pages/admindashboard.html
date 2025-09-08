@@ -12,7 +12,6 @@
     <link href="../assert/css/admindashboard.css" rel="stylesheet">
 </head>
 <body>
-<!-- Sidebar -->
 <div class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <h4 class="text-white fw-bold mb-0">Adlync Admin</h4>
@@ -69,9 +68,7 @@
     </nav>
 </div>
 
-<!-- Main Content -->
 <div class="main-content">
-    <!-- Top Navbar -->
     <div class="top-navbar">
         <div class="d-flex align-items-center">
             <button class="btn btn-outline-secondary sidebar-toggle me-3" id="sidebarToggle">
@@ -108,10 +105,8 @@
         </div>
     </div>
 
-    <!-- Content Wrapper -->
     <div class="content-wrapper">
-        <!-- Dashboard Section -->
-        <div class="content-section" id="dashboard-section">
+        <div class="content-section active" id="dashboard-section">
             <div class="row g-4 mb-4">
                 <div class="col-md-3">
                     <div class="card stat-card text-white">
@@ -237,8 +232,7 @@
             </div>
         </div>
 
-        <!-- Users Management Section -->
-        <div class="content-section d-none" id="users-section">
+        <div class="content-section" id="users-section">
             <div class="section-header">
                 <h3 class="text-primary-emerald mb-0">Users Management</h3>
             </div>
@@ -328,36 +322,6 @@
                                     </div>
                                 </td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img alt="User" class="avatar me-3"
-                                             src="https://picsum.photos/seed/user3/40/40">
-                                        <div>
-                                            <div class="fw-semibold">Mike Johnson</div>
-                                            <small class="text-muted">ID: #12347</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>mike.johnson@email.com</td>
-                                <td>+94 75 345 6789</td>
-                                <td><span class="badge bg-primary">5</span></td>
-                                <td><span class="status-badge status-pending">Suspended</span></td>
-                                <td>2024-02-01</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="View">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-success" title="Activate">
-                                            <i class="bi bi-play"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
@@ -365,8 +329,7 @@
             </div>
         </div>
 
-        <!-- Moderators Section -->
-        <div class="content-section d-none" id="moderators-section">
+        <div class="content-section" id="moderators-section">
             <div class="section-header d-flex justify-content-between align-items-center">
                 <h3 class="text-primary-emerald mb-0">Moderators Management</h3>
                 <button class="btn btn-emerald" data-bs-target="#addModeratorModal" data-bs-toggle="modal">
@@ -420,32 +383,6 @@
                                             </div>
                                         </td>
                                     </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <img alt="Moderator" class="avatar me-3"
-                                                     src="https://picsum.photos/seed/mod2/40/40">
-                                                <div>
-                                                    <div class="fw-semibold">David Chen</div>
-                                                    <small class="text-muted">Category Specialist</small>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>david.chen@adlync.com</td>
-                                        <td><span class="badge bg-info">Specialist</span></td>
-                                        <td><span class="status-badge status-approved">Active</span></td>
-                                        <td>2024-01-15</td>
-                                        <td>
-                                            <div class="btn-group btn-group-sm">
-                                                <button class="btn btn-outline-primary" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </button>
-                                                <button class="btn btn-outline-danger" title="Remove">
-                                                    <i class="bi bi-trash"></i>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -470,114 +407,508 @@
                                     <span class="fw-bold text-success">7</span>
                                 </div>
                             </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <span>Posts Reviewed Today</span>
-                                    <span class="fw-bold">156</span>
-                                </div>
-                            </div>
-                            <div class="mb-3">
-                                <div class="d-flex justify-content-between">
-                                    <span>Average Response Time</span>
-                                    <span class="fw-bold">2.3 hours</span>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Categories Section (continued) -->
-        <div class="card mt-4">
-            <div class="card-header">
-                <h5 class="card-title mb-0">All Categories</h5>
+        <div class="content-section" id="categories-section">
+            <div class="section-header">
+                <h3 class="text-primary-emerald mb-0">Categories Management</h3>
             </div>
-            <div class="card-body">
-                <ul class="list-group">
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Vehicles
-                        <span class="badge bg-primary rounded-pill">1200</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Electronics
-                        <span class="badge bg-primary rounded-pill">950</span>
-                    </li>
-                    <li class="list-group-item d-flex justify-content-between align-items-center">
-                        Real Estate
-                        <span class="badge bg-primary rounded-pill">800</span>
-                    </li>
-                </ul>
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">All Categories</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Vehicles
+                            <span class="badge bg-primary rounded-pill">1200</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Electronics
+                            <span class="badge bg-primary rounded-pill">950</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Real Estate
+                            <span class="badge bg-primary rounded-pill">800</span>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- Posts Management Section -->
-    <div class="content-section d-none" id="posts-section">
-        <div class="section-header">
-            <h3 class="text-primary-emerald mb-0">Posts Management</h3>
-        </div>
-        <!-- Add posts management content here -->
-    </div>
+        <div class="content-section" id="posts-section">
+            <div class="section-header">
+                <h3 class="text-primary-emerald mb-0">Posts Management</h3>
+            </div>
 
-    <!-- Reports Section -->
-    <div class="content-section d-none" id="reports-section">
-        <div class="section-header">
-            <h3 class="text-primary-emerald mb-0">Reports</h3>
-        </div>
-        <!-- Add reports content here -->
-    </div>
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card stat-card text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">Total Posts</h5>
+                                    <h2 class="mb-0">8,532</h2>
+                                </div>
+                                <i class="bi bi-file-post display-6"></i>
+                            </div>
+                            <div class="mt-2">
+                                <small><i class="bi bi-arrow-up"></i> +12% this month</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card warning text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">Pending Review</h5>
+                                    <h2 class="mb-0">124</h2>
+                                </div>
+                                <i class="bi bi-clock display-6"></i>
+                            </div>
+                            <div class="mt-2">
+                                <small><i class="bi bi-arrow-down"></i> -5% from last week</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card secondary text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">Approved Today</h5>
+                                    <h2 class="mb-0">89</h2>
+                                </div>
+                                <i class="bi bi-check-circle display-6"></i>
+                            </div>
+                            <div class="mt-2">
+                                <small><i class="bi bi-arrow-up"></i> +18% from yesterday</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card danger text-white">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="card-title">Rejected</h5>
+                                    <h2 class="mb-0">23</h2>
+                                </div>
+                                <i class="bi bi-x-circle display-6"></i>
+                            </div>
+                            <div class="mt-2">
+                                <small><i class="bi bi-arrow-up"></i> +3 today</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Analytics Section -->
-    <div class="content-section d-none" id="analytics-section">
-        <div class="section-header">
-            <h3 class="text-primary-emerald mb-0">Analytics</h3>
-        </div>
-        <!-- Add analytics content here -->
-    </div>
+            <div class="filter-section">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="pending">Pending Review</option>
+                            <option value="approved">Approved Posts</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label fw-semibold">Category</label>
+                        <div class="category-dropdown">
+                            <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                                    data-bs-toggle="dropdown" id="categoryDropdown" type="button">
+                                <span id="selectedCategory">
+                                    <i class="bi bi-grid me-2"></i>All Categories
+                                </span>
+                            </button>
+                            <ul class="dropdown-menu w-100" id="categoryMenu">
+                                <li>
+                                    <button class="category-item active" data-category="all">
+                                        <span class="category-icon"><i class="bi bi-grid"></i></span>
+                                        All Categories
+                                        <span class="category-count" id="all-count">8,532</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <!-- Added all categories from the Java enum -->
+                                <li>
+                                    <button class="category-item" data-category="VEHICLE">
+                                        <span class="category-icon"><i class="bi bi-car-front"></i></span>
+                                        Vehicle
+                                        <span class="category-count">1,245</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="ANIMAL">
+                                        <span class="category-icon"><i class="bi bi-heart"></i></span>
+                                        Animal
+                                        <span class="category-count">324</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="ESSENTIALS">
+                                        <span class="category-icon"><i class="bi bi-basket"></i></span>
+                                        Essentials
+                                        <span class="category-count">756</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="PROPERTY">
+                                        <span class="category-icon"><i class="bi bi-house"></i></span>
+                                        Property
+                                        <span class="category-count">432</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="HOME_AND_GARDEN">
+                                        <span class="category-icon"><i class="bi bi-flower1"></i></span>
+                                        Home & Garden
+                                        <span class="category-count">298</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="WORK_OVERSEAS">
+                                        <span class="category-icon"><i class="bi bi-airplane"></i></span>
+                                        Work Overseas
+                                        <span class="category-count">156</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="SPORT">
+                                        <span class="category-icon"><i class="bi bi-trophy"></i></span>
+                                        Sport
+                                        <span class="category-count">234</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="ENTERTAINTMENT">
+                                        <span class="category-icon"><i class="bi bi-music-note"></i></span>
+                                        Entertainment
+                                        <span class="category-count">187</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="KIDS">
+                                        <span class="category-icon"><i class="bi bi-balloon"></i></span>
+                                        Kids
+                                        <span class="category-count">345</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="ELECTRONIC">
+                                        <span class="category-icon"><i class="bi bi-laptop"></i></span>
+                                        Electronic
+                                        <span class="category-count">892</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="JOB">
+                                        <span class="category-icon"><i class="bi bi-briefcase"></i></span>
+                                        Job
+                                        <span class="category-count">567</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="AGRICULTURE">
+                                        <span class="category-icon"><i class="bi bi-tree"></i></span>
+                                        Agriculture
+                                        <span class="category-count">123</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="SERVICES">
+                                        <span class="category-icon"><i class="bi bi-tools"></i></span>
+                                        Services
+                                        <span class="category-count">678</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="EDUCATION">
+                                        <span class="category-icon"><i class="bi bi-book"></i></span>
+                                        Education
+                                        <span class="category-count">234</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="FASHION_AND_BEAUTY">
+                                        <span class="category-icon"><i class="bi bi-gem"></i></span>
+                                        Fashion & Beauty
+                                        <span class="category-count">456</span>
+                                    </button>
+                                </li>
+                                <li>
+                                    <button class="category-item" data-category="MOBILE">
+                                        <span class="category-icon"><i class="bi bi-phone"></i></span>
+                                        Mobile
+                                        <span class="category-count">543</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-semibold">Date Range</label>
+                        <select class="form-select" id="dateFilter">
+                            <option value="all">All Time</option>
+                            <option value="today">Today</option>
+                            <option value="week">This Week</option>
+                            <option value="month">This Month</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button class="btn btn-emerald w-100" id="applyFilter">
+                            <i class="bi bi-funnel me-2"></i>Apply Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-    <!-- Settings Section -->
-    <div class="content-section d-none" id="settings-section">
-        <div class="section-header">
-            <h3 class="text-primary-emerald mb-0">Settings</h3>
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">Posts (<span id="postsCount">8,532</span>)</h5>
+                    <div class="d-flex gap-2">
+                        <input class="form-control" id="searchPosts" placeholder="Search posts..." style="width: 300px;"
+                               type="search">
+                        <button class="btn btn-outline-emerald">
+                            <i class="bi bi-download"></i> Export
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div id="postsContainer">
+                        <div class="post-card card" data-category="VEHICLE" data-payment-method="slip"
+                             data-payment-slip="https://example.com/slip1.jpg" data-status="pending"
+                             onclick="showPostDetail(this)">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2 col-3">
+                                        <img alt="Post Image" class="img-fluid rounded"
+                                             src="https://picsum.photos/seed/car1/120/80">
+                                        <div class="post-images" style="display: none;">
+                                            <img alt="Image 1" src="https://picsum.photos/seed/car1/400/300">
+                                            <img alt="Image 2" src="https://picsum.photos/seed/car1interior/400/300">
+                                            <img alt="Image 3" src="https://picsum.photos/seed/car1engine/400/300">
+                                            <img alt="Image 4" src="https://picsum.photos/seed/car1back/400/300">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7 col-6">
+                                        <h6 class="mb-1">Toyota Prius 2020 - Excellent Condition</h6>
+                                        <div class="d-flex align-items-center mb-1">
+                                            <img alt="User"
+                                                 class="avatar me-2 rounded-circle"
+                                                 src="https://picsum.photos/seed/user1/24/24">
+                                            <span class="text-muted">John Doe • 2 hours ago</span>
+                                        </div>
+                                        <p class="text-muted mb-2" style="font-size: 0.8rem; line-height: 1.3;">Well
+                                            maintained Toyota Prius 2020 model with low mileage...</p>
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-primary">Vehicle</span>
+                                            <span class="status-badge status-pending">Pending Review</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-3 text-end">
+                                        <h6 class="text-success mb-2">Rs. 4,500,000</h6>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary"
+                                                    onclick="event.stopPropagation(); showPostDetail(this.closest('.post-card'))"
+                                                    title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="post-card card" data-category="ELECTRONIC" data-payment-method="card"
+                             data-status="approved" onclick="showPostDetail(this)">
+                            <div class="card-body">
+                                <div class="row align-items-center">
+                                    <div class="col-md-2 col-3">
+                                        <img alt="Post Image" class="img-fluid rounded"
+                                             src="https://picsum.photos/seed/laptop1/120/80">
+                                        <div class="post-images" style="display: none;">
+                                            <img alt="Image 1" src="https://picsum.photos/seed/laptop1/400/300">
+                                            <img alt="Image 2" src="https://picsum.photos/seed/laptop1screen/400/300">
+                                            <img alt="Image 3" src="https://picsum.photos/seed/laptop1keyboard/400/300">
+                                            <img alt="Image 4" src="https://picsum.photos/seed/laptop1ports/400/300">
+                                            <img alt="Image 5" src="https://picsum.photos/seed/laptop1box/400/300">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-7 col-6">
+                                        <h6 class="mb-1">MacBook Pro M2 - Brand New Sealed</h6>
+                                        <div class="d-flex align-items-center mb-1">
+                                            <img alt="User"
+                                                 class="avatar me-2 rounded-circle"
+                                                 src="https://picsum.photos/seed/user2/24/24">
+                                            <span class="text-muted">Jane Smith • 4 hours ago</span>
+                                        </div>
+                                        <p class="text-muted mb-2" style="font-size: 0.8rem; line-height: 1.3;">Brand
+                                            new MacBook Pro with M2 chip, still in sealed box...</p>
+                                        <div class="d-flex gap-2">
+                                            <span class="badge bg-info">Electronics</span>
+                                            <span class="status-badge status-approved">Approved</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 col-3 text-end">
+                                        <h6 class="text-success mb-2">Rs. 450,000</h6>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-primary"
+                                                    onclick="event.stopPropagation(); showPostDetail(this.closest('.post-card'))"
+                                                    title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                            <li class="page-item active">
+                                <span class="page-link">1</span>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">2</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">3</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
         </div>
-        <!-- Add settings content here -->
+
+        <div class="content-section" id="reports-section">
+            <div class="section-header">
+                <h3 class="text-primary-emerald mb-0">Reports</h3>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p>Reports management content will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="analytics-section">
+            <div class="section-header">
+                <h3 class="text-primary-emerald mb-0">Analytics</h3>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p>Analytics content will be displayed here.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="settings-section">
+            <div class="section-header">
+                <h3 class="text-primary-emerald mb-0">Settings</h3>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p>Settings content will be displayed here.</p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-</div>
 
-<!-- Modals -->
-<div aria-hidden="true" aria-labelledby="addModeratorModalLabel" class="modal fade" id="addModeratorModal"
-     tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addModeratorModalLabel">Add Moderator</h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Add moderator form here -->
+<div class="post-detail-modal" id="postDetailModal">
+    <div class="post-detail-content">
+        <div class="post-detail-header">
+            <h4 id="modalPostTitle">Post Details</h4>
+            <button class="close-modal" onclick="closePostDetail()">&times;</button>
+        </div>
+        <div class="post-detail-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="image-gallery">
+                        <div class="image-gallery-container" id="imageGalleryContainer">
+                        </div>
+                        <div class="image-indicators" id="imageIndicators">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <h6>Posted by:</h6>
+                        <div class="d-flex align-items-center">
+                            <img alt="User" class="rounded-circle me-2" height="40" id="modalUserAvatar"
+                                 src="/placeholder.svg" width="40">
+                            <div>
+                                <div class="fw-bold" id="modalUserName"></div>
+                                <div class="text-muted small" id="modalPostTime"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Price:</h6>
+                        <h4 class="text-success" id="modalPostPrice"></h4>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Category:</h6>
+                        <span class="badge" id="modalPostCategory"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Status:</h6>
+                        <span class="status-badge" id="modalPostStatus"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Description:</h6>
+                        <p class="text-muted" id="modalPostDescription"></p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Contact Information:</h6>
+                        <p class="mb-1"><i class="bi bi-telephone me-2"></i><span
+                                id="modalContactPhone">+94 77 123 4567</span></p>
+                        <p class="mb-1"><i class="bi bi-envelope me-2"></i><span
+                                id="modalContactEmail">user@example.com</span></p>
+                        <p class="mb-1"><i class="bi bi-geo-alt me-2"></i><span id="modalContactLocation">Colombo, Sri Lanka</span>
+                        </p>
+                    </div>
+
+                    <div class="mb-3">
+                        <h6>Payment Method:</h6>
+                        <div class="d-flex align-items-center" id="modalPaymentMethod">
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2" id="modalActionButtons">
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<div aria-hidden="true" aria-labelledby="addCategoryModalLabel" class="modal fade" id="addCategoryModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addCategoryModalLabel">Add Category</h5>
-                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Add category form here -->
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="../js/admindashboard.js"></script>
 </body>
