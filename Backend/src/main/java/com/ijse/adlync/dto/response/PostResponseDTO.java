@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Setter
@@ -23,6 +24,8 @@ public class PostResponseDTO {
     private Long advertisement_type_id;
     private Long location_id;
     private Long message_id;
-    private Long user_id;
+    private UserResponseDTO user;
+    private CategoryResponseDTO category;
+    private LocalDateTime createdAt;
     private List<ImageResponseDTO> images;
 }

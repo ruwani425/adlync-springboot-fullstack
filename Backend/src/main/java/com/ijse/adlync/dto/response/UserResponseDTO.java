@@ -1,6 +1,5 @@
 package com.ijse.adlync.dto.response;
 
-import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CategoryResponseDTO {
-    private CategoryEntityNameEnum name;
+public class UserResponseDTO {
+    private String name;
+    private String email;
 }

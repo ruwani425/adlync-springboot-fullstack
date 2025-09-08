@@ -52,7 +52,6 @@ public class CategoryServiceImpl {
 
     private CategoryResponseDTO toResponseDTO(CategoryEntity entity) {
         CategoryResponseDTO dto = new CategoryResponseDTO();
-        dto.setCategory_id(entity.getCategory_id());
         dto.setName(entity.getName());
         return dto;
     }

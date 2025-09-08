@@ -3,6 +3,7 @@ package com.ijse.adlync.dto.request;
 import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -20,5 +21,6 @@ public class PostRequestDTO {
     private String city;
     private String district;
     private String address;
+    private LocalDateTime createdAt;
     private List<ImageRequestDTO> images;
 }

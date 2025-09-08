@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,10 +37,21 @@ public class PostController {
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Get Post by ID", description = "Retrieve a Post entity by its ID")
+    @Operation(summary = "Get Post by ID", description = "Retrieve a Post with full details")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findById(id));
+        PostResponseDTO responseDTO = service.findById(id);
+        return ResponseEntity.ok(responseDTO);
     }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<PostResponseDTO>> getPostsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(service.findAll(pageable));
+    }
+
 
     @PostMapping
     @Operation(summary = "Create new Post", description = "Create a new Post entity")

@@ -1,8 +1,10 @@
 package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.dto.request.*;
+import com.ijse.adlync.dto.response.CategoryResponseDTO;
 import com.ijse.adlync.dto.response.ImageResponseDTO;
 import com.ijse.adlync.dto.response.PostResponseDTO;
+import com.ijse.adlync.dto.response.UserResponseDTO;
 import com.ijse.adlync.entity.*;
 import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
@@ -11,6 +13,8 @@ import com.ijse.adlync.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,6 +51,12 @@ public class PostServiceImpl implements PostService {
         return repository.findAll().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public Page<PostResponseDTO> findAll(Pageable pageable) {
+        Page<PostEntity> postPage = repository.findAll(pageable);
+        return postPage.map(this::toResponseDTO);
     }
 
     @Override
@@ -475,6 +485,15 @@ public class PostServiceImpl implements PostService {
         dto.setDescription(entity.getDescription());
         dto.setContact_number(entity.getContact_number());
         dto.setPrice(entity.getPrice());
+        dto.setCreatedAt(entity.getCreatedAt());
+
+        if (entity.getUser() != null) {
+            dto.setUser(modelMapper.map(entity.getUser(), UserResponseDTO.class));
+        }
+
+        if (entity.getCategory() != null) {
+            dto.setCategory(modelMapper.map(entity.getCategory(), CategoryResponseDTO.class));
+        }
 
         if (entity.getImages() != null) {
             List<ImageResponseDTO> imageDTOs = entity.getImages().stream()
@@ -484,6 +503,7 @@ public class PostServiceImpl implements PostService {
         }
         return dto;
     }
+
 
     private ImageResponseDTO toImageResponseDTO(ImageEntity entity) {
         ImageResponseDTO dto = new ImageResponseDTO();

@@ -2,11 +2,12 @@ package com.ijse.adlync.service;
 
 import com.ijse.adlync.dto.request.*;
 import com.ijse.adlync.dto.response.PostResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
 public interface PostService {
-    List<PostResponseDTO> findAll();
 
     PostResponseDTO findById(Long id);
 
@@ -47,4 +48,8 @@ public interface PostService {
     PostResponseDTO createSportPost(SportRequestDTO requestDTO, String username);
 
     PostResponseDTO createWorkOverSeaPost(Work_over_seasRequestDTO requestDTO, String username);
+
+    List<PostResponseDTO> findAll();
+
+    Page<PostResponseDTO> findAll(Pageable pageable);
 }

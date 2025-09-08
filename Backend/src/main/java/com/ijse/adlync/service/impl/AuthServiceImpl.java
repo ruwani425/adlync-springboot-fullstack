@@ -6,6 +6,7 @@ import com.ijse.adlync.dto.response.LoginResponseDTO;
 import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.UserRepository;
 import com.ijse.adlync.service.AuthService;
+import com.ijse.adlync.service.EmailService;
 import com.ijse.adlync.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,8 @@ public class AuthServiceImpl implements AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
+
 
     @Override
     public LoginResponseDTO authenticate(LoginRequestDTO loginRequestDTO) {
@@ -68,6 +71,7 @@ public class AuthServiceImpl implements AuthService {
                 .email(registerRequestDTO.getEmail())
                 .build();
         userRepository.save(userEntity);
+        emailService.sendSignupEmail(userEntity.getEmail(), userEntity.getName());
         return "User Registration Success";
     }
 }

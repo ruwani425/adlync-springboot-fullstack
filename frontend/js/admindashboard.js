@@ -1,3 +1,5 @@
+
+
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
     const $contentSections = $('.content-section');
@@ -65,6 +67,7 @@ $(document).ready(function () {
     });
 });
 
+// Global variables
 let currentPostCard = null;
 let currentImageIndex = 0;
 let postImages = [];
