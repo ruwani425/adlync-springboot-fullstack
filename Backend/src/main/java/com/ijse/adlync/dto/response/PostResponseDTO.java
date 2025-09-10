@@ -26,6 +26,8 @@ public class PostResponseDTO {
     private Long message_id;
     private UserResponseDTO user;
     private CategoryResponseDTO category;
+    private LocationResponseDTO location;
+    private PaymentResponseDTO payment;
     private LocalDateTime createdAt;
     private List<ImageResponseDTO> images;
 }

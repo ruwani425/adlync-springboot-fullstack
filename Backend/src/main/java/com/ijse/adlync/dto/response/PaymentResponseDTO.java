@@ -20,4 +20,5 @@ public class PaymentResponseDTO {
     private PaymentEntityStatusEnum status;
     private PaymentEntityPayment_typeEnum payment_type;
     private Double amount;
+    private String slip_url;
 }

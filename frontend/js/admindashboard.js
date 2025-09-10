@@ -1,4 +1,5 @@
-
+let postList = [];
+let selectedStatus = 'PENDING';
 
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
@@ -7,6 +8,11 @@ $(document).ready(function () {
     const $sidebarToggle = $('#sidebarToggle');
     const $sidebar = $('#sidebar');
     const $mainContent = $('.main-content');
+
+    $(".dropdown-item:contains('Logout')").on("click", function (e) {
+        e.preventDefault();
+        doLogout("../index.html");
+    });
 
     $navLinks.on('click', function (e) {
         e.preventDefault();
@@ -65,80 +71,77 @@ $(document).ready(function () {
         currentFilters.search = $(this).val().toLowerCase();
         applyAllFilters();
     });
+    loadPosts(0);
 });
 
-// Global variables
 let currentPostCard = null;
-let currentImageIndex = 0;
 let postImages = [];
+let currentImageIndex = 0;
 
-function showPostDetail(postCard) {
-    console.log("[v0] showPostDetail called");
-    currentPostCard = postCard;
-
+function showPostDetail(postData) {
     try {
-        const $postCard = $(postCard);
+        $("#modalPostTitle").text(postData.title || "No Title");
+        $("#modalPostDescription").text(postData.description || "No Description");
+        $("#modalPostCategory").text(postData.category?.name || "No Category");
+        $("#modalPostStatus").text(postData.status || "Unknown");
+        $("#modalPostPrice").text(postData.price ? "Rs. " + Number(postData.price).toLocaleString() : "N/A");
 
-        const title = $postCard.find('h6').text();
-        const userAvatar = $postCard.find('.avatar').attr('src');
-        const userName = $postCard.find('.text-muted').text().split('•')[0].trim();
-        const postTime = $postCard.find('.text-muted').text().split('•')[1].trim();
-        const price = $postCard.find('.text-success').text();
-        const category = $postCard.find('.badge').text();
-        const status = $postCard.find('.status-badge').text();
-        const description = $postCard.find('p').text();
-        const postStatus = $postCard.data('status');
+        $("#modalUserName").text(postData.user?.name || "Unknown user");
+        $("#modalUserAvatar").attr("src", postData.userAvatar || "https://via.placeholder.com/40");
+        $("#modalPostTime").text(postData.createdAt ? new Date(postData.createdAt).toLocaleString() : "N/A");
 
-        const paymentMethod = $postCard.data('payment-method') || 'card';
-        const paymentSlip = $postCard.data('payment-slip') || '';
-        const $paymentMethodDiv = $('#modalPaymentMethod');
+        $("#modalContactPhone").text(postData.contact_number || "N/A");
+        $("#modalContactEmail").text(postData.user?.email || "N/A");
+        $("#modalContactLocation").text(postData.location?.address || "N/A");
 
-        if (paymentMethod === 'slip' && paymentSlip) {
-            $paymentMethodDiv.html(`
-                <i class="bi bi-receipt me-2 text-primary"></i>
-                <a href="${paymentSlip}" target="_blank" class="text-decoration-none">
-                    <i class="bi bi-eye me-1"></i>View Payment Slip
-                </a>
-            `);
+        const $paymentDiv = $("#modalPaymentMethod").empty();
+
+        if (postData.payment?.payment_type === "BANK_TRANSFER") {
+            const bankIcon = `<i class="bi bi-bank2 me-2 text-primary"></i>`;
+            $paymentDiv.append(bankIcon + "Bank Transfer");
+
+            if (postData.payment.slip_url) {
+                const slipLink = $(`<a href="${postData.payment.slip_url}" target="_blank" class="ms-2 text-decoration-none">
+                                <i class="bi bi-receipt-cutoff me-1"></i>View Bank Slip
+                            </a>`);
+                $paymentDiv.append(slipLink);
+            }
+        } else if (postData.payment?.payment_type) {
+            $paymentDiv.text(postData.payment.payment_type);
         } else {
-            $paymentMethodDiv.html(`
-                <i class="bi bi-credit-card me-2 text-success"></i>
-                <span class="text-muted">Card Payment</span>
-            `);
+            $paymentDiv.text("N/A");
         }
 
+        postImages = (postData.images || []).map(img => img.image_url);
+        currentImageIndex = 0;
         setupImageGallery();
 
-        const $actionButtons = $('#modalActionButtons');
-        if (postStatus === 'pending') {
-            $actionButtons.html(`
-                <button class="btn btn-success" onclick="approvePostFromModal()">
-                    <i class="bi bi-check me-1"></i>Approve
-                </button>
-                <button class="btn btn-danger" onclick="rejectPostFromModal()">
-                    <i class="bi bi-x me-1"></i>Reject
-                </button>
-            `);
-        } else if (postStatus === 'approved') {
-            $actionButtons.html(`
-                <button class="btn btn-secondary" disabled>
-                    <i class="bi bi-check me-1"></i>Already Approved
-                </button>
-            `);
+        currentPostCard = postData;
+
+        const $actionDiv = $("#modalActionButtons").empty();
+
+        if (postData.status === 'PENDING') {
+            const approveBtn = $('<button class="btn btn-success">Approve</button>');
+            const rejectBtn = $('<button class="btn btn-danger">Reject</button>');
+
+            approveBtn.on('click', approvePostFromModal);
+            rejectBtn.on('click', rejectPostFromModal);
+
+            $actionDiv.append(approveBtn, rejectBtn);
+        } else if (postData.status === 'APPROVED') {
+            const label = $('<span class="text-success fw-bold">Already Approved</span>');
+            $actionDiv.append(label);
         }
 
-        const $modal = $('#postDetailModal');
         $('body').css('overflow', 'hidden');
-        $modal.css('display', 'flex');
-        console.log("[v0] Modal displayed");
-
+        $('#postDetailModal').css('display', 'flex');
     } catch (error) {
-        console.error("[v0] Error showing post detail:", error);
+        console.error("[showPostDetail] Error:", error);
     }
 }
 
 function closePostDetail() {
-    $('#postDetailModal').css('display', 'none');
+    $('#postDetailModal').hide();
     $('body').css('overflow', 'auto');
     currentPostCard = null;
 }
@@ -279,4 +282,142 @@ function updateImageDisplay() {
 
 function showSection(sectionName) {
     $(`.nav-link[data-section="${sectionName}"]`).click();
+}
+
+const pageSize = 5;
+let currentPage = 0;
+
+function loadPosts(page = 0) {
+    $.ajax({
+        url: `http://localhost:8080/api/posts/page?page=${page}&size=${pageSize}&status=${selectedStatus}`,
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + getCookie("token")
+        },
+        success: function (data) {
+            postList = data.content || [];
+            renderPosts(postList);
+            renderPagination(data.pageNumber, data.totalPages);
+        },
+        error: function (xhr) {
+            console.error("Failed to load posts:", xhr);
+        }
+    });
+}
+
+function renderPosts(posts) {
+    const $container = $("#postsContainer");
+    $container.empty();
+
+    if (posts.length === 0) {
+        $container.html("<p class='text-center text-muted'>No posts found</p>");
+        return;
+    }
+
+    posts.forEach(post => {
+        const createdTime = post.createdAt
+            ? new Date(post.createdAt).toLocaleString()
+            : "Unknown time";
+
+        const mainImage = post.images && post.images.length > 0 ? post.images[0] : "https://via.placeholder.com/120x80";
+        console.log(mainImage.image_url)
+        console.log(post.user.name)
+        console.log(post.user.email)
+        const otherImages = (post.images || [])
+            .slice(1)
+            .map(img => `<img alt="Image" src="${img}" />`)
+            .join("");
+
+        const card = `
+            <div class="post-card card mb-3" 
+                 data-category="${post.category ? post.category.name : "Unknown"}"
+                 data-payment-method="${post.paymentMethod || ""}"
+                 data-payment-slip="${post.paymentSlip || ""}"
+                 data-status="${post.status || "unknown"}"
+                 data-post='${JSON.stringify(post)}'>
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Image Column -->
+                        <div class="col-md-2 col-3">
+                            <img alt="Post Image" class="img-fluid rounded"
+                                 src="${mainImage.image_url}">
+                            <div class="post-images" style="display: none;">
+                                ${otherImages}
+                            </div>
+                        </div>
+
+                        <div class="col-md-7 col-6">
+                            <h6 class="mb-1">${post.title || "No title"}</h6>
+                            <div class="d-flex align-items-center mb-1">
+                                <img alt="User"
+                                     class="avatar me-2 rounded-circle"
+                                     src="${post.userAvatar || "https://via.placeholder.com/24"}">
+                                <span class="text-muted">${post.user.name || "Unknown"} • ${createdTime}</span>
+                            </div>
+                            <p class="text-muted mb-2" style="font-size: 0.8rem; line-height: 1.3;">
+                                ${post.description || ""}
+                            </p>
+                            <div class="d-flex gap-2">
+                                <span class="badge bg-primary">${post.category ? post.category.name : "No Category"}</span>
+                                <span class="status-badge status-${(post.status || "unknown").toLowerCase()}">
+                                    ${post.status || "Unknown"}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3 col-3 text-end">
+                            <h6 class="text-success mb-2">${post.price ? "Rs. " + post.price.toLocaleString() : "No Price"}</h6>
+                                <button class="btn btn-primary"
+                                        onclick="event.stopPropagation(); showPostDetailFromCard(this)"
+                                        title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        $container.append(card);
+    });
+}
+
+function showPostDetailFromCard(button) {
+    const $card = $(button).closest('.post-card');
+    const postData = JSON.parse($card.attr('data-post'));
+    showPostDetail(postData);
+}
+
+
+function renderPagination(current, totalPages) {
+    const $pagination = $(".pagination");
+    $pagination.empty();
+
+    const prevDisabled = current === 0 ? "disabled" : "";
+    $pagination.append(`
+        <li class="page-item ${prevDisabled}">
+            <a class="page-link" href="#" onclick="changePage(${current - 1})">Previous</a>
+        </li>
+    `);
+
+    for (let i = 0; i < totalPages; i++) {
+        const active = i === current ? "active" : "";
+        $pagination.append(`
+            <li class="page-item ${active}">
+                <a class="page-link" href="#" onclick="changePage(${i})">${i + 1}</a>
+            </li>
+        `);
+    }
+
+    const nextDisabled = current === totalPages - 1 ? "disabled" : "";
+    $pagination.append(`
+        <li class="page-item ${nextDisabled}">
+            <a class="page-link" href="#" onclick="changePage(${current + 1})">Next</a>
+        </li>
+    `);
+}
+
+function changePage(page) {
+    if (page < 0) return;
+    loadPosts(page);
 }

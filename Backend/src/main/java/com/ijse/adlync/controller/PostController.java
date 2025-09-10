@@ -1,7 +1,9 @@
 package com.ijse.adlync.controller;
 
 import com.ijse.adlync.dto.request.*;
+import com.ijse.adlync.dto.response.PageResponse;
 import com.ijse.adlync.dto.response.PostResponseDTO;
+import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import com.ijse.adlync.service.PostService;
 import com.ijse.adlync.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,9 +11,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,14 +45,14 @@ public class PostController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<Page<PostResponseDTO>> getPostsPage(
+    public ResponseEntity<PageResponse<PostResponseDTO>> getPostsPage(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "PENDING") PostEntityStatusEnum status
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(service.findAll(pageable));
+        return ResponseEntity.ok(service.findAllByStatus(status, pageable));
     }
-
 
     @PostMapping
     @Operation(summary = "Create new Post", description = "Create a new Post entity")

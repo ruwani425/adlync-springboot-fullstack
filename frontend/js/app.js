@@ -75,25 +75,9 @@ function checkAuth() {
             .addClass("btn-danger")
             .show();
 
-        $authBtn.on('click', function () {
+        $authBtn.on("click", function () {
             if ($authBtn.text().trim() === "Logout") {
-                //clear cookie
-                if (confirm('Are you sure you want to logout?')) {
-                    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-                    location.href = "index.html";
-                }
-                // document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-                checkAuth();
-                // Swal.fire({
-                //     icon: 'success',
-                //     title: 'Logged Out',
-                //     text: 'You have been successfully logged out.',
-                //     showConfirmButton: false,
-                //     timer: 1500
-                // });
-                setTimeout(() => {
-                    location.href = "index.html";
-                }, 1500);
+                doLogout("index.html");
             }
         });
 
@@ -124,4 +108,15 @@ function getCookie(name) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
     return null;
+}
+
+function doLogout(redirectUrl = "index.html") {
+    if (confirm("Are you sure you want to logout?")) {
+        // clear cookies
+        deleteCookie("token");
+        deleteCookie("user"); // optional - if user/admin cookie thiyenawanam
+
+        // redirect
+        window.location.href = redirectUrl;
+    }
 }

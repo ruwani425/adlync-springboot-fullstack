@@ -1,6 +1,5 @@
 function selectPaymentMethod(method) {
     $('.payment-method-card').removeClass('selected');
-
     $(`[data-method="${method}"]`).addClass('selected');
 
     $(`#${method === 'card' ? 'cardPayment' : 'bankPayment'}`).prop('checked', true);
@@ -23,17 +22,24 @@ function previewFile(input) {
         const file = input.files[0];
         const fileName = file.name;
         const fileSize = (file.size / 1024 / 1024).toFixed(2);
-
-        if (file.size > 5 * 1024 * 1024) {
-            alert('File size must be less than 5MB');
-            $(input).val('');
-            $('#filePreview').hide();
-            return;
-        }
+        //
+        // if (file.size > 5) {
+        //     alert('File size must be less than 5MB');
+        //     $(input).val('');
+        //     $('#filePreview').hide();
+        //     return;
+        // }
 
         $('#fileName').text(`${fileName} (${fileSize} MB)`);
         $('#filePreview').show();
     }
+}
+
+function updatePaymentAmount() {
+    const baseAmount = 500;
+    const featuredFee = 250;
+    const totalAmount = baseAmount + featuredFee;
+    $('#feeAmount').text(`LKR ${totalAmount.toFixed(2)}`);
 }
 
 function processPayment() {
@@ -45,18 +51,17 @@ function processPayment() {
     }
 
     if (paymentMethod === 'card') {
-        processCardPayment();
+        processCardPayment(paymentMethod);
     } else {
-        processBankTransfer();
+        processBankTransfer(paymentMethod);
     }
 }
 
-function processCardPayment() {
-    savePost();
+function processCardPayment(paymentMethod) {
+    savePost('CARD');
     $('#loadingOverlay').css('display', 'flex');
 
     const paymentGatewayUrl = 'https://your-payment-gateway.com/checkout';
-
     const paymentData = {
         amount: 750.00,
         currency: 'LKR',
@@ -76,12 +81,11 @@ function processCardPayment() {
     setTimeout(() => {
         alert('Redirecting to payment gateway...\n\nIn a real implementation, this would redirect to your payment provider (PayHere, Stripe, etc.)');
         $('#loadingOverlay').hide();
-        // form.submit(); // Uncomment for real implementation
+        // form.submit(); // Uncomment in real implementation
     }, 2000);
 }
 
-function processBankTransfer() {
-    savePost();
+async function processBankTransfer(paymentMethod) {
     const bankSelect = $('#selectedBank');
     const fileInput = $('#bankSlipUpload')[0];
 
@@ -99,47 +103,30 @@ function processBankTransfer() {
 
     $('#loadingOverlay').css('display', 'flex');
 
-    setTimeout(() => {
-        const formData = new FormData();
-        formData.append('bank_slip', fileInput.files[0]);
-        formData.append('bank_name', bankSelect.val());
-        formData.append('amount', 750.00);
-        formData.append('payment_method', 'bank_transfer');
+    try {
+        const uploadedUrls = await uploadImagesToFirebase([fileInput.files[0]]);
+        const slipUrl = uploadedUrls[0];
 
-        console.log('Bank transfer data:', {
-            bank: bankSelect.val(),
-            file: fileInput.files[0].name,
-            amount: 750.00
-        });
+        console.log("Uploaded Payment Slip URL:", slipUrl);
 
+        // Save post with slipUrl + bankName
+        savePostWithBankSlip('BANK_TRANSFER', bankSelect.val(), slipUrl);
+
+    } catch (error) {
         $('#loadingOverlay').hide();
-        $('.card-body').hide();
-        $('#successMessage').show();
-    }, 3000);
+        alert("Bank slip upload failed. Try again!");
+    }
 }
 
-function updatePaymentAmount() {
-    const baseAmount = 500;
-    const featuredFee = 250;
-    const totalAmount = baseAmount + featuredFee;
-
-    $('#feeAmount').text(`LKR ${totalAmount.toFixed(2)}`);
-}
-
-$(document).ready(function () {
-    updatePaymentAmount();
-});
-
-function savePost() {
+function savePostWithBankSlip(paymentMethod, bankName, slipUrl) {
     let storedData = localStorage.getItem("adFormData");
     if (!storedData) {
         alert("No form data found!");
         return;
     }
+
     let adData = JSON.parse(storedData);
-    // let category = adData.category;
-    let category=localStorage.getItem("selectedCategory")
-    console.log(category)
+    let category = localStorage.getItem("selectedCategory");
 
     const endpoints = {
         agriculture: 'http://localhost:8080/api/posts/create-agriculture',
@@ -165,13 +152,22 @@ function savePost() {
         alert("Invalid category selected!");
         return;
     }
-    var token = getCookie('token');
 
-    if (token == null) {
+    let token = getCookie('token');
+    if (!token) {
         alert("Authentication token not found. Please login again.");
         return;
     }
-    console.log(token)
+
+    let amountText = $('#feeAmount').text();
+    let amount = parseFloat(amountText.replace(/[^\d.]/g, ''));
+
+    adData.postRequestDTO.payment_type = paymentMethod;
+    adData.postRequestDTO.amount = amount;
+    adData.postRequestDTO.payment_status = 'COMPLETED';
+    adData.postRequestDTO.bank_name = bankName;
+    adData.postRequestDTO.slip_url = slipUrl;
+
     $.ajax({
         url: apiUrl,
         type: 'POST',
@@ -186,14 +182,14 @@ function savePost() {
 
             Swal.fire({
                 icon: 'success',
-                title: 'Your advertisement request was sent successfully',
-                text: response.message || 'Request sent successfully!',
+                title: 'Your bank transfer request was submitted',
+                text: response.message || 'Our team will verify your payment slip shortly.',
                 showConfirmButton: false,
-                timer: 1500
+                timer: 2000
             });
             setTimeout(() => {
                 window.location.href = "../index.html";
-            }, 1600);
+            }, 2100);
         },
         error: function (xhr) {
             const errorMsg = xhr.responseJSON?.message || 'Request failed. Please try again.';
@@ -209,3 +205,8 @@ function savePost() {
         }
     });
 }
+
+
+$(document).ready(function () {
+    updatePaymentAmount();
+});

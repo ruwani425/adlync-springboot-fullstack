@@ -1,8 +1,9 @@
 package com.ijse.adlync.service;
 
 import com.ijse.adlync.dto.request.*;
+import com.ijse.adlync.dto.response.PageResponse;
 import com.ijse.adlync.dto.response.PostResponseDTO;
-import org.springframework.data.domain.Page;
+import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
@@ -51,5 +52,7 @@ public interface PostService {
 
     List<PostResponseDTO> findAll();
 
-    Page<PostResponseDTO> findAll(Pageable pageable);
+    public PageResponse<PostResponseDTO> findAll(Pageable pageable);
+
+    public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable);
 }

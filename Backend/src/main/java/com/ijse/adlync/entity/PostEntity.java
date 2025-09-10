@@ -48,8 +48,8 @@ public class PostEntity {
     @JoinColumn(name = "report_id")
     private ReportEntity report;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<PaymentEntity> payments = new ArrayList<>();
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private PaymentEntity payment;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReportEntity> reports = new ArrayList<>();

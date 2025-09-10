@@ -1,22 +1,22 @@
 package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.dto.request.*;
-import com.ijse.adlync.dto.response.CategoryResponseDTO;
-import com.ijse.adlync.dto.response.ImageResponseDTO;
-import com.ijse.adlync.dto.response.PostResponseDTO;
-import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.dto.response.*;
 import com.ijse.adlync.entity.*;
 import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
 import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
+import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import com.ijse.adlync.repository.*;
 import com.ijse.adlync.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,10 +54,46 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Page<PostResponseDTO> findAll(Pageable pageable) {
-        Page<PostEntity> postPage = repository.findAll(pageable);
-        return postPage.map(this::toResponseDTO);
+    public PageResponse<PostResponseDTO> findAll(Pageable pageable) {
+//        Page<PostEntity> postPage = repository.findAll(pageable);
+//        Page<PostResponseDTO> dtoPage = postPage.map(this::toResponseDTO);
+        Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+        Page<PostEntity> dtoPage = repository.findAll(page);
+        List<PostResponseDTO> contentlist = new ArrayList<>();
+        dtoPage.getContent().forEach(dto -> contentlist.add(toResponseDTO(dto)));
+
+        System.out.println(dtoPage.getContent());
+        System.out.println("DB total elements: " + dtoPage.getTotalElements());
+        dtoPage.getContent().forEach(System.out::println);
+        return new PageResponse<>(
+                contentlist,
+                dtoPage.getNumber(),
+                dtoPage.getSize(),
+                dtoPage.getTotalElements(),
+                dtoPage.getTotalPages(),
+                dtoPage.isLast()
+        );
     }
+
+    @Override
+    public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable) {
+        Page<PostEntity> postPage = repository.findAllByStatus(status, pageable);
+
+        List<PostResponseDTO> contentList = postPage
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+
+        return new PageResponse<>(
+                contentList,
+                postPage.getNumber(),
+                postPage.getSize(),
+                postPage.getTotalElements(),
+                postPage.getTotalPages(),
+                postPage.isLast()
+        );
+    }
+
 
     @Override
     public PostResponseDTO findById(Long id) {
@@ -101,6 +137,7 @@ public class PostServiceImpl implements PostService {
                 CategoryEntityNameEnum.ANIMAL,
                 Advertisement_typeEntityTypeEnum.SELL
         );
+        System.out.println(requestDTO.getPostRequestDTO().toString());
         PostEntity savedPost = repository.save(postEntity);
 
         AnimalEntity animalEntity = new AnimalEntity();
@@ -495,6 +532,15 @@ public class PostServiceImpl implements PostService {
             dto.setCategory(modelMapper.map(entity.getCategory(), CategoryResponseDTO.class));
         }
 
+        if (entity.getLocation() != null) {
+            dto.setLocation(modelMapper.map(entity.getLocation(), LocationResponseDTO.class));
+        }
+
+        if (entity.getPayment() != null) {
+            dto.setPayment(modelMapper.map(entity.getPayment(), PaymentResponseDTO.class));
+            System.out.println("\n\n\n\n"+entity.getPayment());
+        }
+
         if (entity.getImages() != null) {
             List<ImageResponseDTO> imageDTOs = entity.getImages().stream()
                     .map(this::toImageResponseDTO)
@@ -551,6 +597,15 @@ public class PostServiceImpl implements PostService {
         locationEntity.setCity(dto.getCity());
         locationEntity.setDistrict(dto.getDistrict());
         postEntity.setLocation(locationEntity);
+
+        PaymentEntity paymentEntity = new PaymentEntity();
+        paymentEntity.setAmount(dto.getPrice());
+        paymentEntity.setPayment_date(dto.getPayment_date());
+        paymentEntity.setPayment_type(dto.getPayment_type());
+        paymentEntity.setStatus(dto.getPayment_status());
+        paymentEntity.setSlip_url(dto.getSlip_url());
+        paymentEntity.setPost(postEntity);
+        postEntity.setPayment(paymentEntity);
         return postEntity;
     }
 }
