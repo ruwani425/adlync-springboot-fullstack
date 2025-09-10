@@ -1,5 +1,9 @@
 let postList = [];
 let selectedStatus = 'PENDING';
+let currentPage = 0;
+let currentPostCard = null;
+let postImages = [];
+let currentImageIndex = 0;
 
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
@@ -16,20 +20,15 @@ $(document).ready(function () {
 
     $navLinks.on('click', function (e) {
         e.preventDefault();
-
         $navLinks.removeClass('active');
         $(this).addClass('active');
-
         $contentSections.removeClass('active');
 
         const targetSection = $(this).data('section') + '-section';
         const $section = $('#' + targetSection);
-        if ($section.length) {
-            $section.addClass('active');
-        }
+        if ($section.length) $section.addClass('active');
 
-        const sectionName = $(this).text().trim();
-        $pageTitle.text(sectionName);
+        $pageTitle.text($(this).text().trim());
     });
 
     $sidebarToggle.on('click', function () {
@@ -50,7 +49,6 @@ $(document).ready(function () {
 
     $categoryItems.on('click', function (e) {
         e.preventDefault();
-
         $categoryItems.removeClass('active');
         $(this).addClass('active');
 
@@ -63,20 +61,19 @@ $(document).ready(function () {
     });
 
     $statusFilter.on('change', function () {
-        currentFilters.status = $(this).val();
-        applyAllFilters();
+        const newStatus = $(this).val().toUpperCase();
+        selectedStatus = newStatus;
+        currentFilters.status = newStatus.toLowerCase();
+        loadPosts(0, newStatus);
     });
 
     $searchPosts.on('input', function () {
         currentFilters.search = $(this).val().toLowerCase();
         applyAllFilters();
     });
+
     loadPosts(0);
 });
-
-let currentPostCard = null;
-let postImages = [];
-let currentImageIndex = 0;
 
 function showPostDetail(postData) {
     try {
@@ -95,15 +92,13 @@ function showPostDetail(postData) {
         $("#modalContactLocation").text(postData.location?.address || "N/A");
 
         const $paymentDiv = $("#modalPaymentMethod").empty();
-
         if (postData.payment?.payment_type === "BANK_TRANSFER") {
             const bankIcon = `<i class="bi bi-bank2 me-2 text-primary"></i>`;
             $paymentDiv.append(bankIcon + "Bank Transfer");
-
             if (postData.payment.slip_url) {
                 const slipLink = $(`<a href="${postData.payment.slip_url}" target="_blank" class="ms-2 text-decoration-none">
-                                <i class="bi bi-receipt-cutoff me-1"></i>View Bank Slip
-                            </a>`);
+                                        <i class="bi bi-receipt-cutoff me-1"></i>View Bank Slip
+                                    </a>`);
                 $paymentDiv.append(slipLink);
             }
         } else if (postData.payment?.payment_type) {
@@ -112,16 +107,14 @@ function showPostDetail(postData) {
             $paymentDiv.text("N/A");
         }
 
-        postImages = (postData.images || []).map(img => img.image_url);
+        postImages = (postData.images || []).map(img => (typeof img === 'string' ? img : img.image_url));
         currentImageIndex = 0;
         setupImageGallery();
-
-        currentPostCard = postData;
 
         const $actionDiv = $("#modalActionButtons").empty();
 
         if (postData.status === 'PENDING') {
-            const approveBtn = $('<button class="btn btn-success">Approve</button>');
+            const approveBtn = $('<button class="btn btn-success me-2">Approve</button>');
             const rejectBtn = $('<button class="btn btn-danger">Reject</button>');
 
             approveBtn.on('click', approvePostFromModal);
@@ -129,8 +122,7 @@ function showPostDetail(postData) {
 
             $actionDiv.append(approveBtn, rejectBtn);
         } else if (postData.status === 'APPROVED') {
-            const label = $('<span class="text-success fw-bold">Already Approved</span>');
-            $actionDiv.append(label);
+            $actionDiv.append('<span class="text-success fw-bold">Already Approved</span>');
         }
 
         $('body').css('overflow', 'hidden');
@@ -147,48 +139,36 @@ function closePostDetail() {
 }
 
 function approvePostFromModal() {
-    if (currentPostCard) {
-        const $postCard = $(currentPostCard);
-        $postCard.data('status', 'approved');
-        $postCard.find('.status-badge').text('Approved').removeClass().addClass('status-badge status-approved');
+    if (!currentPostCard) return;
+    currentPostCard.data('status', 'APPROVED');
+    currentPostCard.find('.status-badge').text('APPROVED').removeClass().addClass('status-badge status-approved');
 
-        showToast('Post approved successfully!');
-        closePostDetail();
-
-        applyAllFilters();
-    }
+    showToast('Post approved successfully!');
+    closePostDetail();
+    applyAllFilters();
 }
 
 function rejectPostFromModal() {
-    if (currentPostCard) {
-        if (confirm('Are you sure you want to reject this post?')) {
-            $(currentPostCard).remove();
-            showToast('Post rejected successfully!');
-            closePostDetail();
-            applyAllFilters();
-        }
+    if (!currentPostCard) return;
+    if (confirm('Are you sure you want to reject this post?')) {
+        currentPostCard.remove();
+        showToast('Post rejected successfully!');
+        closePostDetail();
+        applyAllFilters();
     }
 }
 
 function showToast(message) {
     $('.toast-notification').remove();
-
     const $toast = $(`
         <div class="toast-notification position-fixed top-0 end-0 m-3 alert alert-success" style="z-index: 9999;">
             <i class="bi bi-check-circle me-2"></i>${message}
             <button type="button" class="btn-close ms-2"></button>
         </div>
     `);
-
-    $toast.find('.btn-close').on('click', function () {
-        $toast.remove();
-    });
-
+    $toast.find('.btn-close').on('click', () => $toast.remove());
     $('body').append($toast);
-
-    setTimeout(() => {
-        $toast.remove();
-    }, 3000);
+    setTimeout(() => $toast.remove(), 3000);
 }
 
 function applyAllFilters() {
@@ -199,17 +179,13 @@ function applyAllFilters() {
         const $post = $(this);
         let shouldShow = true;
 
-        const postStatus = $post.data('status');
-        if (postStatus !== 'pending' && postStatus !== 'approved') {
-            shouldShow = false;
-        }
+        const postStatus = ($post.data('status') || '').toLowerCase();
+        if (postStatus !== 'pending' && postStatus !== 'approved') shouldShow = false;
 
         if (shouldShow) {
             $post.show();
             visibleCount++;
-        } else {
-            $post.hide();
-        }
+        } else $post.hide();
     });
 
     $('#postsCount').text(visibleCount.toLocaleString());
@@ -218,11 +194,10 @@ function applyAllFilters() {
 function setupImageGallery() {
     const $container = $('#imageGalleryContainer');
     const $indicators = $('#imageIndicators');
-
     $container.empty();
     $indicators.empty();
 
-    if (postImages.length === 0) {
+    if (!postImages.length) {
         $container.html('<img src="/placeholder.svg" alt="No Image" class="post-detail-image active">');
         return;
     }
@@ -237,8 +212,7 @@ function setupImageGallery() {
     }
 
     postImages.forEach((src, index) => {
-        const $img = $(`<img src="${src}" alt="Image ${index + 1}" class="post-detail-image ${index === 0 ? 'active' : ''}">`);
-        $container.append($img);
+        $container.append(`<img src="${src}" alt="Image ${index + 1}" class="post-detail-image ${index === 0 ? 'active' : ''}">`);
     });
 
     if (postImages.length > 1) {
@@ -251,13 +225,11 @@ function setupImageGallery() {
 }
 
 function nextImage() {
-    if (postImages.length <= 1) return;
     currentImageIndex = (currentImageIndex + 1) % postImages.length;
     updateImageDisplay();
 }
 
 function previousImage() {
-    if (postImages.length <= 1) return;
     currentImageIndex = (currentImageIndex - 1 + postImages.length) % postImages.length;
     updateImageDisplay();
 }
@@ -270,34 +242,23 @@ function goToImage(index) {
 function updateImageDisplay() {
     const $images = $('#imageGalleryContainer .post-detail-image');
     const $indicators = $('.image-indicator');
-
-    $images.each(function (i) {
-        $(this).toggleClass('active', i === currentImageIndex);
-    });
-
-    $indicators.each(function (i) {
-        $(this).toggleClass('active', i === currentImageIndex);
-    });
+    $images.each((i, el) => $(el).toggleClass('active', i === currentImageIndex));
+    $indicators.each((i, el) => $(el).toggleClass('active', i === currentImageIndex));
 }
 
-function showSection(sectionName) {
-    $(`.nav-link[data-section="${sectionName}"]`).click();
-}
+function loadPosts(page = 0, status) {
+    currentPage = page;
+    if (status) selectedStatus = status;
 
-const pageSize = 5;
-let currentPage = 0;
-
-function loadPosts(page = 0) {
     $.ajax({
-        url: `http://localhost:8080/api/posts/page?page=${page}&size=${pageSize}&status=${selectedStatus}`,
+        url: `http://localhost:8080/api/posts/page?page=${page}&size=${pageSize}&status=${encodeURIComponent(selectedStatus)}`,
         method: "GET",
-        headers: {
-            "Authorization": "Bearer " + getCookie("token")
-        },
+        headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (data) {
             postList = data.content || [];
             renderPosts(postList);
             renderPagination(data.pageNumber, data.totalPages);
+            applyAllFilters();
         },
         error: function (xhr) {
             console.error("Failed to load posts:", xhr);
@@ -309,70 +270,44 @@ function renderPosts(posts) {
     const $container = $("#postsContainer");
     $container.empty();
 
-    if (posts.length === 0) {
+    if (!posts.length) {
         $container.html("<p class='text-center text-muted'>No posts found</p>");
         return;
     }
 
     posts.forEach(post => {
-        const createdTime = post.createdAt
-            ? new Date(post.createdAt).toLocaleString()
-            : "Unknown time";
-
-        const mainImage = post.images && post.images.length > 0 ? post.images[0] : "https://via.placeholder.com/120x80";
-        console.log(mainImage.image_url)
-        console.log(post.user.name)
-        console.log(post.user.email)
-        const otherImages = (post.images || [])
-            .slice(1)
-            .map(img => `<img alt="Image" src="${img}" />`)
-            .join("");
+        const createdTime = post.createdAt ? new Date(post.createdAt).toLocaleString() : "Unknown time";
+        const mainImage = (post.images && post.images.length > 0) ? (post.images[0].image_url || post.images[0]) : "https://via.placeholder.com/120x80";
+        const otherImages = (post.images || []).slice(1).map(img => `<img alt="Image" src="${typeof img === 'string' ? img : img.image_url}" />`).join("");
 
         const card = `
             <div class="post-card card mb-3" 
-                 data-category="${post.category ? post.category.name : "Unknown"}"
-                 data-payment-method="${post.paymentMethod || ""}"
-                 data-payment-slip="${post.paymentSlip || ""}"
+                 data-category="${post.category?.name || "Unknown"}"
                  data-status="${post.status || "unknown"}"
                  data-post='${JSON.stringify(post)}'>
                 <div class="card-body">
                     <div class="row align-items-center">
-                        <!-- Image Column -->
                         <div class="col-md-2 col-3">
-                            <img alt="Post Image" class="img-fluid rounded"
-                                 src="${mainImage.image_url}">
-                            <div class="post-images" style="display: none;">
-                                ${otherImages}
-                            </div>
+                            <img alt="Post Image" class="img-fluid rounded" src="${mainImage}">
+                            <div class="post-images" style="display:none;">${otherImages}</div>
                         </div>
-
                         <div class="col-md-7 col-6">
                             <h6 class="mb-1">${post.title || "No title"}</h6>
                             <div class="d-flex align-items-center mb-1">
-                                <img alt="User"
-                                     class="avatar me-2 rounded-circle"
-                                     src="${post.userAvatar || "https://via.placeholder.com/24"}">
-                                <span class="text-muted">${post.user.name || "Unknown"} • ${createdTime}</span>
+                                <img alt="User" class="avatar me-2 rounded-circle" src="${post.userAvatar || "https://via.placeholder.com/24"}">
+                                <span class="text-muted">${post.user?.name || "Unknown"} • ${createdTime}</span>
                             </div>
-                            <p class="text-muted mb-2" style="font-size: 0.8rem; line-height: 1.3;">
-                                ${post.description || ""}
-                            </p>
+                            <p class="text-muted mb-2" style="font-size:0.8rem;line-height:1.3;">${post.description || ""}</p>
                             <div class="d-flex gap-2">
-                                <span class="badge bg-primary">${post.category ? post.category.name : "No Category"}</span>
-                                <span class="status-badge status-${(post.status || "unknown").toLowerCase()}">
-                                    ${post.status || "Unknown"}
-                                </span>
+                                <span class="badge bg-primary">${post.category?.name || "No Category"}</span>
+                                <span class="status-badge status-${(post.status || "unknown").toLowerCase()}">${post.status || "Unknown"}</span>
                             </div>
                         </div>
-
                         <div class="col-md-3 col-3 text-end">
                             <h6 class="text-success mb-2">${post.price ? "Rs. " + post.price.toLocaleString() : "No Price"}</h6>
-                                <button class="btn btn-primary"
-                                        onclick="event.stopPropagation(); showPostDetailFromCard(this)"
-                                        title="View Details">
-                                    <i class="bi bi-eye"></i>
-                                </button>
-                            </div>
+                            <button class="btn btn-primary" onclick="event.stopPropagation(); showPostDetailFromCard(this)" title="View Details">
+                                <i class="bi bi-eye"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -385,36 +320,26 @@ function renderPosts(posts) {
 function showPostDetailFromCard(button) {
     const $card = $(button).closest('.post-card');
     const postData = JSON.parse($card.attr('data-post'));
+    currentPostCard = $card;
     showPostDetail(postData);
 }
 
+const pageSize = 5;
 
 function renderPagination(current, totalPages) {
     const $pagination = $(".pagination");
     $pagination.empty();
 
-    const prevDisabled = current === 0 ? "disabled" : "";
-    $pagination.append(`
-        <li class="page-item ${prevDisabled}">
-            <a class="page-link" href="#" onclick="changePage(${current - 1})">Previous</a>
-        </li>
-    `);
+    $pagination.append(`<li class="page-item ${current === 0 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="changePage(${current - 1})">Previous</a></li>`);
 
     for (let i = 0; i < totalPages; i++) {
-        const active = i === current ? "active" : "";
-        $pagination.append(`
-            <li class="page-item ${active}">
-                <a class="page-link" href="#" onclick="changePage(${i})">${i + 1}</a>
-            </li>
-        `);
+        $pagination.append(`<li class="page-item ${i === current ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="changePage(${i})">${i + 1}</a></li>`);
     }
 
-    const nextDisabled = current === totalPages - 1 ? "disabled" : "";
-    $pagination.append(`
-        <li class="page-item ${nextDisabled}">
-            <a class="page-link" href="#" onclick="changePage(${current + 1})">Next</a>
-        </li>
-    `);
+    $pagination.append(`<li class="page-item ${current === totalPages - 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="changePage(${current + 1})">Next</a></li>`);
 }
 
 function changePage(page) {
