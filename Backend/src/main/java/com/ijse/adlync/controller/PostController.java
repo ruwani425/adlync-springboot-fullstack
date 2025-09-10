@@ -67,6 +67,13 @@ public class PostController {
         return ResponseEntity.ok(service.update(id, requestDTO));
     }
 
+    @PutMapping("/{id}/approve")
+    @Operation(summary = "Approve Post", description = "Approve a pending post")
+    public ResponseEntity<PostResponseDTO> approvePost(@PathVariable Long id) {
+        PostResponseDTO approvedPost = service.approvePost(id); // service method to update status
+        return ResponseEntity.ok(approvedPost);
+    }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Post", description = "Delete a Post entity by its ID")
     public ResponseEntity<Void> deletePost(@PathVariable Long id) {

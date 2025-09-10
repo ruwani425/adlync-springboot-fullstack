@@ -4,6 +4,7 @@ let currentPage = 0;
 let currentPostCard = null;
 let postImages = [];
 let currentImageIndex = 0;
+const pageSize = 5;
 
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
@@ -13,11 +14,13 @@ $(document).ready(function () {
     const $sidebar = $('#sidebar');
     const $mainContent = $('.main-content');
 
+    // Logout
     $(".dropdown-item:contains('Logout')").on("click", function (e) {
         e.preventDefault();
         doLogout("../index.html");
     });
 
+    // Sidebar navigation
     $navLinks.on('click', function (e) {
         e.preventDefault();
         $navLinks.removeClass('active');
@@ -31,6 +34,7 @@ $(document).ready(function () {
         $pageTitle.text($(this).text().trim());
     });
 
+    // Sidebar toggle
     $sidebarToggle.on('click', function () {
         $sidebar.toggleClass('collapsed');
         $mainContent.toggleClass('expanded');
@@ -47,6 +51,7 @@ $(document).ready(function () {
         search: ''
     };
 
+    // Category selection
     $categoryItems.on('click', function (e) {
         e.preventDefault();
         $categoryItems.removeClass('active');
@@ -56,10 +61,11 @@ $(document).ready(function () {
         const categoryIcon = $(this).find('i').prop('outerHTML');
         $selectedCategory.html(categoryIcon + ' ' + categoryName);
 
-        currentFilters.category = $(this).data('category');
+        currentFilters.category = $(this).data('category') || 'all';
         applyAllFilters();
     });
 
+    // Status filter
     $statusFilter.on('change', function () {
         const newStatus = $(this).val().toUpperCase();
         selectedStatus = newStatus;
@@ -67,6 +73,7 @@ $(document).ready(function () {
         loadPosts(0, newStatus);
     });
 
+    // Search posts
     $searchPosts.on('input', function () {
         currentFilters.search = $(this).val().toLowerCase();
         applyAllFilters();
@@ -75,8 +82,10 @@ $(document).ready(function () {
     loadPosts(0);
 });
 
+// Show post modal
 function showPostDetail(postData) {
     try {
+        $('#modalPostId').val(postData.id || postData.post_id);
         $("#modalPostTitle").text(postData.title || "No Title");
         $("#modalPostDescription").text(postData.description || "No Description");
         $("#modalPostCategory").text(postData.category?.name || "No Category");
@@ -91,6 +100,7 @@ function showPostDetail(postData) {
         $("#modalContactEmail").text(postData.user?.email || "N/A");
         $("#modalContactLocation").text(postData.location?.address || "N/A");
 
+        // Payment info
         const $paymentDiv = $("#modalPaymentMethod").empty();
         if (postData.payment?.payment_type === "BANK_TRANSFER") {
             const bankIcon = `<i class="bi bi-bank2 me-2 text-primary"></i>`;
@@ -107,12 +117,13 @@ function showPostDetail(postData) {
             $paymentDiv.text("N/A");
         }
 
+        // Images
         postImages = (postData.images || []).map(img => (typeof img === 'string' ? img : img.image_url));
         currentImageIndex = 0;
         setupImageGallery();
 
+        // Action buttons
         const $actionDiv = $("#modalActionButtons").empty();
-
         if (postData.status === 'PENDING') {
             const approveBtn = $('<button class="btn btn-success me-2">Approve</button>');
             const rejectBtn = $('<button class="btn btn-danger">Reject</button>');
@@ -140,22 +151,50 @@ function closePostDetail() {
 
 function approvePostFromModal() {
     if (!currentPostCard) return;
-    currentPostCard.data('status', 'APPROVED');
-    currentPostCard.find('.status-badge').text('APPROVED').removeClass().addClass('status-badge status-approved');
+    const postData = $(currentPostCard).data('post');
+    $.ajax({
+        url: `http://localhost:8080/api/posts/${postData.post_id}/approve`,
+        method: 'PUT',
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            $(currentPostCard).data('status', 'APPROVED');
+            $(currentPostCard).find('.status-badge')
+                .text('APPROVED')
+                .removeClass()
+                .addClass('status-badge status-approved');
 
-    showToast('Post approved successfully!');
-    closePostDetail();
-    applyAllFilters();
+            showToast('Post approved successfully!');
+            closePostDetail();
+            applyAllFilters();
+        },
+        error: function (xhr) {
+            console.error("Failed to approve post:", xhr);
+            showToast('Failed to approve post.');
+        }
+    });
 }
 
 function rejectPostFromModal() {
     if (!currentPostCard) return;
-    if (confirm('Are you sure you want to reject this post?')) {
-        currentPostCard.remove();
-        showToast('Post rejected successfully!');
-        closePostDetail();
-        applyAllFilters();
-    }
+    const postData = $(currentPostCard).data('post');
+
+    if (!confirm('Are you sure you want to reject this post?')) return;
+
+    $.ajax({
+        url: `http://localhost:8080/api/posts/${postData.post_id}`,
+        method: 'DELETE',
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            $(currentPostCard).remove();
+            showToast('Post rejected successfully!');
+            closePostDetail();
+            applyAllFilters();
+        },
+        error: function (xhr) {
+            console.error("Failed to reject post:", xhr);
+            showToast('Failed to reject post.');
+        }
+    });
 }
 
 function showToast(message) {
@@ -173,14 +212,24 @@ function showToast(message) {
 
 function applyAllFilters() {
     const $posts = $('.post-card');
+    const search = $('#searchPosts').val().toLowerCase();
+    const statusFilter = selectedStatus.toLowerCase();
+    const categoryFilter = $('.category-item.active').data('category') || 'all';
+
     let visibleCount = 0;
 
     $posts.each(function () {
         const $post = $(this);
+        const postStatus = ($post.data('status') || '').toLowerCase();
+        const postCategory = ($post.data('category') || '').toLowerCase();
+        const postTitle = ($post.data('post')?.title || '').toLowerCase();
+        const postDesc = ($post.data('post')?.description || '').toLowerCase();
+
         let shouldShow = true;
 
-        const postStatus = ($post.data('status') || '').toLowerCase();
-        if (postStatus !== 'pending' && postStatus !== 'approved') shouldShow = false;
+        if (statusFilter !== 'all' && postStatus !== statusFilter) shouldShow = false;
+        if (categoryFilter !== 'all' && postCategory !== categoryFilter) shouldShow = false;
+        if (search && !postTitle.includes(search) && !postDesc.includes(search)) shouldShow = false;
 
         if (shouldShow) {
             $post.show();
@@ -215,13 +264,11 @@ function setupImageGallery() {
         $container.append(`<img src="${src}" alt="Image ${index + 1}" class="post-detail-image ${index === 0 ? 'active' : ''}">`);
     });
 
-    if (postImages.length > 1) {
-        postImages.forEach((_, index) => {
-            const $indicator = $(`<div class="image-indicator ${index === 0 ? 'active' : ''}"></div>`);
-            $indicator.on('click', () => goToImage(index));
-            $indicators.append($indicator);
-        });
-    }
+    postImages.forEach((_, index) => {
+        const $indicator = $(`<div class="image-indicator ${index === 0 ? 'active' : ''}"></div>`);
+        $indicator.on('click', () => goToImage(index));
+        $indicators.append($indicator);
+    });
 }
 
 function nextImage() {
@@ -278,18 +325,15 @@ function renderPosts(posts) {
     posts.forEach(post => {
         const createdTime = post.createdAt ? new Date(post.createdAt).toLocaleString() : "Unknown time";
         const mainImage = (post.images && post.images.length > 0) ? (post.images[0].image_url || post.images[0]) : "https://via.placeholder.com/120x80";
-        const otherImages = (post.images || []).slice(1).map(img => `<img alt="Image" src="${typeof img === 'string' ? img : img.image_url}" />`).join("");
-
         const card = `
             <div class="post-card card mb-3" 
-                 data-category="${post.category?.name || "Unknown"}"
-                 data-status="${post.status || "unknown"}"
+                 data-category="${post.category?.name?.toLowerCase() || "unknown"}"
+                 data-status="${post.status?.toLowerCase() || "unknown"}"
                  data-post='${JSON.stringify(post)}'>
                 <div class="card-body">
                     <div class="row align-items-center">
                         <div class="col-md-2 col-3">
                             <img alt="Post Image" class="img-fluid rounded" src="${mainImage}">
-                            <div class="post-images" style="display:none;">${otherImages}</div>
                         </div>
                         <div class="col-md-7 col-6">
                             <h6 class="mb-1">${post.title || "No title"}</h6>
@@ -304,7 +348,7 @@ function renderPosts(posts) {
                             </div>
                         </div>
                         <div class="col-md-3 col-3 text-end">
-                            <h6 class="text-success mb-2">${post.price ? "Rs. " + post.price.toLocaleString() : "No Price"}</h6>
+                            <h6 class="text-success mb-2">${post.price ? "Rs. " + Number(post.price).toLocaleString() : "No Price"}</h6>
                             <button class="btn btn-primary" onclick="event.stopPropagation(); showPostDetailFromCard(this)" title="View Details">
                                 <i class="bi bi-eye"></i>
                             </button>
@@ -320,11 +364,10 @@ function renderPosts(posts) {
 function showPostDetailFromCard(button) {
     const $card = $(button).closest('.post-card');
     const postData = JSON.parse($card.attr('data-post'));
+    $card.data('post', postData);
     currentPostCard = $card;
     showPostDetail(postData);
 }
-
-const pageSize = 5;
 
 function renderPagination(current, totalPages) {
     const $pagination = $(".pagination");

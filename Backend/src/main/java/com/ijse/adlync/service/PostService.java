@@ -55,4 +55,6 @@ public interface PostService {
     public PageResponse<PostResponseDTO> findAll(Pageable pageable);
 
     public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable);
+
+    PostResponseDTO approvePost(Long id);
 }

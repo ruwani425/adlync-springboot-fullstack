@@ -94,6 +94,21 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    @Override
+    public PostResponseDTO approvePost(Long id) {
+        PostEntity post = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+
+        if (post.getStatus() == PostEntityStatusEnum.APPROVED) {
+            throw new RuntimeException("Post is already approved");
+        }
+
+        post.setStatus(PostEntityStatusEnum.APPROVED);
+        post = repository.save(post);
+
+        return modelMapper.map(post, PostResponseDTO.class);
+    }
+
 
     @Override
     public PostResponseDTO findById(Long id) {
@@ -538,7 +553,7 @@ public class PostServiceImpl implements PostService {
 
         if (entity.getPayment() != null) {
             dto.setPayment(modelMapper.map(entity.getPayment(), PaymentResponseDTO.class));
-            System.out.println("\n\n\n\n"+entity.getPayment());
+            System.out.println("\n\n\n\n" + entity.getPayment());
         }
 
         if (entity.getImages() != null) {
