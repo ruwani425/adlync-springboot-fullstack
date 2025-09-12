@@ -1,10 +1,7 @@
 package com.ijse.adlync.dto.response;
 
 import com.ijse.adlync.entity.enums.Advertisement_typeEntityTypeEnum;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter

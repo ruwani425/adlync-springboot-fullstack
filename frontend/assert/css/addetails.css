@@ -1,0 +1,184 @@
+:root {
+    --emerald-600: #059669;
+    --emerald-500: #10b981;
+    --bg: #ffffff;
+    --fg: #475569;
+    --card: #f6f8fb;
+    --border: #e5e7eb;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+}
+
+.text-primary-emerald {
+    color: var(--emerald-600) !important;
+}
+
+.btn-danger {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: #fff !important;
+}
+
+.btn-emerald {
+    background: var(--emerald-600);
+    color: #fff;
+    border-color: var(--emerald-600);
+}
+
+.btn-emerald:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #fff;
+}
+
+.text-bg-emerald {
+    background: var(--emerald-600) !important;
+}
+
+.bg-emerald {
+    background: var(--emerald-600) !important;
+}
+
+.bg-card {
+    background: #f7fafc;
+}
+
+.link-faded {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.link-faded:hover {
+    color: #fff;
+}
+
+.hero-gradient {
+    background-image: radial-gradient(1200px 300px at 50% -10%, rgba(16, 185, 129, 0.18), transparent),
+    radial-gradient(1200px 300px at 50% 110%, rgba(5, 150, 105, 0.14), transparent);
+}
+
+.card {
+    border-radius: 16px;
+    border: 1px solid var(--border);
+}
+
+.card-hover {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+}
+
+.icon-pill {
+    width: 64px;
+    height: 64px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.icon-pill i {
+    font-size: 28px;
+}
+
+.bg-soft-blue {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.bg-soft-purple {
+    background: #f5f3ff;
+    color: #7c3aed;
+}
+
+.bg-soft-orange {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+.bg-soft-green {
+    background: #ecfdf5;
+    color: #10b981;
+}
+
+.bg-soft-pink {
+    background: #fdf2f8;
+    color: #db2777;
+}
+
+.bg-soft-indigo {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.bg-soft-amber {
+    background: #fffbeb;
+    color: #f59e0b;
+}
+
+.bg-soft-rose {
+    background: #fff1f2;
+    color: #e11d48;
+}
+
+.bg-soft-teal {
+    background: #f0fdfa;
+    color: #14b8a6;
+}
+
+.bg-soft-cyan {
+    background: #ecfeff;
+    color: #06b6d4;
+}
+
+.bg-soft-violet {
+    background: #f5f3ff;
+    color: #8b5cf6;
+}
+
+.icon-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: rgba(16, 185, 129, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--emerald-600);
+    font-size: 28px;
+    margin-inline: auto;
+}
+
+#catGrid {
+    padding-bottom: 4px;
+}
+
+.category-col {
+    min-width: 220px;
+}
+
+@media (min-width: 992px) {
+    .category-col {
+        min-width: 240px;
+    }
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}

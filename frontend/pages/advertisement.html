@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>All Advertisements - Adlync</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="../assert/css/styles.css" rel="stylesheet"/>
+    <link href="../assert/css/adpage.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container py-2">
+        <a class="navbar-brand fw-bold text-primary-emerald" href="../index.html">Adlync</a>
+        <button aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navMain" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link active" href="../pages/advertisement.html">Browse</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Sell</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">About</a></li>
+            </ul>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" id="signInBtn">Sign In</button>
+                <button class="btn btn-emerald" id="postAdBtn">Post Ad</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<section class="bg-light py-4">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="h3 fw-bold mb-1">All Advertisements</h1>
+                <p class="text-muted mb-0">Discover amazing deals from verified sellers</p>
+            </div>
+            <div class="col-md-6">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 justify-content-md-end">
+                        <li class="breadcrumb-item"><a href="../index.html">Home</a></li>
+                        <li class="breadcrumb-item active">All Ads</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<section class="py-4">
+    <div class="container">
+        <div class="row g-4">
+            <!-- Filters Sidebar -->
+            <div class="col-lg-3">
+                <div class="filter-sidebar sticky-top" style="top: 100px;">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Filters</h5>
+                        <button class="btn btn-sm btn-outline-secondary" id="clearFilters">Clear All</button>
+                    </div>
+
+                    <!-- Search -->
+                    <div class="filter-section">
+                        <label class="form-label fw-semibold">Search</label>
+                        <div class="input-group">
+                            <input class="form-control" id="searchInput" placeholder="Search ads..." type="text">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Category Filter -->
+                    <div class="filter-section">
+                        <label class="form-label fw-semibold">Category</label>
+                        <select class="form-select" id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="vehicles">Vehicles</option>
+                            <option value="electronics">Electronics</option>
+                            <option value="properties">Properties</option>
+                            <option value="jobs">Jobs</option>
+                            <option value="services">Services</option>
+                            <option value="sports">Sports</option>
+                            <option value="animals">Animals</option>
+                            <option value="agriculture">Agriculture</option>
+                            <option value="kids">Kids</option>
+                            <option value="fashion">Fashion & Beauty</option>
+                            <option value="entertainment">Entertainment</option>
+                            <option value="education">Education</option>
+                            <option value="mobile">Mobile</option>
+                            <option value="overseas">Work Overseas</option>
+                            <option value="home">Home & Garden</option>
+                            <option value="essentials">Essentials</option>
+                        </select>
+                    </div>
+
+                    <!-- Price Range -->
+                    <div class="filter-section">
+                        <label class="form-label fw-semibold">Price Range (Rs.)</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input class="form-control" id="minPrice" placeholder="Min" type="number">
+                            </div>
+                            <div class="col-6">
+                                <input class="form-control" id="maxPrice" placeholder="Max" type="number">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="filter-section">
+                        <label class="form-label fw-semibold">Location</label>
+                        <select class="form-select" id="locationFilter">
+                            <option value="">All Locations</option>
+                            <option value="colombo">Colombo</option>
+                            <option value="kandy">Kandy</option>
+                            <option value="galle">Galle</option>
+                            <option value="jaffna">Jaffna</option>
+                            <option value="negombo">Negombo</option>
+                            <option value="mount-lavinia">Mount Lavinia</option>
+                            <option value="kurunegala">Kurunegala</option>
+                            <option value="anuradhapura">Anuradhapura</option>
+                        </select>
+                    </div>
+
+                    <!-- Condition -->
+                    <div class="filter-section">
+                        <label class="form-label fw-semibold">Condition</label>
+                        <div class="form-check">
+                            <input class="form-check-input" id="conditionNew" type="checkbox" value="new">
+                            <label class="form-check-label" for="conditionNew">New</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" id="conditionUsed" type="checkbox" value="used">
+                            <label class="form-check-label" for="conditionUsed">Used</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" id="conditionRefurbished" type="checkbox"
+                                   value="refurbished">
+                            <label class="form-check-label" for="conditionRefurbished">Refurbished</label>
+                        </div>
+                    </div>
+
+                    <!-- Apply Filters Button -->
+                    <button class="btn btn-emerald w-100 mt-3" id="applyFilters">
+                        <i class="bi bi-funnel me-2"></i>Apply Filters
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Area -->
+            <div class="col-lg-9">
+                <!-- Results Header -->
+                <div class="results-header mb-4">
+                    <div class="row align-items-center">
+                        <div class="col-md-6">
+                            <h6 class="mb-1">Showing <span id="resultCount">1,247</span> results</h6>
+                            <small class="text-muted">Found in <span id="searchTime">0.12</span> seconds</small>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex justify-content-md-end align-items-center gap-3">
+                                <!-- Sort Options -->
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="form-label mb-0 text-nowrap">Sort by:</label>
+                                    <select class="form-select form-select-sm" id="sortBy" style="width: auto;">
+                                        <option value="newest">Newest First</option>
+                                        <option value="oldest">Oldest First</option>
+                                        <option value="price-low">Price: Low to High</option>
+                                        <option value="price-high">Price: High to Low</option>
+                                        <option value="popular">Most Popular</option>
+                                    </select>
+                                </div>
+
+                                <!-- View Toggle -->
+                                <div class="view-toggle">
+                                    <button class="btn btn-sm active" id="gridView" title="Grid View">
+                                        <i class="bi bi-grid-3x3-gap"></i>
+                                    </button>
+                                    <button class="btn btn-sm" id="listView" title="List View">
+                                        <i class="bi bi-list"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ads Grid -->
+                <div class="row g-4" id="adsContainer"></div>
+
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">...</a></li>
+                        <li class="page-item"><a class="page-link" href="#">42</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="text-bg-dark py-5 mt-5">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <h5 class="mb-3">Adlync</h5>
+                <p class="text-muted">Sri Lanka's most trusted classified ads platform</p>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-semibold mb-3">Categories</h6>
+                <ul class="list-unstyled text-muted">
+                    <li><a class="link-faded" href="#">Vehicles</a></li>
+                    <li><a class="link-faded" href="#">Electronics</a></li>
+                    <li><a class="link-faded" href="#">Properties</a></li>
+                    <li><a class="link-faded" href="#">Jobs</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-semibold mb-3">Support</h6>
+                <ul class="list-unstyled text-muted">
+                    <li><a class="link-faded" href="#">Help Center</a></li>
+                    <li><a class="link-faded" href="#">Safety Tips</a></li>
+                    <li><a class="link-faded" href="#">Contact Us</a></li>
+                    <li><a class="link-faded" href="#">Report Ad</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h6 class="fw-semibold mb-3">Company</h6>
+                <ul class="list-unstyled text-muted">
+                    <li><a class="link-faded" href="#">About Us</a></li>
+                    <li><a class="link-faded" href="#">Privacy Policy</a></li>
+                    <li><a class="link-faded" href="#">Terms of Service</a></li>
+                    <li><a class="link-faded" href="#">Careers</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-top border-secondary mt-4 pt-3 text-center text-muted">
+            &copy; 2025 Adlync. All rights reserved.
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="../js/cookies.js"></script>
+<script src="../js/view-all-ads.js"></script>
+</body>
+</html>

@@ -112,11 +112,15 @@ function getCookie(name) {
 
 function doLogout(redirectUrl = "index.html") {
     if (confirm("Are you sure you want to logout?")) {
-        // clear cookies
         deleteCookie("token");
-        deleteCookie("user"); // optional - if user/admin cookie thiyenawanam
-
-        // redirect
+        deleteCookie("user");
         window.location.href = redirectUrl;
     }
 }
+
+$(document).ready(function () {
+    $("#viewAllBtn").on("click", function () {
+        window.location.href = "pages/advertisement.html";
+    });
+});
+

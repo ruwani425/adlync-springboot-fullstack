@@ -41,6 +41,7 @@ public class PostController {
     @Operation(summary = "Get Post by ID", description = "Retrieve a Post with full details")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
         PostResponseDTO responseDTO = service.findById(id);
+        System.out.println("post responce dto :"+responseDTO.toString());
         return ResponseEntity.ok(responseDTO);
     }
 
@@ -52,6 +53,15 @@ public class PostController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(service.findAllByStatus(status, pageable));
+    }
+
+    @GetMapping("/approved")
+    public ResponseEntity<PageResponse<PostResponseDTO>> getApprovedPostsPage(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        return ResponseEntity.ok(service.findAllByStatus(PostEntityStatusEnum.APPROVED, pageable));
     }
 
     @PostMapping
@@ -70,7 +80,7 @@ public class PostController {
     @PutMapping("/{id}/approve")
     @Operation(summary = "Approve Post", description = "Approve a pending post")
     public ResponseEntity<PostResponseDTO> approvePost(@PathVariable Long id) {
-        PostResponseDTO approvedPost = service.approvePost(id); // service method to update status
+        PostResponseDTO approvedPost = service.approvePost(id);
         return ResponseEntity.ok(approvedPost);
     }
 

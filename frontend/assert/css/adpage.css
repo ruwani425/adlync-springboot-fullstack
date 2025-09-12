@@ -1,0 +1,53 @@
+.filter-sidebar {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 1.5rem;
+}
+.ad-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+.ad-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+}
+.price-badge {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white;
+    font-weight: 600;
+}
+.category-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+}
+.filter-section {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+.filter-section:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+.view-toggle {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 4px;
+}
+.view-toggle .btn {
+    border: none;
+    background: transparent;
+    padding: 8px 12px;
+    border-radius: 6px;
+}
+.view-toggle .btn.active {
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.results-header {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
