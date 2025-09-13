@@ -1,4 +1,4 @@
-package com.ijse.adlync.dto.response;
+package com.ijse.adlync.dto.request;
 
 import com.ijse.adlync.entity.enums.UserEntityRoleEnum;
 import lombok.AllArgsConstructor;
@@ -8,14 +8,14 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserResponseDTO {
+@Setter
+@Getter
+public class UserRequestDTO {
     private Long id;
+    private UserEntityRoleEnum role;
     private String name;
     private String email;
-    private UserEntityRoleEnum role;
     private LocalDateTime joinDate;
 }

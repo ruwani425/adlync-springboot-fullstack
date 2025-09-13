@@ -37,6 +37,14 @@ public class PostController {
         return ResponseEntity.ok(service.findAll());
     }
 
+
+    @GetMapping("/count/by-user/{userId}")
+    public ResponseEntity<Long> getPostCountByUser(@PathVariable Long userId) {
+        long count = service.getPostCountByUser(userId);
+        System.out.println("\n\n\n\n"+"post count :"+count);
+        return ResponseEntity.ok(count);
+    }
+
     @GetMapping("/{id}")
     @Operation(summary = "Get Post by ID", description = "Retrieve a Post with full details")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
@@ -63,6 +71,17 @@ public class PostController {
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(service.findAllByStatus(PostEntityStatusEnum.APPROVED, pageable));
     }
+
+    @GetMapping("/approved/recent")
+    public ResponseEntity<PageResponse<PostResponseDTO>> getRecentApprovedPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "3") int size) {
+
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<PostResponseDTO> pageResponse = service.findAllByStatus(PostEntityStatusEnum.APPROVED, pageable);
+        return ResponseEntity.ok(pageResponse);
+    }
+
 
     @PostMapping
     @Operation(summary = "Create new Post", description = "Create a new Post entity")

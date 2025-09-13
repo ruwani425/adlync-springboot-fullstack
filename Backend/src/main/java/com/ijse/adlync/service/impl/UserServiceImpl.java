@@ -1,13 +1,15 @@
 package com.ijse.adlync.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
-import com.ijse.adlync.entity.UserEntity;
-import com.ijse.adlync.repository.UserRepository;
 import com.ijse.adlync.dto.request.RegisterRequestDTO;
 import com.ijse.adlync.dto.response.RegisterResponseDTO;
+import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.entity.UserEntity;
+import com.ijse.adlync.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl {
@@ -17,13 +19,20 @@ public class UserServiceImpl {
 
     public List<RegisterResponseDTO> findAll() {
         return repository.findAll().stream()
-            .map(this::toResponseDTO)
-            .collect(Collectors.toList());
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
     }
+
+    public List<UserResponseDTO> findAllUsers() {
+        return repository.findAll().stream()
+                .map(this::toUserResponseDTO)
+                .collect(Collectors.toList());
+    }
+
 
     public RegisterResponseDTO findById(Long id) {
         UserEntity entity = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("UserEntity not found with id: " + id));
+                .orElseThrow(() -> new RuntimeException("UserEntity not found with id: " + id));
         return toResponseDTO(entity);
     }
 
@@ -59,6 +68,17 @@ public class UserServiceImpl {
         dto.setEmail(entity.getEmail());
         return dto;
     }
+
+    private UserResponseDTO toUserResponseDTO(UserEntity entity) {
+        UserResponseDTO dto = new UserResponseDTO();
+        dto.setId(entity.getId());
+        dto.setName(entity.getName());
+        dto.setEmail(entity.getEmail());
+        dto.setJoinDate(entity.getJoinDate());
+        dto.setRole(entity.getRole());
+        return dto;
+    }
+
 
     private UserEntity toEntity(RegisterRequestDTO dto) {
         UserEntity entity = new UserEntity();

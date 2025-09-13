@@ -35,12 +35,12 @@
                 Moderators
             </a>
         </div>
-        <div class="nav-item">
-            <a class="nav-link" data-section="categories" href="#categories">
-                <i class="bi bi-tags"></i>
-                Categories
-            </a>
-        </div>
+        <!--        <div class="nav-item">-->
+        <!--            <a class="nav-link" data-section="categories" href="#categories">-->
+        <!--                <i class="bi bi-tags"></i>-->
+        <!--                Categories-->
+        <!--            </a>-->
+        <!--        </div>-->
         <div class="nav-item">
             <a class="nav-link" data-section="posts" href="#posts">
                 <i class="bi bi-file-post"></i>
@@ -254,74 +254,29 @@
                             <tr>
                                 <th>User</th>
                                 <th>Email</th>
-                                <th>Phone</th>
                                 <th>Posts</th>
-                                <th>Status</th>
                                 <th>Joined</th>
-                                <th>Actions</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="userTableBody">
+                            <!-- Dynamic rows will be loaded via AJAX -->
+                            <!-- Example structure (no sample data) -->
+                            <!--
                             <tr>
                                 <td>
                                     <div class="d-flex align-items-center">
-                                        <img alt="User" class="avatar me-3"
-                                             src="https://picsum.photos/seed/user1/40/40">
+                                        <img alt="User" class="avatar me-3" src="">
                                         <div>
-                                            <div class="fw-semibold">John Doe</div>
-                                            <small class="text-muted">ID: #12345</small>
+                                            <div class="fw-semibold"></div>
+                                            <small class="text-muted">ID: </small>
                                         </div>
                                     </div>
                                 </td>
-                                <td>john.doe@email.com</td>
-                                <td>+94 77 123 4567</td>
-                                <td><span class="badge bg-primary">12</span></td>
-                                <td><span class="status-badge status-approved">Active</span></td>
-                                <td>2024-01-15</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="View">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Suspend">
-                                            <i class="bi bi-pause"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
+                                <td></td>
+                                <td><span class="badge bg-primary"></span></td>
+                                <td></td>
                             </tr>
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img alt="User" class="avatar me-3"
-                                             src="https://picsum.photos/seed/user2/40/40">
-                                        <div>
-                                            <div class="fw-semibold">Jane Smith</div>
-                                            <small class="text-muted">ID: #12346</small>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>jane.smith@email.com</td>
-                                <td>+94 71 234 5678</td>
-                                <td><span class="badge bg-primary">8</span></td>
-                                <td><span class="status-badge status-approved">Active</span></td>
-                                <td>2024-01-20</td>
-                                <td>
-                                    <div class="btn-group btn-group-sm">
-                                        <button class="btn btn-outline-primary" title="View">
-                                            <i class="bi bi-eye"></i>
-                                        </button>
-                                        <button class="btn btn-outline-warning" title="Suspend">
-                                            <i class="bi bi-pause"></i>
-                                        </button>
-                                        <button class="btn btn-outline-danger" title="Delete">
-                                            <i class="bi bi-trash"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                            -->
                             </tbody>
                         </table>
                     </div>
@@ -413,32 +368,32 @@
             </div>
         </div>
 
-        <div class="content-section" id="categories-section">
-            <div class="section-header">
-                <h3 class="text-primary-emerald mb-0">Categories Management</h3>
-            </div>
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="card-title mb-0">All Categories</h5>
-                </div>
-                <div class="card-body">
-                    <ul class="list-group">
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Vehicles
-                            <span class="badge bg-primary rounded-pill">1200</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Electronics
-                            <span class="badge bg-primary rounded-pill">950</span>
-                        </li>
-                        <li class="list-group-item d-flex justify-content-between align-items-center">
-                            Real Estate
-                            <span class="badge bg-primary rounded-pill">800</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        <!--        <div class="content-section" id="categories-section">-->
+        <!--            <div class="section-header">-->
+        <!--                <h3 class="text-primary-emerald mb-0">Categories Management</h3>-->
+        <!--            </div>-->
+        <!--            <div class="card">-->
+        <!--                <div class="card-header">-->
+        <!--                    <h5 class="card-title mb-0">All Categories</h5>-->
+        <!--                </div>-->
+        <!--                <div class="card-body">-->
+        <!--                    <ul class="list-group">-->
+        <!--                        <li class="list-group-item d-flex justify-content-between align-items-center">-->
+        <!--                            Vehicles-->
+        <!--                            <span class="badge bg-primary rounded-pill">1200</span>-->
+        <!--                        </li>-->
+        <!--                        <li class="list-group-item d-flex justify-content-between align-items-center">-->
+        <!--                            Electronics-->
+        <!--                            <span class="badge bg-primary rounded-pill">950</span>-->
+        <!--                        </li>-->
+        <!--                        <li class="list-group-item d-flex justify-content-between align-items-center">-->
+        <!--                            Real Estate-->
+        <!--                            <span class="badge bg-primary rounded-pill">800</span>-->
+        <!--                        </li>-->
+        <!--                    </ul>-->
+        <!--                </div>-->
+        <!--            </div>-->
+        <!--        </div>-->
 
         <div class="content-section" id="posts-section">
             <div class="section-header">
@@ -748,7 +703,7 @@
 
 <div class="post-detail-modal" id="postDetailModal">
     <div class="post-detail-content">
-        <input type="hidden" id="modalPostId">
+        <input id="modalPostId" type="hidden">
         <div class="post-detail-header">
             <h4 id="modalPostTitle">Post Details</h4>
             <button class="close-modal" onclick="closePostDetail()">&times;</button>

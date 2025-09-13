@@ -77,7 +77,14 @@ $(document).ready(function () {
             function formatDate(isoString) {
                 if (!isoString) return "Posted today";
                 const date = new Date(isoString);
-                const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+                const options = {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                };
                 return date.toLocaleString('en-US', options);
             }
 
@@ -86,7 +93,7 @@ $(document).ready(function () {
             const conditionRaw = data.common?.[categoryName]?.condition;
             if (conditionRaw) {
                 const conditionText = conditionRaw.toLowerCase(); // convert to lowercase
-                adTitle +=" - "+ conditionText+" condition ";
+                adTitle += " - " + conditionText + " condition ";
             }
             $("#adTitle").text(adTitle);
 
@@ -105,7 +112,16 @@ $(document).ready(function () {
                 const seller = data.user;
                 $("#sellerNameValue").text(seller.name);
                 $("#sellerEmail").attr("href", `mailto:${seller.email}`).text(seller.email);
-                $("#sellerMemberSince").text("2020");
+                let joinDate = seller.joinDate;
+
+                let onlyDate = joinDate.split("T")[0];
+
+                let d = new Date(joinDate);
+                let formattedDate = d.getFullYear() + "-" +
+                    String(d.getMonth() + 1).padStart(2, '0') + "-" +
+                    String(d.getDate()).padStart(2, '0');
+
+                $("#sellerMemberSince").text(onlyDate);
                 $("#sellerRating").text("4.8/5");
             }
 
@@ -127,7 +143,7 @@ $(document).ready(function () {
                     $indicators.append($indicator);
 
                     const $item = $("<div>").addClass(`carousel-item ${index === 0 ? "active" : ""}`);
-                    $item.html(`<img src="${img.image_url}" class="d-block w-100 object-cover" style="height:400px" alt="Image ${index + 1}">`);
+                    $item.html(`<img src="${img.image_url}" class="d-block w-100 object-cover" style="height:480px;width:480px" alt="Image ${index + 1}">`);
                     $inner.append($item);
                 });
             }

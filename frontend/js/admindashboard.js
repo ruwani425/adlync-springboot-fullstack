@@ -14,13 +14,80 @@ $(document).ready(function () {
     const $sidebar = $('#sidebar');
     const $mainContent = $('.main-content');
 
-    // Logout
+    $.ajax({
+        url: "http://localhost:8080/api/users/all",
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + getCookie("token")
+        },
+        success: async function (users) {
+            console.log(users)
+            const $tbody = $("#userTableBody");
+            $tbody.empty();
+
+            const normalUsers = users.filter(user => user.role !== "ADMIN");
+
+            for (const user of normalUsers) {
+                let postsCount = 0;
+                try {
+                    console.log(user.id)
+                    const response = await $.ajax({
+                        url: `http://localhost:8080/api/posts/count/by-user/${user.id}`,
+                        method: "GET",
+                        headers: {
+                            "Authorization": "Bearer " + getCookie("token")
+                        }
+                    });
+                    postsCount = response;
+                } catch (err) {
+                    console.error("Failed to fetch post count for user", user.id);
+                }
+
+                const row = `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img alt="User" class="avatar me-3"
+                                 src="${user.avatarUrl || 'https://picsum.photos/seed/default/40/40'}">
+                            <div>
+                                <div class="fw-semibold">${user.name}</div>
+                                <small class="text-muted">ID: #${user.id}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${user.email}</td>
+                    <td><span class="badge bg-primary">${postsCount}</span></td>
+                    <td>${formatDate(user.joinDate)}</td>
+                </tr>`;
+                $tbody.append(row);
+            }
+        },
+        error: function () {
+            console.error("Failed to fetch users");
+        }
+    });
+
+// Helper function to format date
+    function formatDate(dateString) {
+        const options = {year: 'numeric', month: 'short', day: 'numeric'};
+        const date = new Date(dateString);
+        return date.toLocaleDateString(undefined, options);
+    }
+
+
+    function formatDate(isoString) {
+        const date = new Date(isoString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${year}-${month}-${day}`;
+    }
+
     $(".dropdown-item:contains('Logout')").on("click", function (e) {
         e.preventDefault();
         doLogout("../index.html");
     });
 
-    // Sidebar navigation
     $navLinks.on('click', function (e) {
         e.preventDefault();
         $navLinks.removeClass('active');
@@ -34,7 +101,6 @@ $(document).ready(function () {
         $pageTitle.text($(this).text().trim());
     });
 
-    // Sidebar toggle
     $sidebarToggle.on('click', function () {
         $sidebar.toggleClass('collapsed');
         $mainContent.toggleClass('expanded');
@@ -51,7 +117,6 @@ $(document).ready(function () {
         search: ''
     };
 
-    // Category selection
     $categoryItems.on('click', function (e) {
         e.preventDefault();
         $categoryItems.removeClass('active');
@@ -65,7 +130,6 @@ $(document).ready(function () {
         applyAllFilters();
     });
 
-    // Status filter
     $statusFilter.on('change', function () {
         const newStatus = $(this).val().toUpperCase();
         selectedStatus = newStatus;
@@ -73,7 +137,6 @@ $(document).ready(function () {
         loadPosts(0, newStatus);
     });
 
-    // Search posts
     $searchPosts.on('input', function () {
         currentFilters.search = $(this).val().toLowerCase();
         applyAllFilters();
@@ -82,7 +145,6 @@ $(document).ready(function () {
     loadPosts(0);
 });
 
-// Show post modal
 function showPostDetail(postData) {
     try {
         $('#modalPostId').val(postData.id || postData.post_id);
@@ -100,7 +162,6 @@ function showPostDetail(postData) {
         $("#modalContactEmail").text(postData.user?.email || "N/A");
         $("#modalContactLocation").text(postData.location?.address || "N/A");
 
-        // Payment info
         const $paymentDiv = $("#modalPaymentMethod").empty();
         if (postData.payment?.payment_type === "BANK_TRANSFER") {
             const bankIcon = `<i class="bi bi-bank2 me-2 text-primary"></i>`;
@@ -117,12 +178,10 @@ function showPostDetail(postData) {
             $paymentDiv.text("N/A");
         }
 
-        // Images
         postImages = (postData.images || []).map(img => (typeof img === 'string' ? img : img.image_url));
         currentImageIndex = 0;
         setupImageGallery();
 
-        // Action buttons
         const $actionDiv = $("#modalActionButtons").empty();
         if (postData.status === 'PENDING') {
             const approveBtn = $('<button class="btn btn-success me-2">Approve</button>');

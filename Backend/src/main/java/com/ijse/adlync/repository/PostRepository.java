@@ -10,4 +10,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
     Page<PostEntity> findAllByStatus(PostEntityStatusEnum status, Pageable pageable);
+
+    long countByUser_Id(Long userId);
 }

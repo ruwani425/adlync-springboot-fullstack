@@ -254,77 +254,23 @@
     <div class="container">
         <div class="d-flex justify-content-between align-items-center mb-4">
             <h2 class="fw-bold mb-0">Featured Listings</h2>
-            <button id="viewAllBtn" class="btn btn-outline-secondary">View All</button>
+            <button class="btn btn-outline-secondary" id="viewAllBtn">View All</button>
         </div>
-        <div class="row g-4">
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-hover h-100 overflow-hidden">
-                    <div class="position-relative">
-                        <img alt="Toyota Prius" class="w-100 object-cover"
-                             src="https://picsum.photos/seed/car/800/480" style="height:220px"/>
-                        <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3">Vehicles</span>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">Toyota Prius 2020 - Excellent Condition</h5>
-                        <div class="fs-5 fw-bold text-primary-emerald mb-1">Rs. 4,500,000</div>
-                        <div class="d-flex justify-content-between text-muted">
-                            <small>Colombo 03</small>
-                            <small><i class="bi bi-star-fill text-warning me-1"></i>4.8</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <small class="text-muted">by John Motors</small>
-                            <a class="btn btn-emerald btn-sm" href="#">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-hover h-100 overflow-hidden">
-                    <div class="position-relative">
-                        <img alt="iPhone 14 Pro Max" class="w-100 object-cover"
-                             src="https://picsum.photos/seed/iphone/800/480" style="height:220px"/>
-                        <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3">Electronics</span>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">iPhone 14 Pro Max - 256GB</h5>
-                        <div class="fs-5 fw-bold text-primary-emerald mb-1">Rs. 285,000</div>
-                        <div class="d-flex justify-content-between text-muted">
-                            <small>Kandy</small>
-                            <small><i class="bi bi-star-fill text-warning me-1"></i>4.9</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <small class="text-muted">by TechHub LK</small>
-                            <a class="btn btn-emerald btn-sm" href="#">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Cards Container -->
+        <div class="row g-4" id="featuredPostsContainer">
+            <!-- Cards will be dynamically inserted here via AJAX -->
+        </div>
 
-            <div class="col-md-6 col-lg-4">
-                <div class="card card-hover h-100 overflow-hidden">
-                    <div class="position-relative">
-                        <img alt="Apartment" class="w-100 object-cover"
-                             src="https://picsum.photos/seed/apartment/800/480" style="height:220px"/>
-                        <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3">Properties</span>
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">3BR Apartment - Sea View</h5>
-                        <div class="fs-5 fw-bold text-primary-emerald mb-1">Rs. 45,000,000</div>
-                        <div class="d-flex justify-content-between text-muted">
-                            <small>Mount Lavinia</small>
-                            <small><i class="bi bi-star-fill text-warning me-1"></i>4.7</small>
-                        </div>
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-                            <small class="text-muted">by Prime Properties</small>
-                            <a class="btn btn-emerald btn-sm" href="#">View Details</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <!-- Pagination Controls -->
+        <div class="d-flex justify-content-center align-items-center mt-4 gap-2">
+            <button class="btn btn-outline-secondary btn-sm" id="prevPage">Previous</button>
+            <span class="fw-bold" id="currentPage">1</span>
+            <button class="btn btn-outline-secondary btn-sm" id="nextPage">Next</button>
         </div>
     </div>
 </section>
+
 
 <!-- Trust Features -->
 <section class="py-5 bg-card">

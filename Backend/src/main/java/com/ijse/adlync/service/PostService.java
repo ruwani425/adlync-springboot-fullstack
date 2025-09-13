@@ -57,4 +57,6 @@ public interface PostService {
     public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable);
 
     PostResponseDTO approvePost(Long id);
+
+    long getPostCountByUser(Long userId);
 }

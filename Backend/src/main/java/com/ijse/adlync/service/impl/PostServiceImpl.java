@@ -109,6 +109,12 @@ public class PostServiceImpl implements PostService {
         return modelMapper.map(post, PostResponseDTO.class);
     }
 
+    @Override
+    public long getPostCountByUser(Long userId) {
+        System.out.println(repository.countByUser_Id(userId));
+        return repository.countByUser_Id(userId);
+    }
+
 
     @Override
     public PostResponseDTO findById(Long id) {

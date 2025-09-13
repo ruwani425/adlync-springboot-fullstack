@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Adlync-fullstack.iml" filepath="$PROJECT_DIR$/.idea/Adlync-fullstack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Backend/adlync.iml" filepath="$PROJECT_DIR$/Backend/adlync.iml" />
     </modules>
   </component>
 </project>

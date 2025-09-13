@@ -3,7 +3,9 @@ package com.ijse.adlync.entity;
 import com.ijse.adlync.entity.enums.UserEntityRoleEnum;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +37,10 @@ public class UserEntity {
 
     @Column(nullable = false)
     private String email;
+
+    @CreationTimestamp
+    @Column(updatable = false, nullable = false)
+    private LocalDateTime joinDate;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ReportEntity> reports = new ArrayList<>();
