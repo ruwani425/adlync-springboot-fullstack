@@ -2,6 +2,7 @@ package com.ijse.adlync.config;
 
 
 import com.ijse.adlync.repository.UserRepository;
+import com.ijse.adlync.util.ValueEncoder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
@@ -36,12 +37,19 @@ public class ApplicationConfig {
                                         ("User not found")
                         );
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
+    }
+
+    @Bean
+    public ValueEncoder valueEncoder() {
+        return new ValueEncoder();
     }
 }

@@ -17,5 +17,6 @@ public class UserRequestDTO {
     private UserEntityRoleEnum role;
     private String name;
     private String email;
+    private String status;
     private LocalDateTime joinDate;
 }

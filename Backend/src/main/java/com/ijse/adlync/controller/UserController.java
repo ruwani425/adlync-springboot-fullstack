@@ -64,7 +64,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid input data"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<RegisterResponseDTO> createUser(@Parameter(description = "User data to create") @RequestBody RegisterRequestDTO requestDTO) {
+    public ResponseEntity<RegisterResponseDTO> createUser(@Parameter(description = "User data to create") @RequestBody RegisterRequestDTO requestDTO) throws Exception {
         RegisterResponseDTO response = service.create(requestDTO);
         return ResponseEntity.ok(response);
     }
@@ -79,6 +79,21 @@ public class UserController {
     })
     public ResponseEntity<RegisterResponseDTO> updateUser(@Parameter(description = "ID of the User to update") @PathVariable Long id, @Parameter(description = "Updated User data") @RequestBody RegisterRequestDTO requestDTO) {
         RegisterResponseDTO response = service.update(id, requestDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/set-moderator-password")
+    @Operation(summary = "Update Moderator", description = "Update an existing Moderator")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated moderator"),
+            @ApiResponse(responseCode = "404", description = "moderator not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<UserResponseDTO> updateModerator(@RequestParam String token, @RequestParam String password) throws Exception {
+        System.out.println(token);
+        System.out.println(password);
+        UserResponseDTO response = service.updateModerator(token, password);
         return ResponseEntity.ok(response);
     }
 

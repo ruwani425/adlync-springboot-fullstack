@@ -14,6 +14,55 @@ $(document).ready(function () {
     const $sidebar = $('#sidebar');
     const $mainContent = $('.main-content');
 
+    $("#addModeratorForm").on("submit", function (e) {
+        e.preventDefault();
+
+        $("#loadingSpinner").removeClass("d-none");
+        $("#submitModeratorBtn").prop("disabled", true);
+
+        const moderatorData = {
+            name: $("#moderatorName").val(),
+            email: $("#moderatorEmail").val()
+        };
+
+        $.ajax({
+            url: "http://localhost:8080/api/users",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(moderatorData),
+            headers: {
+                "Authorization": "Bearer " + getCookie("token")
+            },
+            success: function (response) {
+                $("#addModeratorModal").modal("hide");
+
+                $("#addModeratorForm")[0].reset();
+
+                alert("Moderator added successfully!");
+
+                $("#loadingSpinner").addClass("d-none");
+                $("#submitModeratorBtn").prop("disabled", false);
+            },
+            error: function (xhr) {
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.name) {
+                        $("#nameError").text(xhr.responseJSON.name).show();
+                        $("#moderatorName").addClass("is-invalid");
+                    }
+                    if (xhr.responseJSON.email) {
+                        $("#emailError").text(xhr.responseJSON.email).show();
+                        $("#moderatorEmail").addClass("is-invalid");
+                    }
+                } else {
+                    alert("Something went wrong. Please try again.");
+                }
+
+                $("#loadingSpinner").addClass("d-none");
+                $("#submitModeratorBtn").prop("disabled", false);
+            }
+        });
+    });
+
     $.ajax({
         url: "http://localhost:8080/api/users/all",
         method: "GET",
@@ -142,6 +191,102 @@ $(document).ready(function () {
         applyAllFilters();
     });
 
+    // Function to add a new moderator row to the table
+//     function addModeratorRow(moderatorData) {
+//         const $moderatorTableBody = $('#moderators-section tbody');
+//
+//         // Remove the empty state row if it exists
+//         $moderatorTableBody.find('.empty-state').closest('tr').remove();
+//
+//         // Create the new moderator row with actions dropdown
+//         const moderatorRow = `
+//         <tr data-moderator-id="${moderatorData.id}">
+//             <td>
+//                 <div class="d-flex align-items-center">
+//                     <img alt="Moderator" class="avatar me-3 rounded-circle"
+//                          src="${moderatorData.avatarUrl || 'https://picsum.photos/seed/' + moderatorData.id + '/40/40'}">
+//                     <div>
+//                         <div class="fw-semibold">${moderatorData.name}</div>
+//                         <small class="text-muted">ID: #${moderatorData.id}</small>
+//                     </div>
+//                 </div>
+//             </td>
+//             <td>${moderatorData.email}</td>
+//             <td>${formatDate(moderatorData.joinDate || new Date().toISOString())}</td>
+//             <td>
+//                 <div class="dropdown">
+//                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+//                             type="button"
+//                             data-bs-toggle="dropdown"
+//                             aria-expanded="false">
+//                         Actions
+//                     </button>
+//                     <ul class="dropdown-menu">
+//                         <li>
+//                             <a class="dropdown-item" href="#" onclick="editModerator(${moderatorData.id})">
+//                                 <i class="bi bi-pencil me-2"></i>Edit
+//                             </a>
+//                         </li>
+//                         <li>
+//                             <a class="dropdown-item" href="#" onclick="viewModeratorDetails(${moderatorData.id})">
+//                                 <i class="bi bi-eye me-2"></i>View Details
+//                             </a>
+//                         </li>
+//                         <li><hr class="dropdown-divider"></li>
+//                         <li>
+//                             <a class="dropdown-item text-warning" href="#" onclick="suspendModerator(${moderatorData.id})">
+//                                 <i class="bi bi-pause-circle me-2"></i>Suspend
+//                             </a>
+//                         </li>
+//                         <li>
+//                             <a class="dropdown-item text-danger" href="#" onclick="removeModerator(${moderatorData.id})">
+//                                 <i class="bi bi-trash me-2"></i>Remove
+//                             </a>
+//                         </li>
+//                     </ul>
+//                 </div>
+//             </td>
+//         </tr>
+//     `;
+//
+//         // Append the new row to the table body
+//         $moderatorTableBody.append(moderatorRow);
+//
+//         // Update moderator count
+//         updateModeratorStats();
+//     }
+//
+// // Action functions for the dropdown (implement your own logic)
+//     function editModerator(moderatorId) {
+//         console.log('Edit moderator:', moderatorId);
+//         // Add your edit functionality here
+//     }
+//
+//     function viewModeratorDetails(moderatorId) {
+//         console.log('View moderator details:', moderatorId);
+//         // Add your view details functionality here
+//     }
+//
+//     function suspendModerator(moderatorId) {
+//         console.log('Suspend moderator:', moderatorId);
+//         // Add your suspend functionality here
+//     }
+//
+//     function removeModerator(moderatorId) {
+//         console.log('Remove moderator:', moderatorId);
+//         // Add your remove functionality here
+//     }
+//
+//     function updateModeratorStats() {
+//         const totalModerators = $('#moderators-section tbody tr').not(':has(.empty-state)').length;
+//
+//         // Update the statistics in the sidebar card
+//         $('#moderators-section .card-body .d-flex:first-child .fw-bold').text(totalModerators);
+//         $('#moderators-section .card-body .d-flex:last-child .fw-bold').text(totalModerators);
+//     }
+
+// Note: Change the empty state colspan in your HTML from 6 to 4:
+// <td colspan="4"> instead of <td colspan="6">
     loadPosts(0);
 });
 

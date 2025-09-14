@@ -69,11 +69,9 @@ $(document).ready(function () {
     updateCategoryDetailsTitle(category.icon, categoryName);
 
     $.ajax({
-        url: `http://localhost:8080/api/posts/${postId}`,
+        url: `http://localhost:8080/api/posts/post-detail/${postId}`,
         method: "GET",
-        headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (data) {
-
             function formatDate(isoString) {
                 if (!isoString) return "Posted today";
                 const date = new Date(isoString);

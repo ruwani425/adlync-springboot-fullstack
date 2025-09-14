@@ -17,5 +17,6 @@ public class UserResponseDTO {
     private String name;
     private String email;
     private UserEntityRoleEnum role;
+    private String status;
     private LocalDateTime joinDate;
 }

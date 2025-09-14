@@ -9,6 +9,7 @@ import com.ijse.adlync.service.AuthService;
 import com.ijse.adlync.service.EmailService;
 import com.ijse.adlync.util.JwtUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,6 +70,7 @@ public class AuthServiceImpl implements AuthService {
                 .role(registerRequestDTO.getRole())
                 .name(registerRequestDTO.getName())
                 .email(registerRequestDTO.getEmail())
+                .status("ACTIVE")
                 .build();
         userRepository.save(userEntity);
         emailService.sendSignupEmail(userEntity.getEmail(), userEntity.getName());

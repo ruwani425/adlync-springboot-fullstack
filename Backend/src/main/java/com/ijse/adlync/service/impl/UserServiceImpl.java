@@ -4,25 +4,39 @@ import com.ijse.adlync.dto.request.RegisterRequestDTO;
 import com.ijse.adlync.dto.response.RegisterResponseDTO;
 import com.ijse.adlync.dto.response.UserResponseDTO;
 import com.ijse.adlync.entity.UserEntity;
+import com.ijse.adlync.entity.enums.UserEntityRoleEnum;
 import com.ijse.adlync.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.ijse.adlync.service.EmailService;
+import com.ijse.adlync.service.UserService;
+import com.ijse.adlync.util.ValueEncoder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class UserServiceImpl {
+@RequiredArgsConstructor
+public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private UserRepository repository;
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%";
+    private static final int PASSWORD_LENGTH = 10;
 
+    private final UserRepository repository;
+    private final ValueEncoder valueEncoder;
+    private final PasswordEncoder passwordEncoder;
+    private final EmailService emailService;
+
+    @Override
     public List<RegisterResponseDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
+    @Override
     public List<UserResponseDTO> findAllUsers() {
         return repository.findAll().stream()
                 .map(this::toUserResponseDTO)
@@ -30,18 +44,22 @@ public class UserServiceImpl {
     }
 
 
+    @Override
     public RegisterResponseDTO findById(Long id) {
         UserEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("UserEntity not found with id: " + id));
         return toResponseDTO(entity);
     }
 
-    public RegisterResponseDTO create(RegisterRequestDTO requestDTO) {
+    @Override
+    public RegisterResponseDTO create(RegisterRequestDTO requestDTO) throws Exception {
         UserEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
+        emailService.sendModeratorSignupEmail(entity.getEmail(), entity.getName());
         return toResponseDTO(entity);
     }
 
+    @Override
     public RegisterResponseDTO update(Long id, RegisterRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("UserEntity not found with id: " + id);
@@ -52,12 +70,24 @@ public class UserServiceImpl {
         return toResponseDTO(entity);
     }
 
+    @Override
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("UserEntity not found with id: " + id);
         }
         repository.deleteById(id);
     }
+
+    @Override
+    public UserResponseDTO updateModerator(String token, String password) throws Exception {
+        String email = valueEncoder.decrypt(token);
+        UserEntity user = repository.findByEmail(email).orElseThrow(() -> new Exception("UserEntity not found with email: " + email));
+        user.setPassword(passwordEncoder.encode(password));
+        repository.save(user);
+        System.out.println(user);
+        return toUserResponseDTO(user);
+    }
+
 
     private RegisterResponseDTO toResponseDTO(UserEntity entity) {
         RegisterResponseDTO dto = new RegisterResponseDTO();
@@ -82,10 +112,24 @@ public class UserServiceImpl {
 
     private UserEntity toEntity(RegisterRequestDTO dto) {
         UserEntity entity = new UserEntity();
-        entity.setPassword(dto.getPassword());
-        entity.setRole(dto.getRole());
+        String rawPassword = generateRandomPassword();
+        entity.setPassword(passwordEncoder.encode(rawPassword));
+        entity.setRole(UserEntityRoleEnum.MODERATOR);
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
+        entity.setUsername(dto.getEmail());
+        entity.setStatus("ACTIVE");
         return entity;
     }
+
+    private String generateRandomPassword() {
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(PASSWORD_LENGTH);
+        for (int i = 0; i < PASSWORD_LENGTH; i++) {
+            int index = random.nextInt(CHARACTERS.length());
+            sb.append(CHARACTERS.charAt(index));
+        }
+        return sb.toString();
+    }
+
 }

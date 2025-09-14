@@ -1,4 +1,3 @@
-// Sample data based on ERD structure
 const samplePosts = [
     {
         id: 1,

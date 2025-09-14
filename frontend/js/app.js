@@ -127,9 +127,6 @@ $(document).ready(function () {
         $.ajax({
             url: `http://localhost:8080/api/posts/approved/recent?page=${page}&size=${cardsPerPage}`,
             method: 'GET',
-            headers: {
-                "Authorization": "Bearer " + getCookie("token")
-            },
             success: function (data) {
                 // data is a PageResponse object
                 renderPage(data.content);

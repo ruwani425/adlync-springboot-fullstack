@@ -1,9 +1,11 @@
 package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.service.EmailService;
+import com.ijse.adlync.util.ValueEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 public class EmailServiceImpl implements EmailService {
 
     private final JavaMailSender mailSender;
+    private final ValueEncoder valueEncoder;
 
     public void sendSignupEmail(String to, String name) {
         SimpleMailMessage message = new SimpleMailMessage();
@@ -26,6 +29,26 @@ public class EmailServiceImpl implements EmailService {
                 "Adlync - Your Marketplace in Sri Lanka\n" +
                 "Follow us on Facebook: https://www.facebook.com/adlync\n" +
                 "Download our app: https://adlync.com/app";
+
+        message.setText(text);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendModeratorSignupEmail(String email, String name) throws Exception {
+
+        String signupLink = "http://127.0.0.1:5500/pages/modaratorsignup.html?token=" + valueEncoder.encrypt(email);
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Moderator Account Created - Adlync Marketplace");
+
+        String text = "Hi " + name + ",\n\n" +
+                "You have been invited as a moderator on Adlync Marketplace.\n" +
+                "Please click the link below to complete your account setup:\n\n" +
+                signupLink + "\n\n" +
+                "If you did not expect this invitation, ignore this email.\n\n" +
+                "Regards,\n" +
+                "Adlync Team";
 
         message.setText(text);
         mailSender.send(message);

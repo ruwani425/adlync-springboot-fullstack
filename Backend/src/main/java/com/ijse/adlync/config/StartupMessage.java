@@ -63,6 +63,7 @@ public class StartupMessage implements CommandLineRunner {
                         .role(UserEntityRoleEnum.ADMIN)
                         .name("System Admin")
                         .email("admin@example.com")
+                        .status("ACTIVE")
                         .build();
 
                 userRepository.save(admin);

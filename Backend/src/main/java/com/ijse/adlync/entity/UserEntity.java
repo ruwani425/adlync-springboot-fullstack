@@ -38,6 +38,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String email;
 
+    @Column(nullable = false)
+    private String status;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime joinDate;

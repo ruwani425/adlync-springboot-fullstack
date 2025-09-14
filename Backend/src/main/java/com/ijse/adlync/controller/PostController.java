@@ -45,7 +45,7 @@ public class PostController {
         return ResponseEntity.ok(count);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/post-detail/{id}")
     @Operation(summary = "Get Post by ID", description = "Retrieve a Post with full details")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
         PostResponseDTO responseDTO = service.findById(id);
@@ -63,7 +63,7 @@ public class PostController {
         return ResponseEntity.ok(service.findAllByStatus(status, pageable));
     }
 
-    @GetMapping("/approved")
+    @GetMapping("/approved/all")
     public ResponseEntity<PageResponse<PostResponseDTO>> getApprovedPostsPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size

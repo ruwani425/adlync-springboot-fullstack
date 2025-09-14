@@ -1,7 +1,7 @@
 const $ = window.$
 const bootstrap = window.bootstrap
 
-const API_BASE = "http://localhost:8080/api/posts/approved"
+const API_BASE = "http://localhost:8080/api/posts/approved/all"
 const pageSize = 9
 let currentPage = 0
 let totalPages = 0
@@ -28,7 +28,6 @@ function loadPosts(page = 0) {
     $.ajax({
         url,
         method: "GET",
-        headers: {Authorization: "Bearer " + getCookie("token")},
         success: (data) => {
             postsCache = data.content || []
             console.log(data.totalPages + " " + data.totalElements)

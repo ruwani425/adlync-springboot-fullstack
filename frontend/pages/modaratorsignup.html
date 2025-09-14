@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Moderator Sign Up - Adlync</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body {
+            /*background: linear-gradient(135deg, #10b981 0%, #059669 100%);*/
+            background: linear-gradient(135deg, var(--emerald-50) 0%, #f0f9ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .signup-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem 1.5rem;
+            border: none;
+        }
+
+        .card-body {
+            padding: 2rem 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #10b981;
+            padding: 12px 16px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #059669;
+        }
+
+        .form-control:focus {
+            border-color: #059669;
+            box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
+            background: white;
+            color: #047857;
+        }
+
+        .btn-signup {
+            background: linear-gradient(135deg, #10b981, #059669);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            background: linear-gradient(135deg, #059669, #047857);
+            color: white;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #10b981;
+        }
+
+        .form-floating {
+            position: relative;
+        }
+
+        .invalid-feedback {
+            display: block;
+        }
+
+        .text-muted {
+            color: #047857 !important;
+        }
+    </style>
+</head>
+<body>
+<div class="signup-card">
+    <div class="card-header">
+        <h3 class="mb-0">
+            <i class="bi bi-shield-check me-2"></i>
+            Moderator Sign Up
+        </h3>
+        <p class="mb-0 mt-2 opacity-75">Complete your account setup</p>
+    </div>
+
+    <div class="card-body">
+        <form id="moderatorSignupForm">
+            <div class="mb-4">
+                <div class="form-floating position-relative">
+                    <input class="form-control"
+                           id="moderator-password"
+                           placeholder="Password"
+                           required
+                           type="password">
+                    <label for="moderator-password">
+                        <i class="bi bi-lock me-2"></i>Password
+                    </label>
+                    <span class="password-toggle" onclick="togglePassword('password')">
+                            <i class="bi bi-eye" id="password-eye"></i>
+                        </span>
+                </div>
+                <div class="invalid-feedback" id="passwordError"></div>
+                <small class="text-muted mt-1 d-block">
+                    Password must be at least 8 characters long
+                </small>
+            </div>
+
+            <div class="mb-4">
+                <div class="form-floating position-relative">
+                    <input class="form-control"
+                           id="confirmPassword"
+                           placeholder="Confirm Password"
+                           required
+                           type="password">
+                    <label for="confirmPassword">
+                        <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                    </label>
+                    <span class="password-toggle" onclick="togglePassword('confirmPassword')">
+                            <i class="bi bi-eye" id="confirmPassword-eye"></i>
+                        </span>
+                </div>
+                <div class="invalid-feedback" id="confirmPasswordError"></div>
+            </div>
+
+            <button class="btn btn-signup w-100" id="moderator-sign-up" type="button">
+                <span class="spinner-border spinner-border-sm d-none me-2" id="loadingSpinner"></span>
+                Sign Up
+            </button>
+        </form>
+
+        <div class="text-center mt-4">
+            <small class="text-muted">
+                By signing up, you agree to the moderator terms and conditions
+            </small>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    function togglePassword(fieldId) {
+        const passwordField = document.getElementById(fieldId);
+        const eyeIcon = document.getElementById(fieldId + '-eye');
+
+        if (passwordField.type === 'password') {
+            passwordField.type = 'text';
+            eyeIcon.className = 'bi bi-eye-slash';
+        } else {
+            passwordField.type = 'password';
+            eyeIcon.className = 'bi bi-eye';
+        }
+    }
+
+    document.getElementById('moderatorSignupForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const passwordError = document.getElementById('passwordError');
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        passwordError.textContent = '';
+        confirmPasswordError.textContent = '';
+        document.getElementById('password').classList.remove('is-invalid');
+        document.getElementById('confirmPassword').classList.remove('is-invalid');
+
+        let hasError = false;
+
+        if (password.length < 8) {
+            passwordError.textContent = 'Password must be at least 8 characters long';
+            document.getElementById('password').classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+            document.getElementById('confirmPassword').classList.add('is-invalid');
+            hasError = true;
+        }
+
+        if (!hasError) {
+            loadingSpinner.classList.remove('d-none');
+            setTimeout(() => {
+                loadingSpinner.classList.add('d-none');
+                alert('Sign up successful! Redirecting to moderator dashboard...');
+            }, 2000);
+        }
+    });
+
+    document.getElementById('confirmPassword').addEventListener('input', function () {
+        const password = document.getElementById('password').value;
+        const confirmPassword = this.value;
+        const confirmPasswordError = document.getElementById('confirmPasswordError');
+
+        if (confirmPassword && password !== confirmPassword) {
+            confirmPasswordError.textContent = 'Passwords do not match';
+            this.classList.add('is-invalid');
+        } else {
+            confirmPasswordError.textContent = '';
+            this.classList.remove('is-invalid');
+        }
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="../js/moderatorsignup.js"></script>
+</body>
+</html>

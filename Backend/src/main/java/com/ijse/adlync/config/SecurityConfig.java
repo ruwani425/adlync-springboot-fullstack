@@ -41,8 +41,11 @@ public class SecurityConfig {
                         .requestMatchers("/swagger-ui.html").permitAll()
                         .requestMatchers("/swagger-resources/**").permitAll()
                         .requestMatchers("/webjars/**").permitAll()
-
                         .requestMatchers("/actuator/**").permitAll()
+                        .requestMatchers("/api/users/set-moderator-password/**").permitAll()
+                        .requestMatchers("/api/posts/approved/recent/**").permitAll()
+                        .requestMatchers("/api/posts/approved/all/**").permitAll()
+                        .requestMatchers("api/posts/post-detail/**").permitAll()
 
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
@@ -68,16 +71,16 @@ public class SecurityConfig {
         config.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:8080",
-                "http://localhost:63342"
+                "http://localhost:63342",
+                "http://127.0.0.1:5500"
         ));
 
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
 
         config.setAllowedHeaders(Arrays.asList("*"));
 
         config.setAllowCredentials(true);
 
-        // Set max age for preflight requests
         config.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
