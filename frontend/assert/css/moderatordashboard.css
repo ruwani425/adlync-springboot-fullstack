@@ -21,21 +21,25 @@ body {
     left: 0;
     height: 100vh;
     width: var(--sidebar-width);
-    background: white;
-    border-right: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, var(--emerald-600), #047857);
+    color: white;
     transition: transform 0.3s ease;
     z-index: 1000;
 }
 
+.sidebar.collapsed {
+    transform: translateX(-280px);
+}
+
 .sidebar-header {
     padding: 1.5rem;
-    border-bottom: 1px solid #e2e8f0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .brand-logo {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--emerald-600);
+    color: white;
     text-decoration: none;
 }
 
@@ -46,7 +50,7 @@ body {
 .nav-section-title {
     font-size: 0.75rem;
     font-weight: 600;
-    color: #64748b;
+    color: rgba(255, 255, 255, 0.7);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     padding: 0 1.5rem;
@@ -57,23 +61,23 @@ body {
     display: flex;
     align-items: center;
     padding: 0.75rem 1.5rem;
-    color: #475569;
+    color: rgba(255, 255, 255, 0.8);
     text-decoration: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
     border: none;
     background: none;
     width: 100%;
 }
 
 .nav-link:hover {
-    background: var(--emerald-50);
-    color: var(--emerald-700);
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
 }
 
 .nav-link.active {
-    background: var(--emerald-50);
-    color: var(--emerald-700);
-    border-right: 3px solid var(--emerald-600);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border-right: 3px solid white;
 }
 
 .nav-link i {
@@ -86,6 +90,11 @@ body {
     margin-left: var(--sidebar-width);
     min-height: 100vh;
     padding: 2rem;
+    transition: margin-left 0.3s ease;
+}
+
+.main-content.expanded {
+    margin-left: 0;
 }
 
 .header {
