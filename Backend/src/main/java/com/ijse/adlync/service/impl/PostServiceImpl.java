@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -77,7 +79,13 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable) {
-        Page<PostEntity> postPage = repository.findAllByStatus(status, pageable);
+        Page<PostEntity> postPage;
+
+        if (status == PostEntityStatusEnum.ALL) {
+            postPage = repository.findAll(pageable);
+        } else {
+            postPage = repository.findAllByStatus(status, pageable);
+        }
 
         List<PostResponseDTO> contentList = postPage
                 .stream()
@@ -115,6 +123,21 @@ public class PostServiceImpl implements PostService {
         return repository.countByUser_Id(userId);
     }
 
+    @Override
+    public PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status) {
+        PostEntity post = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
+
+        if (post.getStatus() == status) {
+            throw new RuntimeException("Post is already " + status);
+        }
+
+        post.setStatus(status);
+        post = repository.save(post);
+
+        return modelMapper.map(post, PostResponseDTO.class);
+    }
+
 
     @Override
     public PostResponseDTO findById(Long id) {
@@ -145,6 +168,7 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
+            System.out.println("PostEntity not found with id: " + id);
             throw new RuntimeException("PostEntity not found with id: " + id);
         }
         repository.deleteById(id);
@@ -655,4 +679,41 @@ public class PostServiceImpl implements PostService {
         postEntity.setPayment(paymentEntity);
         return postEntity;
     }
+
+    @Override
+    public PageResponse<PostResponseDTO> filterPostsForAds(
+            PostEntityStatusEnum status,
+            CategoryEntityNameEnum category,
+            String startDate,
+            String endDate,
+            String search,
+            Pageable pageable
+    ) {
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        if (startDate != null && !startDate.isEmpty()) {
+            start = LocalDate.parse(startDate).atStartOfDay();
+        }
+        if (endDate != null && !endDate.isEmpty()) {
+            end = LocalDate.parse(endDate).atTime(23, 59, 59);
+        }
+
+        Page<PostEntity> pageResult = repository.findFilteredPosts(
+                status,
+                category,
+                search,
+                start,
+                end,
+                pageable
+        );
+
+        List<PostResponseDTO> dtos = pageResult.getContent()
+                .stream()
+                .map(this::toResponseDTO)
+                .toList();
+
+        return new PageResponse<>(dtos, pageResult.getNumber(), pageResult.getTotalPages());
+    }
+
 }

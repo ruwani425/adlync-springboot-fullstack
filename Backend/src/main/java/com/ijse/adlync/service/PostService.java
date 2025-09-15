@@ -3,6 +3,7 @@ package com.ijse.adlync.service;
 import com.ijse.adlync.dto.request.*;
 import com.ijse.adlync.dto.response.PageResponse;
 import com.ijse.adlync.dto.response.PostResponseDTO;
+import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
 import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import org.springframework.data.domain.Pageable;
 
@@ -59,4 +60,8 @@ public interface PostService {
     PostResponseDTO approvePost(Long id);
 
     long getPostCountByUser(Long userId);
+
+    PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status);
+
+    PageResponse<PostResponseDTO> filterPostsForAds(PostEntityStatusEnum status, CategoryEntityNameEnum category, String startDate, String endDate, String search, Pageable pageable);
 }

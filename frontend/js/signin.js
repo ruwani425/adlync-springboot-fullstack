@@ -112,6 +112,8 @@ $('#loginForm').on('submit', function (e) {
                 window.location.href = "../pages/admindashboard.html";
             } else if (role === "USER"){
                 window.location.href = "../index.html";
+            }else if (role === "MODERATOR"){
+                window.location.href="../pages/moderatordashboard.html";
             }
         },
         error: function (xhr) {

@@ -356,8 +356,9 @@ function closePostDetail() {
 function approvePostFromModal() {
     if (!currentPostCard) return;
     const postData = $(currentPostCard).data('post');
+
     $.ajax({
-        url: `http://localhost:8080/api/posts/${postData.post_id}/approve`,
+        url: `http://localhost:8080/api/posts/${postData.post_id}/status/APPROVED`,
         method: 'PUT',
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function () {
@@ -366,6 +367,8 @@ function approvePostFromModal() {
                 .text('APPROVED')
                 .removeClass()
                 .addClass('status-badge status-approved');
+
+            $(currentPostCard).find('.btn-success, .btn-danger').remove();
 
             showToast('Post approved successfully!');
             closePostDetail();
@@ -378,6 +381,7 @@ function approvePostFromModal() {
     });
 }
 
+
 function rejectPostFromModal() {
     if (!currentPostCard) return;
     const postData = $(currentPostCard).data('post');
@@ -385,8 +389,8 @@ function rejectPostFromModal() {
     if (!confirm('Are you sure you want to reject this post?')) return;
 
     $.ajax({
-        url: `http://localhost:8080/api/posts/${postData.post_id}`,
-        method: 'DELETE',
+        url: `http://localhost:8080/api/posts/${postData.post_id}/status/REJECTED`,
+        method: 'PUT',
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function () {
             $(currentPostCard).remove();
@@ -592,4 +596,57 @@ function renderPagination(current, totalPages) {
 function changePage(page) {
     if (page < 0) return;
     loadPosts(page);
+}
+// Add this function to your admindashboard.js file
+
+function resetFilters() {
+    $('#statusFilter').val('PENDING');
+    selectedStatus = 'PENDING';
+
+    $('.category-item').removeClass('active');
+    $('.category-item[data-category="all"]').addClass('active');
+
+    const $selectedCategory = $('#selectedCategory');
+    $selectedCategory.html('<i class="bi bi-grid me-2"></i>All Categories');
+
+    $('#dateFilter').val('all');
+
+    $('#searchPosts').val('');
+
+    currentFilters = {
+        category: 'all',
+        status: 'pending',
+        search: ''
+    };
+
+    currentPage = 0;
+    loadPosts(0, 'PENDING');
+
+    showToast('Filters have been reset successfully!');
+}
+
+
+function resetStatusFilter() {
+    $('#statusFilter').val('PENDING');
+    selectedStatus = 'PENDING';
+    currentFilters.status = 'pending';
+    loadPosts(0, 'PENDING');
+}
+
+function resetCategoryFilter() {
+    $('.category-item').removeClass('active');
+    $('.category-item[data-category="all"]').addClass('active');
+    $('#selectedCategory').html('<i class="bi bi-grid me-2"></i>All Categories');
+    currentFilters.category = 'all';
+    applyAllFilters();
+}
+
+function resetSearchFilter() {
+    $('#searchPosts').val('');
+    currentFilters.search = '';
+    applyAllFilters();
+}
+
+function resetDateFilter() {
+    $('#dateFilter').val('all');
 }

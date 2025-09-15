@@ -449,168 +449,175 @@
             <!--                </div>-->
             <!--            </div>-->
 
-            <div class="filter-section">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Status</label>
-                        <select class="form-select" id="statusFilter">
-                            <option value="pending">Pending Review</option>
-                            <option value="approved">Approved Posts</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label fw-semibold">Category</label>
-                        <div class="category-dropdown">
-                            <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
-                                    data-bs-toggle="dropdown" id="categoryDropdown" type="button">
-                                <span id="selectedCategory">
-                                    <i class="bi bi-grid me-2"></i>All Categories
-                                </span>
-                            </button>
-                            <ul class="dropdown-menu w-100" id="categoryMenu">
-                                <li>
-                                    <button class="category-item active" data-category="all">
-                                        <span class="category-icon"><i class="bi bi-grid"></i></span>
-                                        All Categories
-                                        <span class="category-count" id="all-count">8,532</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <!-- Added all categories from the Java enum -->
-                                <li>
-                                    <button class="category-item" data-category="VEHICLE">
-                                        <span class="category-icon"><i class="bi bi-car-front"></i></span>
-                                        Vehicle
-                                        <span class="category-count">1,245</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="ANIMAL">
-                                        <span class="category-icon"><i class="bi bi-heart"></i></span>
-                                        Animal
-                                        <span class="category-count">324</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="ESSENTIALS">
-                                        <span class="category-icon"><i class="bi bi-basket"></i></span>
-                                        Essentials
-                                        <span class="category-count">756</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="PROPERTY">
-                                        <span class="category-icon"><i class="bi bi-house"></i></span>
-                                        Property
-                                        <span class="category-count">432</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="HOME_AND_GARDEN">
-                                        <span class="category-icon"><i class="bi bi-flower1"></i></span>
-                                        Home & Garden
-                                        <span class="category-count">298</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="WORK_OVERSEAS">
-                                        <span class="category-icon"><i class="bi bi-airplane"></i></span>
-                                        Work Overseas
-                                        <span class="category-count">156</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="SPORT">
-                                        <span class="category-icon"><i class="bi bi-trophy"></i></span>
-                                        Sport
-                                        <span class="category-count">234</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="ENTERTAINTMENT">
-                                        <span class="category-icon"><i class="bi bi-music-note"></i></span>
-                                        Entertainment
-                                        <span class="category-count">187</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="KIDS">
-                                        <span class="category-icon"><i class="bi bi-balloon"></i></span>
-                                        Kids
-                                        <span class="category-count">345</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="ELECTRONIC">
-                                        <span class="category-icon"><i class="bi bi-laptop"></i></span>
-                                        Electronic
-                                        <span class="category-count">892</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="JOB">
-                                        <span class="category-icon"><i class="bi bi-briefcase"></i></span>
-                                        Job
-                                        <span class="category-count">567</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="AGRICULTURE">
-                                        <span class="category-icon"><i class="bi bi-tree"></i></span>
-                                        Agriculture
-                                        <span class="category-count">123</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="SERVICES">
-                                        <span class="category-icon"><i class="bi bi-tools"></i></span>
-                                        Services
-                                        <span class="category-count">678</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="EDUCATION">
-                                        <span class="category-icon"><i class="bi bi-book"></i></span>
-                                        Education
-                                        <span class="category-count">234</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="FASHION_AND_BEAUTY">
-                                        <span class="category-icon"><i class="bi bi-gem"></i></span>
-                                        Fashion & Beauty
-                                        <span class="category-count">456</span>
-                                    </button>
-                                </li>
-                                <li>
-                                    <button class="category-item" data-category="MOBILE">
-                                        <span class="category-icon"><i class="bi bi-phone"></i></span>
-                                        Mobile
-                                        <span class="category-count">543</span>
-                                    </button>
-                                </li>
-                            </ul>
+            <!-- Replace the existing filter section in admindashboard.html with this improved version -->
+            <div class="container mt-4">
+                <div class="filter-section">
+                    <div class="row g-4">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="all">All Status</option>
+                                <option selected value="PENDING">Pending Review</option>
+                                <option value="APPROVED">Approved Posts</option>
+                                <option value="REJECTED">Rejected Posts</option>
+                            </select>
                         </div>
-                    </div>
-                    <div class="col-md-3">
-                        <label class="form-label fw-semibold">Date Range</label>
-                        <select class="form-select" id="dateFilter">
-                            <option value="all">All Time</option>
-                            <option value="today">Today</option>
-                            <option value="week">This Week</option>
-                            <option value="month">This Month</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2 d-flex align-items-end">
-                        <button class="btn btn-emerald w-100" id="applyFilter">
-                            <i class="bi bi-funnel me-2"></i>Apply Filter
-                        </button>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Category</label>
+                            <div class="category-dropdown">
+                                <button class="btn btn-outline-secondary dropdown-toggle w-100 d-flex align-items-center justify-content-between"
+                                        data-bs-toggle="dropdown" id="categoryDropdown" type="button">
+                        <span id="selectedCategory">
+                            <i class="bi bi-grid me-2"></i>All Categories
+                        </span>
+                                </button>
+                                <ul class="dropdown-menu w-100" id="categoryMenu">
+                                    <li>
+                                        <button class="category-item active" data-category="all" type="button">
+                                            <span class="category-icon"><i class="bi bi-grid"></i></span>
+                                            All Categories
+                                            <span class="category-count" id="all-count">8,532</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <hr class="dropdown-divider">
+                                    </li>
+                                    <!-- All categories from the Java enum -->
+                                    <li>
+                                        <button class="category-item" data-category="VEHICLE" type="button">
+                                            <span class="category-icon"><i class="bi bi-car-front"></i></span>
+                                            Vehicle
+                                            <span class="category-count">1,245</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="ANIMAL" type="button">
+                                            <span class="category-icon"><i class="bi bi-heart"></i></span>
+                                            Animal
+                                            <span class="category-count">324</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="ESSENTIALS" type="button">
+                                            <span class="category-icon"><i class="bi bi-basket"></i></span>
+                                            Essentials
+                                            <span class="category-count">756</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="PROPERTY" type="button">
+                                            <span class="category-icon"><i class="bi bi-house"></i></span>
+                                            Property
+                                            <span class="category-count">432</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="HOME_AND_GARDEN" type="button">
+                                            <span class="category-icon"><i class="bi bi-flower1"></i></span>
+                                            Home & Garden
+                                            <span class="category-count">298</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="WORK_OVERSEAS" type="button">
+                                            <span class="category-icon"><i class="bi bi-airplane"></i></span>
+                                            Work Overseas
+                                            <span class="category-count">156</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="SPORT" type="button">
+                                            <span class="category-icon"><i class="bi bi-trophy"></i></span>
+                                            Sport
+                                            <span class="category-count">234</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="ENTERTAINTMENT" type="button">
+                                            <span class="category-icon"><i class="bi bi-music-note"></i></span>
+                                            Entertainment
+                                            <span class="category-count">187</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="KIDS" type="button">
+                                            <span class="category-icon"><i class="bi bi-balloon"></i></span>
+                                            Kids
+                                            <span class="category-count">345</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="ELECTRONIC" type="button">
+                                            <span class="category-icon"><i class="bi bi-laptop"></i></span>
+                                            Electronic
+                                            <span class="category-count">892</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="JOB" type="button">
+                                            <span class="category-icon"><i class="bi bi-briefcase"></i></span>
+                                            Job
+                                            <span class="category-count">567</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="AGRICULTURE" type="button">
+                                            <span class="category-icon"><i class="bi bi-tree"></i></span>
+                                            Agriculture
+                                            <span class="category-count">123</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="SERVICES" type="button">
+                                            <span class="category-icon"><i class="bi bi-tools"></i></span>
+                                            Services
+                                            <span class="category-count">678</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="EDUCATION" type="button">
+                                            <span class="category-icon"><i class="bi bi-book"></i></span>
+                                            Education
+                                            <span class="category-count">234</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="FASHION_AND_BEAUTY" type="button">
+                                            <span class="category-icon"><i class="bi bi-gem"></i></span>
+                                            Fashion & Beauty
+                                            <span class="category-count">456</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button class="category-item" data-category="MOBILE" type="button">
+                                            <span class="category-icon"><i class="bi bi-phone"></i></span>
+                                            Mobile
+                                            <span class="category-count">543</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">Date Range</label>
+                            <select class="form-select" id="dateFilter">
+                                <option value="all">All Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold">&nbsp;</label>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-outline-secondary flex-fill" onclick="resetFilters()" id="resetFiltersBtn">
+                                    <i class="bi bi-arrow-clockwise me-1"></i>Reset
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title mb-0">Posts (<span id="postsCount">8,532</span>)</h5>

@@ -3,6 +3,7 @@ package com.ijse.adlync.controller;
 import com.ijse.adlync.dto.request.*;
 import com.ijse.adlync.dto.response.PageResponse;
 import com.ijse.adlync.dto.response.PostResponseDTO;
+import com.ijse.adlync.entity.enums.CategoryEntityNameEnum;
 import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import com.ijse.adlync.service.PostService;
 import com.ijse.adlync.util.JwtUtil;
@@ -41,7 +42,7 @@ public class PostController {
     @GetMapping("/count/by-user/{userId}")
     public ResponseEntity<Long> getPostCountByUser(@PathVariable Long userId) {
         long count = service.getPostCountByUser(userId);
-        System.out.println("\n\n\n\n"+"post count :"+count);
+        System.out.println("\n\n\n\n" + "post count :" + count);
         return ResponseEntity.ok(count);
     }
 
@@ -49,19 +50,61 @@ public class PostController {
     @Operation(summary = "Get Post by ID", description = "Retrieve a Post with full details")
     public ResponseEntity<PostResponseDTO> getPostById(@PathVariable Long id) {
         PostResponseDTO responseDTO = service.findById(id);
-        System.out.println("post responce dto :"+responseDTO.toString());
+        System.out.println("post responce dto :" + responseDTO.toString());
         return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/page")
+    @Operation(summary = "Filter Posts for Advertisement Page", description = "Filter posts by status, category, date range, and search")
     public ResponseEntity<PageResponse<PostResponseDTO>> getPostsPage(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "PENDING") PostEntityStatusEnum status
+            @RequestParam(required = false) PostEntityStatusEnum status,
+            @RequestParam(required = false) CategoryEntityNameEnum category,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String search
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        return ResponseEntity.ok(service.findAllByStatus(status, pageable));
+        PageResponse<PostResponseDTO> response = service.filterPostsForAds(
+                status, category, startDate, endDate, search, pageable
+        );
+        return ResponseEntity.ok(response);
     }
+//    @GetMapping("/filter")
+//    @Operation(summary = "Filter Posts for Advertisement Page", description = "Filter posts by status, category, date range, and search")
+//    public ResponseEntity<PageResponse<PostResponseDTO>> filterPosts(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(required = false) PostEntityStatusEnum status,
+//            @RequestParam(required = false) CategoryEntityNameEnum category,
+//            @RequestParam(required = false) String startDate,
+//            @RequestParam(required = false) String endDate,
+//            @RequestParam(required = false) String search
+//    ) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        PageResponse<PostResponseDTO> response = service.filterPostsForAds(
+//                status, category, startDate, endDate, search, pageable
+//        );
+//        return ResponseEntity.ok(response);
+//    }
+
+//    @GetMapping("/public/filter")
+//    @Operation(summary = "Filter Posts for Advertisement Page", description = "Filter posts by category, price, location, condition, and search")
+//    public ResponseEntity<PageResponse<PostResponseDTO>> filterPostsForAds(
+//            @RequestParam(defaultValue = "0") int page,
+//            @RequestParam(defaultValue = "10") int size,
+//            @RequestParam(required = false) String category,
+//            @RequestParam(required = false) Double minPrice,
+//            @RequestParam(required = false) Double maxPrice,
+//            @RequestParam(required = false) String location,
+//            @RequestParam(required = false) List<String> condition,
+//            @RequestParam(required = false) String search
+//    ) {
+//        Pageable pageable = PageRequest.of(page, size);
+//        return ResponseEntity.ok(service.filterPostsForAds(category, minPrice, maxPrice, location, condition, search, pageable));
+//    }
+
 
     @GetMapping("/approved/all")
     public ResponseEntity<PageResponse<PostResponseDTO>> getApprovedPostsPage(
@@ -96,12 +139,16 @@ public class PostController {
         return ResponseEntity.ok(service.update(id, requestDTO));
     }
 
-    @PutMapping("/{id}/approve")
-    @Operation(summary = "Approve Post", description = "Approve a pending post")
-    public ResponseEntity<PostResponseDTO> approvePost(@PathVariable Long id) {
-        PostResponseDTO approvedPost = service.approvePost(id);
-        return ResponseEntity.ok(approvedPost);
+    @PutMapping("/{id}/status/{status}")
+    @Operation(summary = "Update Post Status", description = "Update post status (APPROVED / REJECTED / PENDING)")
+    public ResponseEntity<PostResponseDTO> updatePostStatus(
+            @PathVariable Long id,
+            @PathVariable PostEntityStatusEnum status) {
+
+        PostResponseDTO updatedPost = service.updatePostStatus(id, status);
+        return ResponseEntity.ok(updatedPost);
     }
+
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Post", description = "Delete a Post entity by its ID")

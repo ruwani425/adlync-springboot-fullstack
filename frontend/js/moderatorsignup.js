@@ -113,6 +113,7 @@ $(document).ready(function () {
                 type: "PATCH",
                 success: function (response) {
                     console.log("Password set successfully!", response);
+                    window.location.href = "../pages/signin.html"
                 },
                 error: function (xhr) {
                     console.error("Error:", xhr.responseText);

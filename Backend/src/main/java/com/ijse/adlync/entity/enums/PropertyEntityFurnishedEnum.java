@@ -4,4 +4,5 @@ public enum PropertyEntityFurnishedEnum {
     FURNISHED,
     FULLY_FURNISHED,
     SEMI_FURNISHED,
+    UNFURNISHED
 }
