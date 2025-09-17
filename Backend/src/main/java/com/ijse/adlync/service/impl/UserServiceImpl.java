@@ -170,5 +170,52 @@ public class UserServiceImpl implements UserService {
         }
         return sb.toString();
     }
+// Add this method to your UserServiceImpl.java
 
+    @Override
+    public void changePassword(String username, String currentPassword, String newPassword) {
+        // Find user by username
+        UserEntity user = repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        // Verify current password
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new IllegalArgumentException("Current password is incorrect");
+        }
+
+        // Validate new password
+        validateNewPassword(newPassword, currentPassword);
+
+        // Update password
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(user);
+    }
+
+    private void validateNewPassword(String newPassword, String currentPassword) {
+        // Check if new password is same as current password
+        if (newPassword.equals(currentPassword)) {
+            throw new IllegalArgumentException("New password must be different from current password");
+        }
+
+        // Validate password strength
+        if (newPassword.length() < 8) {
+            throw new IllegalArgumentException("Password must be at least 8 characters long");
+        }
+
+        if (!newPassword.matches(".*[A-Z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one uppercase letter");
+        }
+
+        if (!newPassword.matches(".*[a-z].*")) {
+            throw new IllegalArgumentException("Password must contain at least one lowercase letter");
+        }
+
+        if (!newPassword.matches(".*[0-9].*")) {
+            throw new IllegalArgumentException("Password must contain at least one number");
+        }
+
+        if (!newPassword.matches(".*[^A-Za-z0-9].*")) {
+            throw new IllegalArgumentException("Password must contain at least one special character");
+        }
+    }
 }

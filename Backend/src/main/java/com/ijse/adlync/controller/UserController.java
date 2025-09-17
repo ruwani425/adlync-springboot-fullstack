@@ -31,6 +31,51 @@ public class UserController {
     @Autowired
     private OtpServiceImpl otpService;
 
+    // Add this to your UserController.java
+
+    @PatchMapping("/change-password")
+    @Operation(summary = "Change Password", description = "Change user's password after validating current password")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password changed successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid current password"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Map<String, String>> changePassword(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, String> requestBody) {
+
+        try {
+            String token = authHeader.replace("Bearer ", "").trim();
+            String username = jwtUtil.extractUsername(token);
+            String currentPassword = requestBody.get("currentPassword");
+            String newPassword = requestBody.get("newPassword");
+
+            // Validate input
+            if (currentPassword == null || currentPassword.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Current password is required"));
+            }
+
+            if (newPassword == null || newPassword.trim().isEmpty()) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "New password is required"));
+            }
+
+            // Change password through service
+            service.changePassword(username, currentPassword, newPassword);
+
+            return ResponseEntity.ok(Map.of("message", "Password changed successfully"));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("message", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "Failed to change password"));
+        }
+    }
+
     @PostMapping("/checkEmail")
     @Operation(summary = "Check if Email Exists", description = "Checks if the provided email exists in the system")
     @ApiResponses(value = {

@@ -247,3 +247,185 @@ body {
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+
+/* Password Change Modal Styles */
+.password-requirements .requirement {
+    display: block;
+    margin-bottom: 0.25rem;
+    transition: color 0.3s ease;
+}
+
+.password-requirements .requirement.valid {
+    color: #059669 !important;
+}
+
+.password-requirements .requirement.valid i {
+    color: #059669 !important;
+}
+
+.password-requirements .requirement.valid i::before {
+    content: "\F26A"; /* bi-check-circle */
+}
+
+.password-strength .progress-bar {
+    transition: all 0.3s ease;
+}
+
+.progress-bar.strength-weak {
+    background-color: #dc2626;
+}
+
+.progress-bar.strength-medium {
+    background-color: #f59e0b;
+}
+
+.progress-bar.strength-strong {
+    background-color: #059669;
+}
+
+.input-group .btn {
+    border-color: #d1d5db;
+}
+
+.form-control:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+}
+
+#changePasswordModal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#changePasswordModal .modal-header {
+    background: linear-gradient(135deg, #059669, #047857);
+    color: white;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom: none;
+}
+
+#changePasswordModal .btn-close {
+    filter: invert(1);
+}
+
+#changePasswordModal .alert-info {
+    background-color: rgba(5, 150, 105, 0.1);
+    border-color: rgba(5, 150, 105, 0.2);
+    color: #047857;
+}
+
+/* Password input group styling */
+#changePasswordModal .input-group .btn {
+    border-left: none;
+    background-color: transparent;
+    border-color: #d1d5db;
+}
+
+#changePasswordModal .input-group .btn:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+#changePasswordModal .input-group .form-control {
+    border-right: none;
+}
+
+#changePasswordModal .input-group .form-control:focus {
+    border-right: none;
+    box-shadow: none;
+}
+
+#changePasswordModal .input-group:focus-within .btn {
+    border-color: #059669;
+}
+
+/* Requirements animation */
+.password-requirements .requirement i {
+    transition: all 0.3s ease;
+}
+
+.password-requirements .requirement.valid i {
+    transform: scale(1.1);
+}
+
+/* Password strength progress styling */
+.password-strength .progress {
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.password-strength .progress-bar {
+    border-radius: 4px;
+}
+
+/* Modal backdrop */
+#changePasswordModal .modal-backdrop {
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* Responsive adjustments */
+@media (max-width: 576px) {
+    #changePasswordModal .modal-dialog {
+        margin: 1rem;
+    }
+
+    #changePasswordModal .password-requirements .col-sm-6 {
+        margin-bottom: 1rem;
+    }
+}
+
+/* Button states */
+#savePasswordBtn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Form validation states */
+.form-control.is-valid {
+    border-color: #059669;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23059669' d='m2.3 6.73.94-.94 1.88 1.88 3.75-3.75.94.94-4.69 4.69z'/%3e%3c/svg%3e");
+}
+
+.form-control.is-invalid {
+    border-color: #dc2626;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc2626'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 1.4 1.4m0-1.4L5.8 6'/%3e%3c/svg%3e");
+}
+
+.valid-feedback {
+    color: #059669;
+}
+
+.invalid-feedback {
+    color: #dc2626;
+}
+
+/* Loading state */
+#savePasswordBtn.loading {
+    position: relative;
+    pointer-events: none;
+}
+
+#savePasswordBtn.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}

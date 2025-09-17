@@ -1,9 +1,9 @@
 let currentUserId = null;
 
-
 $(document).ready(function () {
     initializeProfile();
     getUserByToken();
+    initPasswordChange();
 
     $('#statusFilter').change(function () {
         const selectedStatus = $(this).val();
@@ -98,7 +98,6 @@ $(document).ready(function () {
     });
 });
 
-
 $('#photoInput').change(function (e) {
     const file = e.target.files[0];
     if (file) {
@@ -125,7 +124,6 @@ $('#photoInput').change(function (e) {
             return;
         }
 
-        // Show preview
         const reader = new FileReader();
         reader.onload = function (e) {
             $('#photoPreview').attr('src', e.target.result);
@@ -179,6 +177,294 @@ $('#uploadPhotoBtn').click(async function () {
     }
 });
 
+function initPasswordChange() {
+    $('#toggleCurrentPassword').click(function () {
+        togglePasswordVisibility('#currentPassword', '#toggleCurrentPassword');
+    });
+
+    $('#toggleNewPassword').click(function () {
+        togglePasswordVisibility('#newPassword', '#toggleNewPassword');
+    });
+
+    $('#toggleConfirmPassword').click(function () {
+        togglePasswordVisibility('#confirmPassword', '#toggleConfirmPassword');
+    });
+
+    $('#newPassword').on('input', function () {
+        const password = $(this).val();
+        checkPasswordStrength(password);
+        validatePasswordRequirements();
+        checkPasswordMatch();
+    });
+
+    $('#confirmPassword').on('input', function () {
+        checkPasswordMatch();
+        validatePasswordRequirements();
+    });
+
+    $('#currentPassword').on('input', function () {
+        validatePasswordRequirements();
+    });
+
+    $('#savePasswordBtn').click(function () {
+        if (validatePasswordForm()) {
+            changePassword();
+        }
+    });
+
+    $(document).on('click', '.btn-outline-danger:contains("Change Password")', function (e) {
+        e.preventDefault();
+        $('#changePasswordModal').modal('show');
+        resetPasswordForm();
+    });
+}
+
+function togglePasswordVisibility(inputSelector, buttonSelector) {
+    const input = $(inputSelector);
+    const button = $(buttonSelector);
+    const icon = button.find('i');
+
+    if (input.attr('type') === 'password') {
+        input.attr('type', 'text');
+        icon.removeClass('bi-eye').addClass('bi-eye-slash');
+    } else {
+        input.attr('type', 'password');
+        icon.removeClass('bi-eye-slash').addClass('bi-eye');
+    }
+}
+
+function checkPasswordStrength(password) {
+    const strengthContainer = $('#passwordStrength');
+    const progressBar = strengthContainer.find('.progress-bar');
+    const strengthText = $('#strengthText');
+
+    if (password.length === 0) {
+        strengthContainer.hide();
+        return;
+    }
+
+    strengthContainer.show();
+
+    let strength = 0;
+    let strengthLabel = '';
+
+    if (password.length >= 8) strength += 20;
+    if (password.length >= 12) strength += 10;
+
+    if (/[a-z]/.test(password)) strength += 20;
+    if (/[A-Z]/.test(password)) strength += 20;
+    if (/[0-9]/.test(password)) strength += 15;
+    if (/[^A-Za-z0-9]/.test(password)) strength += 15;
+
+    if (strength < 40) {
+        strengthLabel = 'Weak';
+        progressBar.removeClass().addClass('progress-bar strength-weak');
+    } else if (strength < 70) {
+        strengthLabel = 'Medium';
+        progressBar.removeClass().addClass('progress-bar strength-medium');
+    } else {
+        strengthLabel = 'Strong';
+        progressBar.removeClass().addClass('progress-bar strength-strong');
+    }
+
+    progressBar.css('width', strength + '%');
+    strengthText.text(`Password strength: ${strengthLabel}`);
+}
+
+function validatePasswordRequirements() {
+    const currentPassword = $('#currentPassword').val();
+    const newPassword = $('#newPassword').val();
+    const confirmPassword = $('#confirmPassword').val();
+
+    let allValid = true;
+
+    if (currentPassword.length === 0) {
+        allValid = false;
+    }
+
+    const lengthValid = newPassword.length >= 8;
+    updateRequirement('#req-length', lengthValid);
+    if (!lengthValid) allValid = false;
+
+    const uppercaseValid = /[A-Z]/.test(newPassword);
+    updateRequirement('#req-uppercase', uppercaseValid);
+    if (!uppercaseValid) allValid = false;
+
+    const lowercaseValid = /[a-z]/.test(newPassword);
+    updateRequirement('#req-lowercase', lowercaseValid);
+    if (!lowercaseValid) allValid = false;
+
+    const numberValid = /[0-9]/.test(newPassword);
+    updateRequirement('#req-number', numberValid);
+    if (!numberValid) allValid = false;
+
+    const specialValid = /[^A-Za-z0-9]/.test(newPassword);
+    updateRequirement('#req-special', specialValid);
+    if (!specialValid) allValid = false;
+
+    const matchValid = newPassword.length > 0 && newPassword === confirmPassword;
+    updateRequirement('#req-match', matchValid);
+    if (!matchValid) allValid = false;
+
+    $('#savePasswordBtn').prop('disabled', !allValid);
+
+    return allValid;
+}
+
+function updateRequirement(selector, isValid) {
+    const element = $(selector);
+    const icon = element.find('i');
+
+    if (isValid) {
+        element.addClass('valid');
+        icon.removeClass('bi-x-circle text-danger').addClass('bi-check-circle text-success');
+    } else {
+        element.removeClass('valid');
+        icon.removeClass('bi-check-circle text-success').addClass('bi-x-circle text-danger');
+    }
+}
+
+function checkPasswordMatch() {
+    const newPassword = $('#newPassword').val();
+    const confirmPassword = $('#confirmPassword').val();
+    const confirmInput = $('#confirmPassword');
+    const errorDiv = $('#confirmPasswordError');
+
+    if (confirmPassword.length > 0) {
+        if (newPassword !== confirmPassword) {
+            confirmInput.addClass('is-invalid');
+            errorDiv.text('Passwords do not match');
+        } else {
+            confirmInput.removeClass('is-invalid').addClass('is-valid');
+            errorDiv.text('');
+        }
+    } else {
+        confirmInput.removeClass('is-invalid is-valid');
+        errorDiv.text('');
+    }
+}
+
+function validatePasswordForm() {
+    const currentPassword = $('#currentPassword').val().trim();
+    const newPassword = $('#newPassword').val().trim();
+    const confirmPassword = $('#confirmPassword').val().trim();
+
+    $('.form-control').removeClass('is-invalid');
+    $('.invalid-feedback').text('');
+
+    let isValid = true;
+
+    if (!currentPassword) {
+        $('#currentPassword').addClass('is-invalid');
+        $('#currentPasswordError').text('Current password is required');
+        isValid = false;
+    }
+
+    if (!newPassword) {
+        $('#newPassword').addClass('is-invalid');
+        $('#newPasswordError').text('New password is required');
+        isValid = false;
+    }
+
+    if (!confirmPassword) {
+        $('#confirmPassword').addClass('is-invalid');
+        $('#confirmPasswordError').text('Please confirm your new password');
+        isValid = false;
+    }
+
+    if (newPassword && currentPassword && newPassword === currentPassword) {
+        $('#newPassword').addClass('is-invalid');
+        $('#newPasswordError').text('New password must be different from current password');
+        isValid = false;
+    }
+
+    return isValid && validatePasswordRequirements();
+}
+
+function changePassword() {
+    const currentPassword = $('#currentPassword').val();
+    const newPassword = $('#newPassword').val();
+    const token = getCookie("token");
+
+    if (!token) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Authentication Error',
+            text: 'Please log in again to change your password'
+        });
+        return;
+    }
+
+    const saveBtn = $('#savePasswordBtn');
+    const originalText = saveBtn.html();
+    saveBtn.prop('disabled', true).html('<i class="bi bi-hourglass-split me-2"></i>Changing Password...');
+
+    $.ajax({
+        url: "http://localhost:8080/api/users/change-password",
+        method: "PATCH",
+        headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        },
+        data: JSON.stringify({
+            currentPassword: currentPassword,
+            newPassword: newPassword
+        }),
+        success: function (response) {
+            $('#changePasswordModal').modal('hide');
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Password Changed!',
+                text: 'Your password has been updated successfully. You will be logged out for security.',
+                showConfirmButton: true,
+                confirmButtonColor: '#059669',
+                confirmButtonText: 'Continue'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteCookie("token");
+                    window.location.href = '../index.html';
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Password change error:", error);
+            let errorMessage = 'Failed to change password. Please try again.';
+
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+
+            if (xhr.status === 400) {
+                $('#currentPassword').addClass('is-invalid');
+                $('#currentPasswordError').text('Current password is incorrect');
+            } else if (xhr.status === 401) {
+                $('#currentPassword').addClass('is-invalid');
+                $('#currentPasswordError').text('Current password is incorrect');
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: errorMessage
+                });
+            }
+        },
+        complete: function () {
+            saveBtn.prop('disabled', false).html(originalText);
+        }
+    });
+}
+
+function resetPasswordForm() {
+    $('#changePasswordForm')[0].reset();
+    $('.form-control').removeClass('is-invalid is-valid');
+    $('.invalid-feedback').text('');
+    $('.requirement').removeClass('valid');
+    $('.requirement i').removeClass('bi-check-circle text-success').addClass('bi-x-circle text-danger');
+    $('#passwordStrength').hide();
+    $('#savePasswordBtn').prop('disabled', true);
+}
+
 async function updateProfilePhoto(photoUrl) {
     const token = getCookie("token");
     if (!token) {
@@ -208,7 +494,6 @@ async function updateProfilePhoto(photoUrl) {
     });
 }
 
-
 function getUserByToken() {
     const token = getCookie("token");
     if (!token) return;
@@ -223,7 +508,6 @@ function getUserByToken() {
             $('#userName').text(response.name);
             $('#userEmail').text(response.email);
             $('#joinDate').text(formatJoinDate(response.joinDate));
-
 
             let profileUrl = response.profileImageUrl;
 
@@ -284,7 +568,7 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 6) {
 
             renderUserAds(posts);
             updateStats(posts);
-            renderPagination(response, status); // pass status to keep filter
+            renderPagination(response, status);
         },
         error: function (xhr, status, error) {
             console.error("Error loading ads:", error);
@@ -433,7 +717,6 @@ function deleteAd(adId) {
                 return;
             }
 
-            // Show loading
             Swal.fire({
                 title: 'Deleting...',
                 text: 'Please wait while we delete your advertisement',
@@ -456,7 +739,6 @@ function deleteAd(adId) {
                         timer: 2000,
                         showConfirmButton: false
                     }).then(() => {
-                        // Refresh the ads list
                         getUserByToken();
                     });
                 },
@@ -508,9 +790,7 @@ function renderPagination(response, status = 'all') {
     }
 }
 
-
 function changePage(page, status = 'all') {
     if (!currentUserId) return;
     loadUserAdsByUserId(currentUserId, status, page, 6);
 }
-
