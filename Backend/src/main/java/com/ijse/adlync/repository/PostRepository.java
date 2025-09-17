@@ -11,6 +11,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
@@ -37,4 +38,9 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             Pageable pageable
     );
 
+    List<PostEntity> findPostEntitYByUser_id(Long userId);
+
+    Page<PostEntity> findByUser_idAndStatus(Long userId, PostEntityStatusEnum status, Pageable pageable);
+
+    Page<PostEntity> findByUser_Id(Long userId, Pageable pageable);
 }

@@ -3,17 +3,21 @@ package com.ijse.adlync.controller;
 import com.ijse.adlync.dto.request.RegisterRequestDTO;
 import com.ijse.adlync.dto.response.RegisterResponseDTO;
 import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.service.impl.OtpServiceImpl;
 import com.ijse.adlync.service.impl.UserServiceImpl;
+import com.ijse.adlync.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -22,6 +26,107 @@ public class UserController {
 
     @Autowired
     private UserServiceImpl service;
+    @Autowired
+    private JwtUtil jwtUtil;
+    @Autowired
+    private OtpServiceImpl otpService;
+
+    @PostMapping("/checkEmail")
+    @Operation(summary = "Check if Email Exists", description = "Checks if the provided email exists in the system")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Email existence status returned"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Map<String, Boolean>> checkEmail(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        boolean exists = service.checkEmailExists(email);
+        return ResponseEntity.ok(Map.of("exists", exists));
+    }
+
+    @PostMapping("/sendOTP")
+    @Operation(summary = "Send OTP for password reset", description = "Checks if email exists and sends OTP if it does")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OTP sent successfully"),
+            @ApiResponse(responseCode = "404", description = "Email not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<String> sendOTP(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        try {
+            if (!service.checkEmailExists(email)) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Email not found in the system.");
+            }
+            otpService.generateAndSendOTP(email);
+            return ResponseEntity.ok("OTP sent to your email.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verifyOTP")
+    @Operation(summary = "Verify OTP", description = "Verifies the OTP for the given email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OTP verified"),
+            @ApiResponse(responseCode = "400", description = "Invalid or expired OTP"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<String> verifyOTP(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String otp = request.get("otp");
+        if (otpService.verifyOTP(email, otp)) {
+            return ResponseEntity.ok("OTP verified successfully.");
+        } else {
+            return ResponseEntity.badRequest().body("Invalid or expired OTP.");
+        }
+    }
+
+    @PostMapping("/resetPassword")
+    @Operation(summary = "Reset Password", description = "Resets the password for the given email")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Password reset successfully"),
+            @ApiResponse(responseCode = "404", description = "Email not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<String> resetPassword(@RequestBody Map<String, String> request) {
+        String email = request.get("email");
+        String newPassword = request.get("newPassword");
+        try {
+            service.resetPassword(email, newPassword);
+            return ResponseEntity.ok("Password reset successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/getUserByToken")
+    public ResponseEntity<UserResponseDTO> getUserByToken(
+            @RequestHeader("Authorization") String authHeader) {
+
+        String token = authHeader.replace("Bearer ", "").trim();
+        String username = jwtUtil.extractUsername(token);
+        UserResponseDTO user = service.getUserByUsername(username);
+        return ResponseEntity.ok(user);
+    }
+
+    @PatchMapping("/update-profile-photo")
+    @Operation(summary = "Update Profile Photo", description = "Update user's profile photo URL")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully updated profile photo"),
+            @ApiResponse(responseCode = "404", description = "User not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<UserResponseDTO> updateProfilePhoto(
+            @RequestHeader("Authorization") String authHeader,
+            @RequestBody Map<String, String> requestBody) {
+
+        String token = authHeader.replace("Bearer ", "").trim();
+        String username = jwtUtil.extractUsername(token);
+        String profileImageUrl = requestBody.get("profileImageUrl");
+
+        UserResponseDTO response = service.updateProfilePhoto(username, profileImageUrl);
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping
     @Operation(summary = "Get all Users", description = "Retrieve a list of all User entities")

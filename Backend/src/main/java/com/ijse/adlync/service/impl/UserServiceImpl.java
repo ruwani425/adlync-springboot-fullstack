@@ -7,9 +7,12 @@ import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.entity.enums.UserEntityRoleEnum;
 import com.ijse.adlync.repository.UserRepository;
 import com.ijse.adlync.service.EmailService;
+import com.ijse.adlync.service.OtpService;
 import com.ijse.adlync.service.UserService;
 import com.ijse.adlync.util.ValueEncoder;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +31,8 @@ public class UserServiceImpl implements UserService {
     private final ValueEncoder valueEncoder;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
+    private final ModelMapper modelMapper;
+    private final OtpService otpService;
 
     @Override
     public List<RegisterResponseDTO> findAll() {
@@ -88,6 +93,39 @@ public class UserServiceImpl implements UserService {
         return toUserResponseDTO(user);
     }
 
+    @Override
+    public UserResponseDTO getUserByUsername(String username) {
+        UserEntity user = repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return modelMapper.map(user, UserResponseDTO.class);
+    }
+
+    @Override
+    public UserResponseDTO updateProfilePhoto(String username, String profileImageUrl) {
+        UserEntity user = repository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        user.setProfileImageUrl(profileImageUrl);
+        repository.save(user);
+
+        return toUserResponseDTO(user);
+    }
+
+    @Override
+    public void resetPassword(String email, String newPassword) throws Exception {
+        if (!checkEmailExists(email)) {
+            throw new Exception("Email not found in the system.");
+        }
+        UserEntity user = repository.findByEmail(email)
+                .orElseThrow(() -> new Exception("User not found"));
+        user.setPassword(passwordEncoder.encode(newPassword));
+        repository.save(user);
+    }
+
+    @Override
+    public boolean checkEmailExists(String email) {
+        return repository.findByEmail(email).isPresent();
+    }
 
     private RegisterResponseDTO toResponseDTO(UserEntity entity) {
         RegisterResponseDTO dto = new RegisterResponseDTO();
@@ -106,6 +144,7 @@ public class UserServiceImpl implements UserService {
         dto.setEmail(entity.getEmail());
         dto.setJoinDate(entity.getJoinDate());
         dto.setRole(entity.getRole());
+        dto.setProfileImageUrl(entity.getProfileImageUrl());
         return dto;
     }
 

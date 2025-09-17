@@ -64,4 +64,8 @@ public interface PostService {
     PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status);
 
     PageResponse<PostResponseDTO> filterPostsForAds(PostEntityStatusEnum status, CategoryEntityNameEnum category, String startDate, String endDate, String search, Pageable pageable);
+
+    List<PostResponseDTO> findPostsByUser(Long userId);
+
+    PageResponse<PostResponseDTO> findPostsByUserWithPagination(Long userId, String status, Pageable pageable);
 }

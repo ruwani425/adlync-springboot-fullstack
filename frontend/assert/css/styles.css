@@ -8,7 +8,7 @@
 }
 
 * {
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 body {
@@ -76,7 +76,7 @@ body {
 
 .card-hover:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 30px rgba(2, 6, 23, .08);
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
 }
 
 .icon-pill {
@@ -152,7 +152,7 @@ body {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: rgba(16, 185, 129, .12);
+    background: rgba(16, 185, 129, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -181,4 +181,17 @@ body {
 
 .rounded-4 {
     border-radius: 1rem !important;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+    transition: border-color 0.2s ease;
+}
+
+.profile-avatar:hover {
+    border-color: var(--emerald-600);
 }

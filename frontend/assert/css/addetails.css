@@ -182,3 +182,41 @@ body {
 .rounded-4 {
     border-radius: 1rem !important;
 }
+
+/* Added profile dropdown styles */
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--emerald-600);
+    transition: transform 0.2s ease;
+}
+
+.profile-avatar:hover {
+    transform: scale(1.05);
+}
+
+.dropdown-menu {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    padding: 8px 0;
+}
+
+.dropdown-item {
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin: 2px 8px;
+    transition: background-color 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: var(--emerald-600);
+    color: white;
+}
+
+.dropdown-item i {
+    width: 16px;
+    text-align: center;
+}

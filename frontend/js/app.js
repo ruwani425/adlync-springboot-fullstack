@@ -1,158 +1,215 @@
-$(function () {
-    const $grid = $('#catGrid');
-    const $prev = $('#prevCat');
-    const $next = $('#nextCat');
-    const $dots = $('#catDots');
+/* global $, getCookie, deleteCookie */
+// jQuery is loaded via CDN in index.html
 
-    if (!$grid.length) return;
+const $ = window.$ // Declare the $ variable
 
-    const itemWidth = 240;
-    const perPage = () => Math.floor($grid.width() / itemWidth) || 1;
-    const maxIndex = () => Math.max(0, Math.ceil($grid.children().length - perPage()));
+$(() => {
+    const $grid = $("#catGrid")
+    const $prev = $("#prevCat")
+    const $next = $("#nextCat")
+    const $dots = $("#catDots")
 
-    let index = 0;
+    if (!$grid.length) return
+
+    const itemWidth = 240
+    const perPage = () => Math.floor($grid.width() / itemWidth) || 1
+    const maxIndex = () => Math.max(0, Math.ceil($grid.children().length - perPage()))
+
+    let index = 0
 
     function updateDots() {
-        const pages = Math.ceil($grid.children().length / perPage());
-        $dots.empty();
+        const pages = Math.ceil($grid.children().length / perPage())
+        $dots.empty()
         for (let i = 0; i < pages; i++) {
-            const $b = $('<button>')
-                .addClass('dot' + (i === Math.floor(index) ? ' active' : ''))
-                .attr('aria-label', 'Go to page ' + (i + 1))
-                .on('click', function () {
-                    index = i;
-                    scroll();
-                });
-            $dots.append($b);
+            const $b = $("<button>")
+                .addClass("dot" + (i === Math.floor(index) ? " active" : ""))
+                .attr("aria-label", "Go to page " + (i + 1))
+                .on("click", () => {
+                    index = i
+                    scroll()
+                })
+            $dots.append($b)
         }
     }
 
     function scroll() {
-        const x = index * itemWidth;
-        $grid.animate({scrollLeft: x}, 400);
-        updateDots();
-        $prev.prop('disabled', index <= 0);
-        $next.prop('disabled', index >= maxIndex());
+        const x = index * itemWidth
+        $grid.animate({scrollLeft: x}, 400)
+        updateDots()
+        $prev.prop("disabled", index <= 0)
+        $next.prop("disabled", index >= maxIndex())
     }
 
-    $prev.on('click', function () {
-        index = Math.max(0, index - 1);
-        scroll();
-    });
+    $prev.on("click", () => {
+        index = Math.max(0, index - 1)
+        scroll()
+    })
 
-    $next.on('click', function () {
-        index = Math.min(maxIndex(), index + 1);
-        scroll();
-    });
+    $next.on("click", () => {
+        index = Math.min(maxIndex(), index + 1)
+        scroll()
+    })
 
-    $(window).on('resize', function () {
-        index = 0;
-        updateDots();
-    });
+    $(window).on("resize", () => {
+        index = 0
+        updateDots()
+    })
 
-    $('<style>')
+    $("<style>")
         .text(`
         #catDots .dot { width:8px; height:8px; border-radius:999px; border:none; margin:0 4px; background:#c7d2fe; }
         #catDots .dot.active { background: var(--emerald-600); }
     `)
-        .appendTo('head');
+        .appendTo("head")
 
-    updateDots();
-    checkAuth();
-});
+    updateDots()
+    checkAuth()
+})
 
 function checkAuth() {
-    const $authBtn = $('#signInBtn');
-    const $postAdBtn = $('#postAdBtn');
-    const token = getCookie("token");
+    const $authBtn = $("#signInBtn")
+    const $postAdBtn = $("#postAdBtn")
+    const $profileDropdown = $("#profileDropdown")
+    const token = getCookie("token")
 
-    $authBtn.off('click');
-    $postAdBtn.off('click');
+    $authBtn.off("click")
+    $postAdBtn.off("click")
 
     if (token) {
-        $authBtn.text("Logout")
-            .removeClass("btn-outline-primary")
-            .addClass("btn-danger")
-            .show();
+        $authBtn.hide()
+        $profileDropdown.show()
 
-        $authBtn.on("click", function () {
-            if ($authBtn.text().trim() === "Logout") {
-                doLogout("index.html");
-            }
+        // Fetch user profile data including profile photo
+        fetchUserProfile(token)
+
+        $("#profileLink").on("click", (e) => {
+            e.preventDefault()
+            window.location.href = "pages/user-profile.html"
+        })
+
+        function doLogout(redirectUrl) {
+            deleteCookie("token");
+
+            Swal.fire({
+                title: 'Logged out!',
+                text: 'You have been successfully logged out.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false
+            }).then(() => {
+                window.location.href = redirectUrl;
+            });
+        }
+
+        $("#logoutLink").on("click", (e) => {
+            e.preventDefault();
+            doLogout("index.html");
         });
 
-        $postAdBtn.on('click', function () {
-            location.href = "pages/postad.html";
-        });
-
+        $postAdBtn.on("click", () => {
+            window.location.href = "pages/postad.html"
+        })
     } else {
-        $authBtn.text("Sign In")
-            .removeClass("btn-danger")
-            .addClass("btn-outline-primary")
-            .show();
+        $authBtn.show()
+        $profileDropdown.hide()
 
-        $authBtn.on('click', function () {
-            if ($authBtn.text().trim() === "Sign In") {
-                location.href = "pages/signin.html";
-            }
-        });
+        $authBtn.on("click", () => {
+            location.href = "pages/signin.html"
+        })
 
-        $postAdBtn.on('click', function () {
-            location.href = "pages/signup.html";
-        });
+        $postAdBtn.on("click", () => {
+            location.href = "pages/signup.html"
+        })
     }
 }
 
+function fetchUserProfile(token) {
+    $.ajax({
+        url: "http://localhost:8080/api/users/getUserByToken",
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token },
+        success: function (response) {
+            console.log("User data loaded for navbar:", response);
+            console.log("Profile Image URL:", response.profileImageUrl);
+
+            // Get the profile image in navbar dropdown
+            const $navProfileImg = $("#profileDropdown img");
+
+            let profileUrl = response.profileImageUrl;
+
+            // Check for null, undefined, empty string, or just whitespace
+            if (!profileUrl || profileUrl.trim() === '') {
+                profileUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(response.name)}&background=10b981&color=fff&size=40&rounded=true`;
+                console.log("Using fallback avatar for navbar:", profileUrl);
+            } else {
+                profileUrl = profileUrl.trim(); // Remove any whitespace
+                console.log("Using database profile photo for navbar:", profileUrl);
+            }
+
+            // Update the navbar profile image
+            $navProfileImg.attr('src', profileUrl);
+            $navProfileImg.attr('alt', response.name + "'s profile");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error fetching user profile for navbar:", error);
+            // Keep the default avatar if there's an error
+        }
+    });
+}
+
 function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return null;
+    const value = `; ${document.cookie}`
+    const parts = value.split(`; ${name}=`)
+    if (parts.length === 2) return parts.pop().split(";").shift()
+    return null
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"
 }
 
 function doLogout(redirectUrl = "index.html") {
     if (confirm("Are you sure you want to logout?")) {
-        deleteCookie("token");
-        deleteCookie("user");
-        window.location.href = redirectUrl;
+        deleteCookie("token")
+        deleteCookie("user")
+        window.location.href = redirectUrl
     }
 }
 
-$(document).ready(function () {
-    let currentPage = 0;
-    let totalPages = 1;
-    const cardsPerPage = 3;
+$(document).ready(() => {
+    let currentPage = 0
+    let totalPages = 1
+    const cardsPerPage = 3
 
     function fetchFeaturedPosts(page = 0) {
         $.ajax({
             url: `http://localhost:8080/api/posts/approved/recent?page=${page}&size=${cardsPerPage}`,
-            method: 'GET',
-            success: function (data) {
+            method: "GET",
+            success: (data) => {
                 // data is a PageResponse object
-                renderPage(data.content);
-                currentPage = data.pageNumber;
-                totalPages = data.totalPages;
+                renderPage(data.content)
+                currentPage = data.pageNumber
+                totalPages = data.totalPages
 
                 // Enable/disable buttons based on page
-                $('#prevPage').prop('disabled', currentPage <= 0);
-                $('#nextPage').prop('disabled', currentPage >= totalPages - 1);
+                $("#prevPage").prop("disabled", currentPage <= 0)
+                $("#nextPage").prop("disabled", currentPage >= totalPages - 1)
 
-                $('#currentPage').text(currentPage + 1);
+                $("#currentPage").text(currentPage + 1)
             },
-            error: function () {
-                console.error('Failed to fetch featured posts');
-            }
-        });
+            error: () => {
+                console.error("Failed to fetch featured posts")
+            },
+        })
     }
 
     function renderPage(posts) {
-        const $container = $('#featuredPostsContainer');
-        $container.empty();
+        const $container = $("#featuredPostsContainer")
+        $container.empty()
 
-        posts.forEach(post => {
-            const imageUrl = post.images && post.images.length
-                ? post.images[0].image_url
-                : 'https://picsum.photos/seed/default/800/480';
+        posts.forEach((post) => {
+            const imageUrl =
+                post.images && post.images.length ? post.images[0].image_url : "https://picsum.photos/seed/default/800/480"
 
             const card = `
                 <div class="col-md-6 col-lg-4">
@@ -160,44 +217,48 @@ $(document).ready(function () {
                         <div class="position-relative">
                             <img alt="${post.title}" class="w-100 object-cover" src="${imageUrl}" style="height:220px"/>
                             <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3">
-                                ${post.category ? post.category.name : 'Other'}
+                                ${post.category ? post.category.name : "Other"}
                             </span>
                         </div>
                         <div class="card-body">
                             <h5 class="card-title">${post.title}</h5>
                             <div class="fs-5 fw-bold text-primary-emerald mb-1">Rs. ${post.price}</div>
                             <div class="d-flex justify-content-between text-muted">
-                                <small>${post.location ? post.location.city : ''}</small>
+                                <small>${post.location ? post.location.city : ""}</small>
                                 <small><i class="bi bi-star-fill text-warning me-1"></i>4.5</small>
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
-                                <small class="text-muted">by ${post.user ? post.user.name : 'Unknown'}</small>
+                                <small class="text-muted">by ${post.user ? post.user.name : "Unknown"}</small>
                                 <a class="btn btn-emerald btn-sm" href="#">View Details</a>
                             </div>
                         </div>
                     </div>
-                </div>`;
-            $container.append(card);
-        });
+                </div>`
+            $container.append(card)
+        })
     }
-
-    $('#prevPage').click(function () {
-        if (currentPage > 0) {
-            fetchFeaturedPosts(currentPage - 1);
-        }
-    });
-
-    $('#nextPage').click(function () {
-        if (currentPage < totalPages - 1) {
-            fetchFeaturedPosts(currentPage + 1);
-        }
-    });
-
-    fetchFeaturedPosts();
-
-    $("#viewAllBtn").on("click", function () {
+    $(".nav-link").filter(function() {
+        return $(this).text().trim() === "Browse";
+    }).on("click", function(e) {
+        e.preventDefault();
         window.location.href = "pages/advertisement.html";
     });
-});
 
+    $("#prevPage").click(() => {
+        if (currentPage > 0) {
+            fetchFeaturedPosts(currentPage - 1)
+        }
+    })
 
+    $("#nextPage").click(() => {
+        if (currentPage < totalPages - 1) {
+            fetchFeaturedPosts(currentPage + 1)
+        }
+    })
+
+    fetchFeaturedPosts()
+
+    $("#viewAllBtn").on("click", () => {
+        window.location.href = "pages/advertisement.html"
+    })
+})

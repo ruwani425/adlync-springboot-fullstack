@@ -226,6 +226,7 @@ async function uploadImages() {
 }
 
 $(document).ready(function () {
+    checkAuth();
     initializeCategories();
 
     $("#prevPage").on("click", function () {
@@ -687,6 +688,97 @@ $(document).ready(function () {
         }
     });
 });
+
+function checkAuth() {
+    const token = getCookie("token");
+    const user = getCookie("user");
+
+    if (token) {
+        setupAuthenticatedUser(user);
+        loadPostAdFunctionality();
+    } else {
+        setupUnauthenticatedUser();
+    }
+}
+
+function setupAuthenticatedUser(user) {
+    $("#signInBtn").hide();
+    $("#profileDropdown").show();
+    $("#mainContent").show();
+    $("#signInPrompt").hide();
+    $("#authAlert").addClass('d-none');
+
+    if (user) {
+        try {
+            const userData = JSON.parse(decodeURIComponent(user));
+            const userName = userData.name || userData.username || "User";
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(userName)}&background=10b981&color=fff&size=40&rounded=true`;
+            $("#profileAvatar").attr('src', avatarUrl);
+        } catch (e) {
+            console.warn("Error parsing user data:", e);
+        }
+    }
+
+    $("#profileLink").on("click", function (e) {
+        e.preventDefault();
+        location.href = "../pages/user-profile.html";
+    });
+
+    $("#logoutLink").on("click", function (e) {
+        e.preventDefault();
+        doLogout("../index.html");
+    });
+
+    $("#postAdBtn").on("click", function () {
+        window.scrollTo({top: 0, behavior: 'smooth'});
+    });
+}
+
+function setupUnauthenticatedUser() {
+    $("#signInBtn").show();
+    $("#profileDropdown").hide();
+    $("#mainContent").hide();
+    $("#signInPrompt").show();
+
+    $("#signInBtn").on("click", function () {
+        location.href = "signin.html";
+    });
+
+    $("#postAdBtn").on("click", function () {
+        $("#authAlert").removeClass('d-none');
+        setTimeout(() => {
+            location.href = "signin.html";
+        }, 2000);
+    });
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
+function doLogout(redirectUrl = "../index.html") {
+    if (confirm("Are you sure you want to logout?")) {
+        deleteCookie("token");
+        deleteCookie("user");
+        window.location.href = redirectUrl;
+    }
+}
+
+function loadPostAdFunctionality() {
+    const script = document.createElement('script');
+    script.src = '../js/postad.js';
+    script.onload = function () {
+        console.log('Post ad functionality loaded');
+    };
+    document.head.appendChild(script);
+}
 
 function displaySelectedImages(input) {
     const selectedImagesDiv = document.getElementById('selected-images');
@@ -2105,7 +2197,7 @@ function generateDynamicForm(categoryId) {
                         <label class="form-label" for="listing_type">Listing Type *</label>
                         <select class="form-select" id="listing_type" name="listing_type" required>
                             <option value="">Select Listing Type</option>
-                            <option value="SAle">For Sale</option>
+                            <option value="SELL">For Sale</option>
                             <option value="RENT">For Rent</option>
                             <option value="LEASE">For Lease</option>
                         </select>

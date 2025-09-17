@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>Profile - Adlync</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <link href="../assert/css/userProfile.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
+    <div class="container py-2">
+        <a class="navbar-brand fw-bold text-primary-emerald" href="../index.html">Adlync</a>
+        <button aria-controls="navMain" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
+                data-bs-target="#navMain" data-bs-toggle="collapse" type="button">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navMain">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Browse</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Sell</a></li>
+            </ul>
+            <div class="d-flex gap-2 align-items-center">
+                <button class="btn btn-emerald" id="postAdBtn">Post Ad</button>
+                <div class="dropdown">
+                    <button aria-expanded="false" class="btn btn-link p-0" data-bs-toggle="dropdown" type="button">
+                        <img alt="Profile"
+                             class="profile-avatar"
+                             id="navProfileImg"
+                             src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=40&rounded=true">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item active" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i>Log
+                            out</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Profile Header -->
+<section class="profile-header text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <div class="d-flex align-items-center gap-4 flex-wrap">
+                    <div class="position-relative">
+                        <img alt="Profile"
+                             class="profile-avatar-large"
+                             id="profileImg"
+                             src="https://ui-avatars.com/api/?name=John+Doe&background=059669&color=fff&size=120&rounded=true">
+                        <button class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle p-2"
+                                id="changePhotoBtn"
+                                style="width: 36px; height: 36px;"
+                                title="Change photo">
+                            <i class="bi bi-camera-fill"></i>
+                        </button>
+                    </div>
+                    <div class="flex-grow-1 min-width-0">
+                        <h1 class="fw-bold mb-1" id="userName">John Doe</h1>
+                        <p class="mb-2 opacity-75" id="userEmail">john.doe@example.com</p>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-calendar-fill"></i>
+                                <span id="joinDate">Joined Jan 2024</span>
+                            </span>
+                            <span class="d-flex align-items-center gap-1">
+                                <i class="bi bi-star-fill text-warning"></i>
+                                <span id="userRating">4.8 (23 reviews)</span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-4 bg-white border-bottom">
+    <div class="container">
+        <div class="row g-3">
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalAds">24</div>
+                    <div class="text-muted small">Total Ads</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="activeAds">18</div>
+                    <div class="text-muted small">Active</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="soldAds">6</div>
+                    <div class="text-muted small">Sold</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="stats-card">
+                    <div class="stats-number" id="totalViews">1.2k</div>
+                    <div class="text-muted small">Total Views</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Content Section -->
+<section class="py-5">
+    <div class="container">
+        <!-- Tab Navigation -->
+        <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" data-bs-target="#my-ads" data-bs-toggle="tab" id="my-ads-tab"
+                        role="tab" type="button">
+                    <i class="bi bi-grid-3x3-gap-fill me-2"></i>My Ads
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-target="#reviews" data-bs-toggle="tab" id="reviews-tab"
+                        role="tab" type="button">
+                    <i class="bi bi-star-fill me-2"></i>Reviews
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" data-bs-target="#settings" data-bs-toggle="tab" id="settings-tab"
+                        role="tab" type="button">
+                    <i class="bi bi-gear-fill me-2"></i>Settings
+                </button>
+            </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content">
+            <!-- My Ads Tab -->
+            <div class="tab-pane fade show active" id="my-ads" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="mb-0">My Advertisements</h3>
+                    <div class="d-flex gap-2">
+                        <select class="form-select form-select-sm" id="statusFilter" style="width: auto;">
+                            <option value="ALL">All Status</option>
+                            <option value="APPROVED">Active</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="EXPIRED">Expired</option>
+                            <option value="REJECTED">Rejected</option>
+                        </select>
+                        <button class="btn btn-emerald btn-sm" id="addNewAdBtn">
+                            <i class="bi bi-plus-circle me-1"></i>Add New
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row g-4" id="userAdsContainer">
+                    <!-- Demo ads with improved status labels -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card ad-card h-100">
+                            <div class="ad-image-container position-relative">
+                                <img alt="Car" class="w-100 object-cover" src="https://picsum.photos/seed/car1/400/300"
+                                     style="height: 200px;">
+                                <span class="status-badge status-active position-absolute top-0 end-0 m-3">
+                                    Active
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <span class="category-badge mb-2">Vehicles</span>
+                                <h6 class="card-title">2019 Honda Civic - Excellent Condition</h6>
+                                <div class="price-tag mb-3">Rs. 3,500,000</div>
+                                <div class="d-flex justify-content-between text-muted small mb-3">
+                                    <span><i class="bi bi-geo-alt me-1"></i>Colombo</span>
+                                    <span><i class="bi bi-eye me-1"></i>145 views</span>
+                                </div>
+                                <div class="d-flex gap-2 action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm flex-fill">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card ad-card h-100">
+                            <div class="ad-image-container position-relative">
+                                <img alt="Phone" class="w-100 object-cover"
+                                     src="https://picsum.photos/seed/phone1/400/300" style="height: 200px;">
+                                <span class="status-badge status-sold position-absolute top-0 end-0 m-3">
+                                    Sold
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <span class="category-badge mb-2">Electronics</span>
+                                <h6 class="card-title">iPhone 13 Pro Max - 256GB</h6>
+                                <div class="price-tag mb-3">Rs. 280,000</div>
+                                <div class="d-flex justify-content-between text-muted small mb-3">
+                                    <span><i class="bi bi-geo-alt me-1"></i>Kandy</span>
+                                    <span><i class="bi bi-eye me-1"></i>89 views</span>
+                                </div>
+                                <div class="d-flex gap-2 action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm flex-fill">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card ad-card h-100">
+                            <div class="ad-image-container position-relative">
+                                <img alt="House" class="w-100 object-cover"
+                                     src="https://picsum.photos/seed/house1/400/300" style="height: 200px;">
+                                <span class="status-badge status-pending position-absolute top-0 end-0 m-3">
+                                    Pending
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <span class="category-badge mb-2">Properties</span>
+                                <h6 class="card-title">Luxury Apartment in Colombo 03</h6>
+                                <div class="price-tag mb-3">Rs. 45,000,000</div>
+                                <div class="d-flex justify-content-between text-muted small mb-3">
+                                    <span><i class="bi bi-geo-alt me-1"></i>Colombo</span>
+                                    <span><i class="bi bi-eye me-1"></i>234 views</span>
+                                </div>
+                                <div class="d-flex gap-2 action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm flex-fill">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Example of rejected status -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="card ad-card h-100">
+                            <div class="ad-image-container position-relative">
+                                <img alt="Laptop" class="w-100 object-cover"
+                                     src="https://picsum.photos/seed/laptop1/400/300" style="height: 200px;">
+                                <span class="status-badge status-rejected position-absolute top-0 end-0 m-3">
+                                    Rejected
+                                </span>
+                            </div>
+                            <div class="card-body">
+                                <span class="category-badge mb-2">Electronics</span>
+                                <h6 class="card-title">Gaming Laptop - High Performance</h6>
+                                <div class="price-tag mb-3">Rs. 450,000</div>
+                                <div class="d-flex justify-content-between text-muted small mb-3">
+                                    <span><i class="bi bi-geo-alt me-1"></i>Galle</span>
+                                    <span><i class="bi bi-eye me-1"></i>12 views</span>
+                                </div>
+                                <div class="d-flex gap-2 action-buttons">
+                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
+                                        <i class="bi bi-pencil me-1"></i>Edit
+                                    </button>
+                                    <button class="btn btn-outline-danger btn-sm flex-fill">
+                                        <i class="bi bi-trash me-1"></i>Delete
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center mt-4">
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item disabled">
+                                <a class="page-link" href="#" tabindex="-1">Previous</a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#">Next</a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Reviews Tab -->
+            <div class="tab-pane fade" id="reviews" role="tabpanel">
+                <h3 class="mb-4">Customer Reviews</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <img alt="Reviewer"
+                                         class="rounded-circle"
+                                         src="https://ui-avatars.com/api/?name=Sarah+Johnson&background=6366f1&color=fff&size=50&rounded=true"
+                                         style="width: 50px; height: 50px;">
+                                    <div>
+                                        <h6 class="mb-0">Sarah Johnson</h6>
+                                        <div class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted ms-auto">2 days ago</small>
+                                </div>
+                                <p class="mb-0">"Excellent seller! The car was exactly as described and the transaction
+                                    was smooth."</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center gap-3 mb-3">
+                                    <img alt="Reviewer"
+                                         class="rounded-circle"
+                                         src="https://ui-avatars.com/api/?name=Mike+Chen&background=f59e0b&color=fff&size=50&rounded=true"
+                                         style="width: 50px; height: 50px;">
+                                    <div>
+                                        <h6 class="mb-0">Mike Chen</h6>
+                                        <div class="text-warning">
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star-fill"></i>
+                                            <i class="bi bi-star"></i>
+                                        </div>
+                                    </div>
+                                    <small class="text-muted ms-auto">1 week ago</small>
+                                </div>
+                                <p class="mb-0">"Good communication and fair pricing. Would recommend!"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-pane fade" id="settings" role="tabpanel">
+                <h3 class="mb-4">Account Settings</h3>
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Notification Preferences</h5>
+                                <div class="form-check mb-3">
+                                    <input checked class="form-check-input" id="emailNotifs" type="checkbox">
+                                    <label class="form-check-label" for="emailNotifs">
+                                        Email notifications for new messages
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" id="smsNotifs" type="checkbox">
+                                    <label class="form-check-label" for="smsNotifs">
+                                        SMS notifications for important updates
+                                    </label>
+                                </div>
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" id="marketingEmails" type="checkbox">
+                                    <label class="form-check-label" for="marketingEmails">
+                                        Marketing emails and promotions
+                                    </label>
+                                </div>
+                                <button class="btn btn-emerald">Save Preferences</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">Danger Zone</h5>
+                                <p class="text-muted small">These actions are irreversible</p>
+                                <button class="btn btn-outline-danger w-100 mb-2">Change Password</button>
+                                <button class="btn btn-danger w-100">Delete Account</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Add this modal to your user-profile.html, before closing </body> tag -->
+<div aria-hidden="true" aria-labelledby="photoUploadModalLabel" class="modal fade" id="photoUploadModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="photoUploadModalLabel">Change Profile Photo</h5>
+                <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button"></button>
+            </div>
+            <div class="modal-body text-center">
+                <div class="mb-4">
+                    <img alt="Profile Preview"
+                         class="rounded-circle mb-3"
+                         id="photoPreview"
+                         src="https://ui-avatars.com/api/?name=User&background=059669&color=fff&size=150&rounded=true"
+                         style="width: 150px; height: 150px; object-fit: cover; border: 4px solid #e5e7eb;">
+                </div>
+
+                <div class="mb-3">
+                    <input accept="image/*"
+                           class="form-control"
+                           id="photoInput"
+                           style="display: none;"
+                           type="file">
+                    <button class="btn btn-outline-emerald" onclick="$('#photoInput').click()" type="button">
+                        <i class="bi bi-camera-fill me-2"></i>Choose Photo
+                    </button>
+                </div>
+
+                <div class="mb-3" id="uploadProgress" style="display: none;">
+                    <div class="progress">
+                        <div class="progress-bar bg-emerald" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    <small class="text-muted">Uploading...</small>
+                </div>
+
+                <small class="text-muted d-block">
+                    Supported formats: JPG, PNG, WebP (Max 5MB)
+                </small>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">Cancel</button>
+                <button class="btn btn-emerald" disabled id="uploadPhotoBtn" type="button">
+                    <i class="bi bi-cloud-upload me-2"></i>Upload & Save
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="../js/firebase.js"></script>
+<script src="../js/user-profile.js"></script>
+</body>

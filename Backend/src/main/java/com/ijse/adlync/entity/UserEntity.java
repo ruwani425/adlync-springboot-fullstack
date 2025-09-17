@@ -41,6 +41,8 @@ public class UserEntity {
     @Column(nullable = false)
     private String status;
 
+    private String profileImageUrl;
+
     @CreationTimestamp
     @Column(updatable = false, nullable = false)
     private LocalDateTime joinDate;

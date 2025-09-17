@@ -9,7 +9,7 @@
 }
 .ad-card:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
 }
 .price-badge {
     background: linear-gradient(135deg, #10b981, #059669);
@@ -43,11 +43,61 @@
 }
 .view-toggle .btn.active {
     background: white;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .results-header {
     background: white;
     border-radius: 12px;
     padding: 1.5rem;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Added profile dropdown styles */
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #10b981;
+    transition: all 0.3s ease;
+}
+
+.profile-avatar:hover {
+    border-color: #059669;
+    transform: scale(1.05);
+}
+
+.dropdown-menu {
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    padding: 0.5rem 0;
+    min-width: 180px;
+}
+
+.dropdown-item {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item:hover {
+    background-color: #f8f9fa;
+    color: #10b981;
+}
+
+.dropdown-item i {
+    width: 20px;
+    text-align: center;
+}
+
+.dropdown-divider {
+    margin: 0.5rem 0;
+}
+
+@media (max-width: 768px) {
+    .profile-avatar {
+        width: 35px;
+        height: 35px;
+    }
 }

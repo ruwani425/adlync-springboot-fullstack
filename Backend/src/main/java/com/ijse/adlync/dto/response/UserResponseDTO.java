@@ -19,4 +19,5 @@ public class UserResponseDTO {
     private UserEntityRoleEnum role;
     private String status;
     private LocalDateTime joinDate;
+    private String profileImageUrl;
 }

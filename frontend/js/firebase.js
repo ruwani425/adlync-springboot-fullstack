@@ -118,3 +118,53 @@ function validateImages(files) {
 
     return true;
 }
+
+// Add this function to your firebase.js file
+
+async function uploadProfilePhotoToFirebase(file) {
+    if (!file) {
+        throw new Error('No file selected');
+    }
+
+    // Validate file
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (file.size > maxSize) {
+        throw new Error('File size exceeds 5MB limit');
+    }
+
+    if (!allowedTypes.includes(file.type)) {
+        throw new Error('Invalid file type. Only JPG, PNG, and WebP are allowed');
+    }
+
+    const fileName = `profile-photos/${Date.now()}_${file.name}`;
+    const storageRef = storage.ref(fileName);
+    const uploadTask = storageRef.put(file);
+
+    return new Promise((resolve, reject) => {
+        uploadTask.on('state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
+                // Update progress bar
+                const progressBar = document.querySelector('#uploadProgress .progress-bar');
+                if (progressBar) {
+                    progressBar.style.width = progress + '%';
+                }
+
+                console.log(`Upload progress: ${Math.round(progress)}%`);
+            },
+            (error) => {
+                console.error('Upload failed:', error);
+                reject(error);
+            },
+            () => {
+                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                    console.log('Profile photo uploaded successfully:', downloadURL);
+                    resolve(downloadURL);
+                }).catch(reject);
+            }
+        );
+    });
+}

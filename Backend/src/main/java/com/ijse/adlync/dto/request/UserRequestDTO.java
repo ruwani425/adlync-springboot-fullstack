@@ -19,4 +19,5 @@ public class UserRequestDTO {
     private String email;
     private String status;
     private LocalDateTime joinDate;
+    private String profileImageUrl;
 }

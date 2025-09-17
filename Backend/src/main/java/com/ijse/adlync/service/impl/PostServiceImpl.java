@@ -716,4 +716,42 @@ public class PostServiceImpl implements PostService {
         return new PageResponse<>(dtos, pageResult.getNumber(), pageResult.getTotalPages());
     }
 
+    @Override
+    public List<PostResponseDTO> findPostsByUser(Long userId) {
+//        UserEntity user = userRepository.findById(userId)
+//                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        List<PostEntity> posts = repository.findPostEntitYByUser_id(userId);
+        System.out.println(posts.toString());
+        return posts.stream()
+                .map(post -> modelMapper.map(post, PostResponseDTO.class))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<PostResponseDTO> findPostsByUserWithPagination(Long userId, String status, Pageable pageable) {
+        Page<PostEntity> postsPage;
+
+        if (status != null && !status.equalsIgnoreCase("all")) {
+            PostEntityStatusEnum statusEnum = PostEntityStatusEnum.valueOf(status.toUpperCase());
+//            postsPage = repository.findByUser_IdAndStatus(userId, statusEnum, pageable);
+            postsPage = repository.findByUser_idAndStatus(userId, statusEnum, pageable);
+        } else {
+//            postsPage = repository.findByUser_Id(userId, pageable);
+            postsPage = repository.findByUser_Id(userId, pageable);
+        }
+
+        List<PostResponseDTO> dtos = postsPage.getContent()
+                .stream()
+                .map(post -> modelMapper.map(post, PostResponseDTO.class))
+                .collect(Collectors.toList());
+
+        return new PageResponse<>(
+                dtos,
+                postsPage.getNumber(),
+                postsPage.getSize(),
+                postsPage.getTotalElements(),
+                postsPage.getTotalPages(),
+                postsPage.isLast()
+        );
+    }
 }

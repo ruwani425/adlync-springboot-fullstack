@@ -5,7 +5,6 @@ import com.ijse.adlync.util.ValueEncoder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -51,6 +50,15 @@ public class EmailServiceImpl implements EmailService {
                 "Adlync Team";
 
         message.setText(text);
+        mailSender.send(message);
+    }
+
+    @Override
+    public void sendOTPEmail(String email, String otp) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Password Reset OTP");
+        message.setText("Your OTP for password reset is: " + otp + ". It expires in 5 minutes.\n\nBest regards,\nAdlync Team");
         mailSender.send(message);
     }
 }

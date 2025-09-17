@@ -1,7 +1,95 @@
+$(document).ready(function() {
+    checkAuthAndSetup();
+    updatePaymentAmount();
+
+    // Payment button click
+    $('#proceedPaymentBtn').on('click', processPayment);
+
+    // File input change
+    $('#bankSlipUpload').on('change', function() {
+        previewFile(this);
+    });
+
+    // Payment method card clicks
+    $('.payment-method-card').on('click', function() {
+        const method = $(this).data('method');
+        selectPaymentMethod(method);
+    });
+});
+
+function checkAuthAndSetup() {
+    const token = getCookie("token");
+    const user = getCookie("user");
+
+    if (token) {
+        // Reuse ProfileImageManager to handle authentication and image setup
+        profileImageManager.init().then((isAuthenticated) => {
+            if (isAuthenticated) {
+                setupAuthenticatedUser(user);  // Proceed with other setup
+            } else {
+                setupUnauthenticatedUser();
+            }
+        });
+    } else {
+        setupUnauthenticatedUser();
+    }
+}
+
+function setupAuthenticatedUser(user) {
+    $("#signInBtn").hide();
+    $("#profileDropdown").show();
+    $("#mainPaymentContent").show();
+    $("#signInPrompt").hide();
+    $("#authAlert").addClass('d-none');
+
+    // No need for manual avatar setup here – ProfileImageManager already handled it in init()
+
+    $("#profileLink").on("click", function(e) {
+        e.preventDefault();
+        location.href = "../pages/user-profile.html";
+    });
+
+    $("#logoutLink").on("click", function(e) {
+        e.preventDefault();
+        doLogout("../index.html");
+    });
+}
+
+function setupUnauthenticatedUser() {
+    $("#signInBtn").show();
+    $("#profileDropdown").hide();
+    $("#mainPaymentContent").hide();
+    $("#signInPrompt").show();
+
+    $("#signInBtn").on("click", function() {
+        location.href = "signin.html";
+    });
+}
+
+// ---------------------- Cookies ----------------------
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(";").shift();
+    return null;
+}
+
+function deleteCookie(name) {
+    document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
+
+function doLogout(redirectUrl = "../index.html") {
+    if (confirm("Are you sure you want to logout?")) {
+        deleteCookie("token");
+        deleteCookie("user");
+        window.location.href = redirectUrl;
+    }
+}
+
+// ---------------------- Payment ----------------------
 function selectPaymentMethod(method) {
     $('.payment-method-card').removeClass('selected');
     $(`[data-method="${method}"]`).addClass('selected');
-
     $(`#${method === 'card' ? 'cardPayment' : 'bankPayment'}`).prop('checked', true);
 
     if (method === 'card') {
@@ -22,14 +110,6 @@ function previewFile(input) {
         const file = input.files[0];
         const fileName = file.name;
         const fileSize = (file.size / 1024 / 1024).toFixed(2);
-        //
-        // if (file.size > 5) {
-        //     alert('File size must be less than 5MB');
-        //     $(input).val('');
-        //     $('#filePreview').hide();
-        //     return;
-        // }
-
         $('#fileName').text(`${fileName} (${fileSize} MB)`);
         $('#filePreview').show();
     }
@@ -51,41 +131,23 @@ function processPayment() {
     }
 
     if (paymentMethod === 'card') {
-        processCardPayment(paymentMethod);
+        processCardPayment();
     } else {
-        processBankTransfer(paymentMethod);
+        processBankTransfer();
     }
 }
 
-function processCardPayment(paymentMethod) {
-    savePost('CARD');
+function processCardPayment() {
     $('#loadingOverlay').css('display', 'flex');
-
-    const paymentGatewayUrl = 'https://your-payment-gateway.com/checkout';
-    const paymentData = {
-        amount: 750.00,
-        currency: 'LKR',
-        description: 'Advertisement Posting Fee',
-        return_url: window.location.origin + '/payment-success',
-        cancel_url: window.location.origin + '/payment-cancel',
-        customer_email: 'customer@example.com',
-        order_id: 'AD' + Date.now(),
-    };
-
-    const form = $('<form>', {method: 'POST', action: paymentGatewayUrl});
-    $.each(paymentData, function (key, value) {
-        $('<input>', {type: 'hidden', name: key, value: value}).appendTo(form);
-    });
-    $('body').append(form);
+    savePost('CARD'); // existing function for card
 
     setTimeout(() => {
-        alert('Redirecting to payment gateway...\n\nIn a real implementation, this would redirect to your payment provider (PayHere, Stripe, etc.)');
         $('#loadingOverlay').hide();
-        // form.submit(); // Uncomment in real implementation
+        alert('Redirecting to payment gateway...');
     }, 2000);
 }
 
-async function processBankTransfer(paymentMethod) {
+async function processBankTransfer() {
     const bankSelect = $('#selectedBank');
     const fileInput = $('#bankSlipUpload')[0];
 
@@ -106,12 +168,7 @@ async function processBankTransfer(paymentMethod) {
     try {
         const uploadedUrls = await uploadImagesToFirebase([fileInput.files[0]]);
         const slipUrl = uploadedUrls[0];
-
-        console.log("Uploaded Payment Slip URL:", slipUrl);
-
-        // Save post with slipUrl + bankName
         savePostWithBankSlip('BANK_TRANSFER', bankSelect.val(), slipUrl);
-
     } catch (error) {
         $('#loadingOverlay').hide();
         alert("Bank slip upload failed. Try again!");
@@ -120,6 +177,7 @@ async function processBankTransfer(paymentMethod) {
 
 function savePostWithBankSlip(paymentMethod, bankName, slipUrl) {
     let storedData = localStorage.getItem("adFormData");
+    console.log(storedData)
     if (!storedData) {
         alert("No form data found!");
         return;
@@ -177,7 +235,7 @@ function savePostWithBankSlip(paymentMethod, bankName, slipUrl) {
         },
         data: JSON.stringify(adData),
         success: function (response) {
-            localStorage.removeItem("adFormData");
+            // localStorage.removeItem("adFormData");
             $('#loadingOverlay').hide();
 
             Swal.fire({
@@ -205,8 +263,3 @@ function savePostWithBankSlip(paymentMethod, bankName, slipUrl) {
         }
     });
 }
-
-
-$(document).ready(function () {
-    updatePaymentAmount();
-});

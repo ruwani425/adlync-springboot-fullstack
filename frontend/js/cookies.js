@@ -19,9 +19,6 @@ function getCookie(name) {
     return null;
 }
 
- // function eraseCookie(name) {
- //    document.cookie = name + "=; Max-Age=-99999999; path=/";
- // }
 function deleteCookie(name) {
     document.cookie = name + "=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 }
@@ -29,6 +26,6 @@ function deleteCookie(name) {
 let token = getCookie("token");
 if (token != null) {
     $("#signInBtn").hide();
-}else{
+} else {
     $("#signInBtn").show();
 }

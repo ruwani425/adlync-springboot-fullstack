@@ -9,10 +9,15 @@ let postsCache = []
 const selectedStatus = "APPROVED"
 
 $(document).ready(() => {
+    // Initialize profile images first
+    if (window.profileImageManager) {
+        window.profileImageManager.init();
+    }
+
+    checkAuth()
     initializeFilters()
     initializeViewToggle()
     initializeSorting()
-    checkAuth()
 
     loadPosts(0)
 })
@@ -322,38 +327,39 @@ function initializeSorting() {
     $("#sortBy").on("change", applyFilters)
 }
 
+// Updated checkAuth function to work with ProfileImageManager
 function checkAuth() {
-    const $authBtn = $("#signInBtn")
-    const $postAdBtn = $("#postAdBtn")
     const token = getCookie("token")
 
-    $authBtn.off("click")
-    $postAdBtn.off("click")
-
-    if (token) {
-        $authBtn.text("Logout").removeClass("btn-outline-secondary").addClass("btn-danger").show()
-        $authBtn.on("click", () => {
-            if ($authBtn.text().trim() === "Logout") doLogout("/index.html")
-        })
-        $postAdBtn.on("click", () => {
-            location.href = "pages/postad.html"
-        })
-    } else {
-        $authBtn.text("Sign In").removeClass("btn-danger").addClass("btn-outline-secondary").show()
-        $authBtn.on("click", () => {
-            if ($authBtn.text().trim() === "Sign In") location.href = "pages/signin.html"
-        })
-        $postAdBtn.on("click", () => {
-            location.href = "pages/signup.html"
-        })
+    if (!token) {
+        // User not authenticated - use ProfileImageManager to handle UI
+        if (window.profileImageManager) {
+            window.profileImageManager.hideProfileElements();
+        } else {
+            // Fallback for when ProfileImageManager is not available
+            $("#signInBtn").show().removeClass("btn-danger").addClass("btn-outline-secondary")
+                .off("click").on("click", () => location.href = "signin.html")
+            $("#profileDropdown").hide()
+            $("#postAdBtn").off("click").on("click", () => location.href = "signup.html")
+        }
+        return;
     }
+
+    // User is authenticated - ProfileImageManager will handle the UI
+    // But we still need to set up specific handlers for this page
+    $("#postAdBtn").off("click").on("click", () => location.href = "postad.html")
 }
 
-function doLogout(redirectUrl = "/index.html") {
-    if (confirm("Are you sure you want to logout?")) {
-        deleteCookie("token")
-        deleteCookie("user")
-        window.location.href = redirectUrl
+function logout() {
+    if (window.profileImageManager) {
+        window.profileImageManager.logout();
+    } else {
+        // Fallback logout
+        if (confirm("Are you sure you want to logout?")) {
+            deleteCookie("token")
+            deleteCookie("user")
+            window.location.href = "../index.html"
+        }
     }
 }
 
@@ -414,9 +420,9 @@ function escapeHtml(unsafe) {
 }
 
 $(document).on("click", ".view-details-btn", function (e) {
-    e.preventDefault();
+    e.preventDefault()
     const $card = $(this).closest(".ad-item")
-    const categoryValue = $card.find(".category-badge").text().trim().toLowerCase();
+    const categoryValue = $card.find(".category-badge").text().trim().toLowerCase()
     const postId = $card.data("post-id") || ""
-    window.location.href = `../pages/ad-details.html?categoryName=${categoryValue}&postId=${postId}`;
-});
+    window.location.href = `../pages/ad-details.html?categoryName=${categoryValue}&postId=${postId}`
+})

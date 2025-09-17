@@ -246,3 +246,15 @@ body {
     background: linear-gradient(135deg, #dbeafe, #bfdbfe);
     color: #1e40af;
 }
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+#signInPrompt .card {
+    border: none;
+    box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
+    border-radius: 16px;
+}

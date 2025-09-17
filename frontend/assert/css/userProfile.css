@@ -1,0 +1,249 @@
+:root {
+    --emerald-600: #059669;
+    --emerald-500: #10b981;
+    --bg: #ffffff;
+    --fg: #475569;
+    --card: #f6f8fb;
+    --border: #e5e7eb;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--fg);
+    background: #f7fafc;
+    min-height: 100vh;
+}
+
+.text-primary-emerald {
+    color: var(--emerald-600) !important;
+}
+
+.btn-emerald {
+    background: var(--emerald-600);
+    color: #fff;
+    border-color: var(--emerald-600);
+}
+
+.btn-emerald:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #fff;
+}
+
+.text-bg-emerald {
+    background: var(--emerald-600) !important;
+}
+
+.bg-emerald {
+    background: var(--emerald-600) !important;
+}
+
+.bg-card {
+    background: #f7fafc;
+}
+
+.card {
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.card-hover {
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.profile-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 4px solid #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.nav-tabs .nav-link {
+    border: none;
+    color: #6b7280;
+    font-weight: 500;
+    padding: 1rem 1.5rem;
+}
+
+.nav-tabs .nav-link.active {
+    color: var(--emerald-600);
+    background: transparent;
+    border-bottom: 2px solid var(--emerald-600);
+}
+
+.nav-tabs {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.stats-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stats-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--emerald-600);
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.rounded-4 {
+    border-radius: 1rem !important;
+}
+
+.profile-header {
+    background: linear-gradient(135deg, var(--emerald-600), #047857);
+}
+
+.edit-profile-btn {
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--emerald-600);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.edit-profile-btn:hover {
+    background: #fff;
+    color: var(--emerald-600);
+}
+
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 25px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border: 2px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.status-active {
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: #ffffff;
+    border-color: #d1fae5;
+}
+
+.status-pending {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #ffffff;
+    border-color: #fef3c7;
+}
+
+.status-sold {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: #ffffff;
+    border-color: #fee2e2;
+}
+
+.status-rejected {
+    background: linear-gradient(135deg, #6b7280, #4b5563);
+    color: #ffffff;
+    border-color: #e5e7eb;
+}
+
+.status-draft {
+    background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+    color: #ffffff;
+    border-color: #ede9fe;
+}
+
+.status-badge::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: #6b7280;
+}
+
+.empty-state i {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+}
+
+.ad-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+.ad-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    border-color: var(--emerald-600);
+}
+
+.ad-image-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.ad-image-container img {
+    transition: transform 0.3s ease;
+}
+
+.ad-card:hover .ad-image-container img {
+    transform: scale(1.05);
+}
+
+.price-tag {
+    background: linear-gradient(135deg, var(--emerald-600), #047857);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(5, 150, 105, 0.3);
+}
+
+.category-badge {
+    background: rgba(107, 114, 128, 0.1);
+    color: #4b5563;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    display: inline-block;
+}
+
+.action-buttons .btn {
+    border-radius: 20px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.action-buttons .btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

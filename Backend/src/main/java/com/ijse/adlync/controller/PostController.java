@@ -38,6 +38,17 @@ public class PostController {
         return ResponseEntity.ok(service.findAll());
     }
 
+    @GetMapping("/by-user/{userId}")
+    public ResponseEntity<PageResponse<PostResponseDTO>> getPostsByUser(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size,
+            @RequestParam(required = false) String status
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        PageResponse<PostResponseDTO> response = service.findPostsByUserWithPagination(userId, status, pageable);
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/count/by-user/{userId}")
     public ResponseEntity<Long> getPostCountByUser(@PathVariable Long userId) {

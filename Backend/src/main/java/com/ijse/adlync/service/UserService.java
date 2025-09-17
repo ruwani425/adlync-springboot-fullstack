@@ -21,4 +21,10 @@ public interface UserService {
     void deleteById(Long id);
 
     UserResponseDTO updateModerator(String token, String password) throws Exception;
-}
+
+    UserResponseDTO getUserByUsername(String username);
+
+    UserResponseDTO updateProfilePhoto(String username, String profileImageUrl);
+    void resetPassword(String email, String newPassword) throws Exception;
+    public boolean checkEmailExists(String email);
+    }
