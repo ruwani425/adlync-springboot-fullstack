@@ -220,3 +220,283 @@ body {
     width: 16px;
     text-align: center;
 }
+
+/* Add these styles to your addetails.css file */
+
+/* Message Seller Modal Styles */
+#messageSellerModal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#messageSellerModal .modal-header {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+#messageSellerModal .modal-body {
+    padding: 2rem;
+}
+
+#messageSellerModal .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+/* Seller Info Bar */
+.seller-info-bar {
+    border-left: 4px solid #059669;
+}
+
+.seller-avatar {
+    border: 2px solid #059669;
+}
+
+/* Form Styling */
+#messageSellerModal .form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+#messageSellerModal .form-control,
+#messageSellerModal .form-select {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+#messageSellerModal .form-control:focus,
+#messageSellerModal .form-select:focus {
+    border-color: #059669;
+    box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+}
+
+#messageSellerModal .form-check-input:checked {
+    background-color: #059669;
+    border-color: #059669;
+}
+
+#messageSellerModal .form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
+}
+
+/* Character Counter */
+#messageCharCount {
+    font-weight: 600;
+    color: #059669;
+}
+
+/* Alert Styling */
+#messageSellerModal .alert-info {
+    background-color: rgba(5, 150, 105, 0.1);
+    border-color: rgba(5, 150, 105, 0.2);
+    color: #047857;
+    border-left: 4px solid #059669;
+    border-radius: 8px;
+}
+
+/* Button Styling */
+#messageSellerModal .btn-emerald {
+    background: linear-gradient(135deg, #059669, #047857);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#messageSellerModal .btn-emerald:hover {
+    background: linear-gradient(135deg, #047857, #065f46);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+}
+
+#messageSellerModal .btn-secondary {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+/* Loading State */
+#messageSellerModal .btn-emerald.loading {
+    position: relative;
+    pointer-events: none;
+    opacity: 0.8;
+}
+
+#messageSellerModal .btn-emerald.loading::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    margin: auto;
+    border: 2px solid transparent;
+    border-top-color: #ffffff;
+    border-radius: 50%;
+    animation: button-loading-spinner 1s ease infinite;
+}
+
+@keyframes button-loading-spinner {
+    from {
+        transform: rotate(0turn);
+    }
+    to {
+        transform: rotate(1turn);
+    }
+}
+
+#customSubjectContainer {
+    transition: all 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+#customSubjectContainer.show {
+    max-height: 100px;
+}
+
+.form-control.is-invalid {
+    border-color: #dc2626;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc2626'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath d='m5.8 4.6 1.4 1.4m0-1.4L5.8 6'/%3e%3c/svg%3e");
+}
+
+.form-control.is-valid {
+    border-color: #059669;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8'%3e%3cpath fill='%23059669' d='m2.3 6.73.94-.94 1.88 1.88 3.75-3.75.94.94-4.69 4.69z'/%3e%3c/svg%3e");
+}
+
+
+@media (max-width: 768px) {
+    #messageSellerModal .modal-dialog {
+        margin: 1rem;
+    }
+
+    #messageSellerModal .modal-body,
+    #messageSellerModal .modal-footer {
+        padding: 1.5rem;
+    }
+
+    .seller-info-bar .d-flex {
+        flex-direction: column;
+        text-align: center;
+        gap: 1rem !important;
+    }
+
+    .seller-info-bar .text-end {
+        text-align: center !important;
+    }
+}
+
+/* Additional styles for the report modal */
+#reportModal .modal-content {
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+#reportModal .modal-header {
+    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom: none;
+    padding: 1.5rem;
+}
+
+#reportModal .modal-body {
+    padding: 2rem;
+}
+
+#reportModal .modal-footer {
+    padding: 1.5rem 2rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f8fafc;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+}
+
+#reportModal .form-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+#reportModal .form-control,
+#reportModal .form-select {
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    padding: 0.75rem;
+    transition: all 0.3s ease;
+}
+
+#reportModal .form-control:focus,
+#reportModal .form-select:focus {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 0.2rem rgba(220, 38, 38, 0.25);
+}
+
+#reportModal .btn-danger {
+    background: linear-gradient(135deg, #dc2626, #b91c1c);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+#reportModal .btn-danger:hover {
+    background: linear-gradient(135deg, #b91c1c, #991b1b);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+#reportModal .btn-secondary {
+    border-radius: 8px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+}
+
+#customReasonContainer {
+    transition: all 0.3s ease;
+}
+
+.alert.position-fixed {
+    animation: slideInRight 0.3s ease-out;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@media (max-width: 768px) {
+    #reportModal .modal-dialog {
+        margin: 1rem;
+    }
+
+    #reportModal .modal-body,
+    #reportModal .modal-footer {
+        padding: 1.5rem;
+    }
+
+    .alert.position-fixed {
+        position: fixed !important;
+        top: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        width: auto !important;
+        min-width: auto !important;
+    }
+}

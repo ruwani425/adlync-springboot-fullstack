@@ -47,6 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/posts/approved/all/**").permitAll()
                         .requestMatchers("api/posts/post-detail/**").permitAll()
                         .requestMatchers("/api/users/checkEmail", "/api/users/sendOTP", "/api/users/verifyOTP", "/api/users/resetPassword").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

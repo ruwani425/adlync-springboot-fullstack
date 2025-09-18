@@ -47,6 +47,7 @@ $(document).ready(function () {
                     let token = response.data.token;
                     var role = response.data.role;
                     setCookie("token", token, 1);
+                    setCookie("msgId", loginIdentifier + "MSG")
                     console.log(document.cookie);
                     Swal.fire({
                         icon: 'success',

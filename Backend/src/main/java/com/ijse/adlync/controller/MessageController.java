@@ -80,4 +80,17 @@ public class MessageController {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/send")
+    @Operation(summary = "Send Message to Seller", description = "Send a message to a seller about an ad")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Message sent successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid message data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<MessageResponseDTO> sendMessageToSeller(@RequestBody MessageRequestDTO requestDTO) {
+        // requestDTO should contain: sellerId, adId, subject, message, contactPreferences, senderPhone
+        MessageResponseDTO response = service.sendMessage(requestDTO);
+        return ResponseEntity.ok(response);
+    }
 }
