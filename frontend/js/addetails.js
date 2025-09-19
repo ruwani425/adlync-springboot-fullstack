@@ -365,7 +365,7 @@ $(document).ready(() => {
 
             $("#adTitle").text(adTitle);
             $("#adPrice").text(`Rs. ${data.price?.toLocaleString() || "-"}`);
-            $("#postId").text(data.post_id || "-");  // FIXED: Use numeric data.post_id in DOM
+            $("#postId").text(data.post_id || "-");
             $("#contactNumber").text(data.contact_number || "-");
             $("#postStatus").text(data.status || "-");
             $("#adDescription").html(`<p>${data.description || "-"}</p>`);

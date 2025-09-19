@@ -1,17 +1,14 @@
-$(document).ready(function() {
+$(document).ready(function () {
     checkAuthAndSetup();
     updatePaymentAmount();
 
-    // Payment button click
     $('#proceedPaymentBtn').on('click', processPayment);
 
-    // File input change
-    $('#bankSlipUpload').on('change', function() {
+    $('#bankSlipUpload').on('change', function () {
         previewFile(this);
     });
 
-    // Payment method card clicks
-    $('.payment-method-card').on('click', function() {
+    $('.payment-method-card').on('click', function () {
         const method = $(this).data('method');
         selectPaymentMethod(method);
     });
@@ -22,10 +19,9 @@ function checkAuthAndSetup() {
     const user = getCookie("user");
 
     if (token) {
-        // Reuse ProfileImageManager to handle authentication and image setup
         profileImageManager.init().then((isAuthenticated) => {
             if (isAuthenticated) {
-                setupAuthenticatedUser(user);  // Proceed with other setup
+                setupAuthenticatedUser(user);
             } else {
                 setupUnauthenticatedUser();
             }
@@ -42,14 +38,12 @@ function setupAuthenticatedUser(user) {
     $("#signInPrompt").hide();
     $("#authAlert").addClass('d-none');
 
-    // No need for manual avatar setup here – ProfileImageManager already handled it in init()
-
-    $("#profileLink").on("click", function(e) {
+    $("#profileLink").on("click", function (e) {
         e.preventDefault();
         location.href = "../pages/user-profile.html";
     });
 
-    $("#logoutLink").on("click", function(e) {
+    $("#logoutLink").on("click", function (e) {
         e.preventDefault();
         doLogout("../index.html");
     });
@@ -61,12 +55,11 @@ function setupUnauthenticatedUser() {
     $("#mainPaymentContent").hide();
     $("#signInPrompt").show();
 
-    $("#signInBtn").on("click", function() {
+    $("#signInBtn").on("click", function () {
         location.href = "signin.html";
     });
 }
 
-// ---------------------- Cookies ----------------------
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -86,7 +79,6 @@ function doLogout(redirectUrl = "../index.html") {
     }
 }
 
-// ---------------------- Payment ----------------------
 function selectPaymentMethod(method) {
     $('.payment-method-card').removeClass('selected');
     $(`[data-method="${method}"]`).addClass('selected');

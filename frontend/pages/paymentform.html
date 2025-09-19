@@ -34,7 +34,10 @@
                 <!-- Profile dropdown -->
                 <div class="dropdown" id="profileDropdown" style="display: none;">
                     <button aria-expanded="false" class="btn btn-link p-0" data-bs-toggle="dropdown" type="button">
-                        <img id="profileAvatar" class="profile-avatar rounded-circle me-2" src="https://ui-avatars.com/api/?name=User&background=fff&color=000&size=40&rounded=true" alt="Profile" style="width: 40px; height: 40px;">
+                        <img alt="Profile" class="profile-avatar rounded-circle me-2"
+                             id="profileAvatar"
+                             src="https://ui-avatars.com/api/?name=User&background=fff&color=000&size=40&rounded=true"
+                             style="width: 40px; height: 40px;">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="#" id="profileLink"><i class="bi bi-person me-2"></i>Profile</a>
@@ -317,13 +320,14 @@
                     </div>
 
                     <div class="text-center mt-5">
-                        <button class="btn btn-payment btn-lg px-5" id="proceedPaymentBtn" onclick="processPayment()"
-                                style="display: none;" type="button">
-                                <span id="btnText">
-                                    <i class="bi bi-lock-fill me-2"></i>
-                                    Proceed to Secure Payment
-                                </span>
+                        <button class="btn btn-payment btn-lg px-5" id="proceedPaymentBtn" style="display: none;"
+                                type="button">
+                            <span id="btnText">
+                                <i class="bi bi-lock-fill me-2"></i>
+                                Proceed to Secure Payment
+                            </span>
                         </button>
+
                     </div>
 
                     <div class="success-message mt-4" id="successMessage">
