@@ -49,7 +49,6 @@ public class ReviewEntity {
     private Integer deliveryRating;       // Delivery/Pickup rating (1-5)
 
 
-    // Privacy setting (frontend has anonymous checkbox)
     @Column(nullable = false)
     private Boolean anonymous = false;
 
@@ -57,7 +56,6 @@ public class ReviewEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
-    // NEW: Relationship to PostEntity
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;

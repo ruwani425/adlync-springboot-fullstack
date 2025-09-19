@@ -2,6 +2,7 @@ package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.dto.request.ReviewRequestDTO;
 import com.ijse.adlync.dto.response.ReviewResponseDTO;
+import com.ijse.adlync.dto.response.ReviewStatsDTO;
 import com.ijse.adlync.entity.PostEntity;
 import com.ijse.adlync.entity.ReviewEntity;
 import com.ijse.adlync.entity.UserEntity;
@@ -9,9 +10,13 @@ import com.ijse.adlync.repository.PostRepository;
 import com.ijse.adlync.repository.ReviewRepository;
 import com.ijse.adlync.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -48,7 +53,7 @@ public class ReviewServiceImpl {
         if (!repository.existsById(id)) {
             throw new RuntimeException("ReviewEntity not found with id: " + id);
         }
-        ReviewEntity entity = toEntity(requestDTO, null); // User not updated
+        ReviewEntity entity = toEntity(requestDTO, null);
         entity.setReview_id(id);
         entity = repository.save(entity);
         return toResponseDTO(entity);
@@ -88,7 +93,7 @@ public class ReviewServiceImpl {
         if (entity.getPost() != null) {
             dto.setPostId(entity.getPost().getPost_id());
         }
-
+        System.out.println("\n\n\nto responseDTO"+dto.toString());
         return dto;
     }
 
@@ -121,8 +126,86 @@ public class ReviewServiceImpl {
         } else {
             throw new RuntimeException("postId is required for review creation");
         }
-
+        System.out.println("\n\nto entity: " + entity);
         return entity;
+    }
+
+
+    public List<ReviewResponseDTO> findByPostId(Long postId, Integer limit) {
+        PostEntity post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+        List<ReviewEntity> reviews;
+
+        if (limit != null && limit > 0) {
+            PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("created_at").descending());
+            reviews = repository.findByPostIdWithLimit(postId, pageRequest);
+        } else {
+            reviews = repository.findByPost_OrderByCreated_atDesc(post);
+        }
+        System.out.println("\n\n"+reviews.stream().map(ReviewEntity::getReview_id).collect(Collectors.toList())+"find by post method");
+
+        return reviews.stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    public ReviewStatsDTO getReviewStatsByPostId(Long postId) {
+        PostEntity postEntity = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
+        ReviewStatsDTO stats = new ReviewStatsDTO();
+
+        // Get total reviews
+        Long totalReviews = repository.countByPost_Post_id(postEntity);
+        stats.setTotalReviews(totalReviews);
+
+        if (totalReviews == 0) {
+            // Return default values if no reviews
+            stats.setAverageRating(0.0);
+            stats.setFiveStar(0L);
+            stats.setFourStar(0L);
+            stats.setThreeStar(0L);
+            stats.setTwoStar(0L);
+            stats.setOneStar(0L);
+            stats.setRecommended(0L);
+            stats.setVerifiedCount(0L);
+            stats.setSellerRating(0.0);
+            return stats;
+        }
+
+        // Get average rating
+        Double avgRating = repository.findAverageRatingByPostId(postId);
+        stats.setAverageRating(avgRating != null ? avgRating : 0.0);
+
+        // Get rating distribution
+        List<Object[]> ratingDistribution = repository.findRatingDistributionByPostId(postId);
+        Map<Integer, Long> ratingCounts = new HashMap<>();
+
+        for (Object[] row : ratingDistribution) {
+            Double rating = (Double) row[0];
+            Long count = (Long) row[1];
+            if (rating != null) {
+                ratingCounts.put(rating.intValue(), count);
+            }
+        }
+
+        stats.setFiveStar(ratingCounts.getOrDefault(5, 0L));
+        stats.setFourStar(ratingCounts.getOrDefault(4, 0L));
+        stats.setThreeStar(ratingCounts.getOrDefault(3, 0L));
+        stats.setTwoStar(ratingCounts.getOrDefault(2, 0L));
+        stats.setOneStar(ratingCounts.getOrDefault(1, 0L));
+
+        // Get recommended percentage
+        Long recommendedCount = repository.countRecommendedByPostId(postId);
+        Long recommendedPercentage = totalReviews > 0 ? (recommendedCount * 100) / totalReviews : 0L;
+        stats.setRecommended(recommendedPercentage);
+
+        // Get verified count
+        Long verifiedCount = repository.countVerifiedByPostId(postId);
+        stats.setVerifiedCount(verifiedCount);
+
+        // For seller rating, you might want to calculate this differently
+        // For now, using the same as average rating
+        stats.setSellerRating(avgRating != null ? avgRating : 0.0);
+        System.out.println("\nstats: "+stats);
+        return stats;
     }
 
 }

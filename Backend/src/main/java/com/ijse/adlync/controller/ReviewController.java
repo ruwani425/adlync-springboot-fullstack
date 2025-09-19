@@ -1,5 +1,6 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.dto.response.ReviewStatsDTO;
 import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.UserRepository;
 import com.ijse.adlync.util.JwtUtil;
@@ -30,6 +31,33 @@ public class ReviewController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @GetMapping("/post/{postId}")
+    @Operation(summary = "Get reviews by post ID", description = "Retrieve reviews for a specific post with optional limit")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved reviews"),
+            @ApiResponse(responseCode = "404", description = "Post not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<ReviewResponseDTO>> getReviewsByPostId(
+            @Parameter(description = "ID of the post") @PathVariable Long postId,
+            @Parameter(description = "Limit number of reviews (optional)") @RequestParam(required = false) Integer limit) {
+        List<ReviewResponseDTO> reviews = service.findByPostId(postId, limit);
+        return ResponseEntity.ok(reviews);
+    }
+
+    @GetMapping("/post/{postId}/stats")
+    @Operation(summary = "Get review statistics for a post", description = "Get aggregated review statistics for a specific post")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved review stats"),
+            @ApiResponse(responseCode = "404", description = "Post not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<ReviewStatsDTO> getReviewStatsByPostId(
+            @Parameter(description = "ID of the post") @PathVariable Long postId) {
+        ReviewStatsDTO stats = service.getReviewStatsByPostId(postId);
+        return ResponseEntity.ok(stats);
+    }
 
     @GetMapping
     @Operation(summary = "Get all Reviews", description = "Retrieve a list of all Review entities")

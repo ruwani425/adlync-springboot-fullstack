@@ -25,17 +25,13 @@ public class PostEntity {
     @Column(unique = true)
     private Long post_id;
 
-    //    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PostEntityStatusEnum status;
 
-    //    @Column(nullable = false)
     private String title;
 
-    //    @Column(nullable = false)
     private String description;
 
-    //    @Column(nullable = false)
     private String contact_number;
 
     private double price;
@@ -120,7 +116,6 @@ public class PostEntity {
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ImageEntity> images = new ArrayList<>();
 
-    // NEW: Relationship to reviews
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ReviewEntity> reviews = new ArrayList<>();
 }

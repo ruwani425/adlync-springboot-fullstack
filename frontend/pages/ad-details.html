@@ -14,7 +14,7 @@
 <!-- Navigation -->
 <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top">
     <div class="container py-2">
-        <a class="navbar-brand fw-bold text-primary-emerald" href="index.html">Adlync</a>
+        <a class="navbar-brand fw-bold text-primary-emerald" href="../index.html">Adlync</a>
         <button class="navbar-toggler" data-bs-target="#navMain" data-bs-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -250,10 +250,10 @@
                             <i class="bi bi-calendar me-2 text-muted"></i>
                             <span>Member since:</span> <span id="sellerMemberSince">Loading...</span>
                         </div>
-                        <div class="mb-2">
-                            <i class="bi bi-star-fill me-2 text-warning"></i>
-                            <span>Rating:</span> <span id="sellerRating">Loading...</span>
-                        </div>
+                        <!--                        <div class="mb-2">-->
+                        <!--                            <i class="bi bi-star-fill me-2 text-warning"></i>-->
+                        <!--                            <span>Rating:</span> <span id="sellerRating">Loading...</span>-->
+                        <!--                        </div>-->
                     </div>
 
                     <!-- Action Buttons -->
@@ -533,14 +533,15 @@
 </div>
 
 <!-- Add Review Modal -->
-<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+<div aria-hidden="true" aria-labelledby="reviewModalLabel" class="modal fade" id="reviewModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header bg-emerald text-white">
                 <h5 class="modal-title" id="reviewModalLabel">
                     <i class="bi bi-star me-2"></i>Write a Review
                 </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        type="button"></button>
             </div>
             <div class="modal-body">
                 <!-- Ad Info Section -->
@@ -580,7 +581,7 @@
                             </div>
                             <span class="ms-2 text-muted" id="ratingText">Click stars to rate</span>
                         </div>
-                        <input type="hidden" id="selectedRating" name="rating" required>
+                        <input id="selectedRating" name="rating" required type="hidden">
                         <div class="invalid-feedback">
                             Please select a rating.
                         </div>
@@ -591,9 +592,9 @@
                         <label class="form-label fw-semibold" for="reviewTitle">
                             <i class="bi bi-pencil me-2 text-primary-emerald"></i>Review Title *
                         </label>
-                        <input class="form-control" id="reviewTitle" name="title"
-                               placeholder="Summarize your experience in a few words"
-                               maxlength="100" required>
+                        <input class="form-control" id="reviewTitle" maxlength="100"
+                               name="title"
+                               placeholder="Summarize your experience in a few words" required>
                         <div class="form-text">
                             <span id="titleCharCount">0</span>/100 characters
                         </div>
@@ -607,9 +608,10 @@
                         <label class="form-label fw-semibold" for="reviewContent">
                             <i class="bi bi-chat-left-text me-2 text-primary-emerald"></i>Your Review *
                         </label>
-                        <textarea class="form-control" id="reviewContent" name="content"
-                                  rows="4" maxlength="1000" required
-                                  placeholder="Share details about your experience with this ad and seller..."></textarea>
+                        <textarea class="form-control" id="reviewContent" maxlength="1000"
+                                  name="content"
+                                  placeholder="Share details about your experience with this ad and seller..." required
+                                  rows="4"></textarea>
                         <div class="form-text">
                             <span id="contentCharCount">0</span>/1000 characters
                         </div>
@@ -678,15 +680,16 @@
                     <!-- Recommendation -->
                     <div class="mb-4">
                         <label class="form-label fw-semibold">
-                            <i class="bi bi-hand-thumbs-up me-2 text-primary-emerald"></i>Would you recommend this to others?
+                            <i class="bi bi-hand-thumbs-up me-2 text-primary-emerald"></i>Would you recommend this to
+                            others?
                         </label>
-                        <div class="btn-group w-100" role="group" data-bs-toggle="buttons">
-                            <input type="radio" class="btn-check" name="recommendation" id="recommendYes" value="yes">
+                        <div class="btn-group w-100" data-bs-toggle="buttons" role="group">
+                            <input class="btn-check" id="recommendYes" name="recommendation" type="radio" value="yes">
                             <label class="btn btn-outline-success" for="recommendYes">
                                 <i class="bi bi-hand-thumbs-up me-2"></i>Yes, I recommend
                             </label>
 
-                            <input type="radio" class="btn-check" name="recommendation" id="recommendNo" value="no">
+                            <input class="btn-check" id="recommendNo" name="recommendation" type="radio" value="no">
                             <label class="btn btn-outline-danger" for="recommendNo">
                                 <i class="bi bi-hand-thumbs-down me-2"></i>No, I don't recommend
                             </label>
@@ -696,7 +699,7 @@
                     <!-- Privacy Options -->
                     <div class="mb-4">
                         <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="anonymousReview" name="anonymous">
+                            <input class="form-check-input" id="anonymousReview" name="anonymous" type="checkbox">
                             <label class="form-check-label" for="anonymousReview">
                                 Post this review anonymously
                             </label>
@@ -721,12 +724,180 @@
                 </form>
             </div>
             <div class="modal-footer bg-light">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                <button class="btn btn-secondary" data-bs-dismiss="modal" type="button">
                     <i class="bi bi-x-lg me-2"></i>Cancel
                 </button>
-                <button type="button" class="btn btn-emerald" id="submitReviewBtn">
+                <button class="btn btn-emerald" id="submitReviewBtn" type="button">
                     <i class="bi bi-check-lg me-2"></i>Submit Review
                 </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div aria-hidden="true" aria-labelledby="allReviewsModalLabel" class="modal fade" id="allReviewsModal" tabindex="-1">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header text-white">
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-star-fill me-3 fs-4"></i>
+                    <div>
+                        <h4 class="modal-title mb-0" id="allReviewsModalLabel">All Reviews</h4>
+                        <small class="opacity-75" id="reviewsSubtitle">Customer feedback and ratings</small>
+                    </div>
+                </div>
+                <button aria-label="Close" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        type="button"></button>
+            </div>
+            <div class="modal-body p-0">
+                <div class="row g-0">
+                    <!-- Sidebar - Stats & Filters -->
+                    <div class="col-lg-4">
+                        <div class="reviews-sidebar scrollbar-thin">
+                            <!-- Overall Rating -->
+                            <div class="text-center mb-4">
+                                <div class="display-4 fw-bold text-primary-emerald mb-2" id="modalOverallRating">4.2
+                                </div>
+                                <div class="star-display large mb-2" id="modalOverallStars">
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star-fill"></i>
+                                    <i class="bi bi-star"></i>
+                                </div>
+                                <p class="text-muted mb-0">Based on <span id="modalTotalReviews">0</span> reviews</p>
+                            </div>
+
+                            <!-- Rating Distribution -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Rating Distribution</h6>
+                                <div class="rating-distribution">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2" style="width: 20px;">5</span>
+                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                        <div class="rating-bar flex-grow-1 me-3">
+                                            <div class="rating-progress" id="rating5Bar" style="width: 70%"></div>
+                                        </div>
+                                        <span class="fw-semibold" id="rating5Count">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2" style="width: 20px;">4</span>
+                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                        <div class="rating-bar flex-grow-1 me-3">
+                                            <div class="rating-progress" id="rating4Bar" style="width: 25%"></div>
+                                        </div>
+                                        <span class="fw-semibold" id="rating4Count">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2" style="width: 20px;">3</span>
+                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                        <div class="rating-bar flex-grow-1 me-3">
+                                            <div class="rating-progress" id="rating3Bar" style="width: 3%"></div>
+                                        </div>
+                                        <span class="fw-semibold" id="rating3Count">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2" style="width: 20px;">2</span>
+                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                        <div class="rating-bar flex-grow-1 me-3">
+                                            <div class="rating-progress" id="rating2Bar" style="width: 1%"></div>
+                                        </div>
+                                        <span class="fw-semibold" id="rating2Count">0</span>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="me-2" style="width: 20px;">1</span>
+                                        <i class="bi bi-star-fill text-warning me-2"></i>
+                                        <div class="rating-bar flex-grow-1 me-3">
+                                            <div class="rating-progress" id="rating1Bar" style="width: 1%"></div>
+                                        </div>
+                                        <span class="fw-semibold" id="rating1Count">0</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick Stats -->
+                            <div class="row g-2 mb-4">
+                                <div class="col-6">
+                                    <div class="bg-soft-green p-3 rounded-3 text-center">
+                                        <div class="fw-bold fs-5 text-primary-emerald" id="recommendedPercentage">85%
+                                        </div>
+                                        <small>Recommended</small>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-soft-green p-3 rounded-3 text-center">
+                                        <div class="fw-bold fs-5 text-primary-emerald" id="verifiedReviewsCount">6</div>
+                                        <small>Verified</small>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Filters -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Filter Reviews</h6>
+                                <div class="d-flex flex-wrap gap-2">
+                                    <button class="filter-btn active" data-filter="all">All Reviews</button>
+                                    <button class="filter-btn" data-filter="5">5 Stars</button>
+                                    <button class="filter-btn" data-filter="4">4 Stars</button>
+                                    <button class="filter-btn" data-filter="3">3 Stars</button>
+                                    <button class="filter-btn" data-filter="verified">Verified</button>
+                                    <button class="filter-btn" data-filter="recommended">Recommended</button>
+                                </div>
+                            </div>
+
+                            <!-- Sort Options -->
+                            <div class="mb-4">
+                                <h6 class="fw-bold mb-3">Sort By</h6>
+                                <select class="form-select" id="sortReviews">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="highest">Highest Rated</option>
+                                    <option value="lowest">Lowest Rated</option>
+                                    <option value="helpful">Most Helpful</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Main Content - Reviews List -->
+                    <div class="col-lg-8">
+                        <div class="reviews-main scrollbar-thin">
+                            <!-- Reviews Header -->
+                            <div class="d-flex justify-content-between align-items-center mb-4">
+                                <div>
+                                    <h5 class="mb-0">Customer Reviews</h5>
+                                    <p class="text-muted mb-0" id="reviewsCount">Showing all reviews</p>
+                                </div>
+                                <button class="btn btn-outline-primary btn-sm" id="writeReviewBtn">
+                                    <i class="bi bi-plus-circle me-2"></i>Write Review
+                                </button>
+                            </div>
+
+                            <!-- Reviews Container -->
+                            <div id="reviewsContainer">
+                                <!-- Reviews will be populated here -->
+                            </div>
+
+                            <!-- Load More Button -->
+                            <div class="text-center mt-4">
+                                <button class="btn btn-outline-secondary" id="loadMoreReviews" style="display: none;">
+                                    <i class="bi bi-arrow-down-circle me-2"></i>Load More Reviews
+                                </button>
+                            </div>
+
+                            <!-- No Reviews Message -->
+                            <div class="text-center py-5" id="noReviewsMessage" style="display: none;">
+                                <i class="bi bi-star display-4 text-muted mb-3"></i>
+                                <h5 class="text-muted">No reviews found</h5>
+                                <p class="text-muted">Be the first to write a review for this ad!</p>
+                                <button class="btn btn-emerald" id="firstReviewBtn">
+                                    <i class="bi bi-star me-2"></i>Write First Review
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

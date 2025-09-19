@@ -1,6 +1,14 @@
 const $ = window.jQuery;
 
 let stompClient = null;
+let allReviews = [];
+let filteredReviews = [];
+let currentFilter = 'all';
+let currentSort = 'newest';
+let currentPage = 0;
+let reviewsPerPage = 10;
+let numericPostId = null;
+
 
 function getCookie(name) {
     const value = `; ${document.cookie}`;
@@ -49,7 +57,6 @@ function showReviewSuccessMessage() {
     }, 5000);
 }
 
-// Helper function to show success messages (add this if not already present)
 function showReportSuccessMessage() {
     const alertHtml = `
         <div class="alert alert-success alert-dismissible fade show position-fixed" 
@@ -66,7 +73,6 @@ function showReportSuccessMessage() {
     }, 5000);
 }
 
-// Helper function to show error messages (add this if not already present)
 function showReportErrorMessage(message) {
     const alertHtml = `
         <div class="alert alert-danger alert-dismissible fade show position-fixed" 
@@ -266,7 +272,9 @@ function setCookie(name, value) {
 }
 
 $(document).ready(() => {
+
     initializeProfileForAdDetails();
+    initializeReviewsModal();
 
     const urlParams = new URLSearchParams(window.location.search);
     const categoryName = urlParams.get("categoryName");
@@ -340,8 +348,6 @@ $(document).ready(() => {
 
     updateCategoryDetailsTitle(category.icon, categoryName);
 
-    let numericPostId = null;
-
     $.ajax({
         url: `http://localhost:8080/api/posts/post-detail/${postId}`,
         method: "GET",
@@ -384,8 +390,6 @@ $(document).ready(() => {
 
                 const joinDate = seller.joinDate.split("T")[0];
                 $("#sellerMemberSince").text(joinDate);
-
-                $("#sellerRating").text("4.8/5");
 
                 let profileUrl = seller.profileImageUrl;
                 if (!profileUrl || profileUrl.trim() === '') {
@@ -432,6 +436,76 @@ $(document).ready(() => {
             }
 
             numericPostId = data.post_id;
+
+            if (numericPostId) {
+                loadSidebarReviewStats(numericPostId);
+                loadRecentReviews(numericPostId);
+            }
+
+            function loadSidebarReviewStats(postId) {
+                $.ajax({
+                    url: `http://localhost:8080/api/reviews/post/${postId}/stats`, // <-- adjust to your API
+                    method: "GET",
+                    success: (stats) => {
+                        $('#sidebarOverallRating').text(stats.averageRating.toFixed(1));
+                        $('#sidebarTotalReviews').text(stats.totalReviews);
+
+                        $('#fiveStarCount').text(stats.fiveStar);
+                        $('#fourStarCount').text(stats.fourStar);
+                        $('#recommendedCount').text(stats.recommended + '%');
+
+                        $('#verifiedCount').text(stats.verifiedCount);
+                        $('#sellerRatingBadge').text(stats.sellerRating.toFixed(1) + '/5'); // add id="sellerRatingBadge"
+
+                        const $stars = $('#sidebarOverallStars').empty();
+                        for (let i = 1; i <= 5; i++) {
+                            if (i <= Math.floor(stats.averageRating)) {
+                                $stars.append('<i class="bi bi-star-fill"></i>');
+                            } else if (i - stats.averageRating < 1) {
+                                $stars.append('<i class="bi bi-star-half"></i>');
+                            } else {
+                                $stars.append('<i class="bi bi-star"></i>');
+                            }
+                        }
+                    },
+                    error: (xhr) => {
+                        console.error("Failed to load review stats:", xhr.responseText);
+                    }
+                });
+            }
+
+            function loadRecentReviews(postId) {
+                $.ajax({
+                    url: `http://localhost:8080/api/reviews/post/${postId}?limit=3`,
+                    method: "GET",
+                    success: (reviews) => {
+                        console.log(reviews);
+                        const $container = $('#recentReviewsPreview').empty();
+                        if (!reviews || reviews.length === 0) {
+                            $container.html('<p class="text-muted small">No reviews yet. Be the first!</p>');
+                            return;
+                        }
+
+                        reviews.forEach(r => {
+                            const reviewHtml = `
+                    <div class="border-bottom pb-2 mb-2">
+                        <div class="fw-semibold">${r.title}</div>
+                        <div class="text-warning small">
+                            ${'<i class="bi bi-star-fill"></i>'.repeat(r.rating)}${'<i class="bi bi-star"></i>'.repeat(5 - r.rating)}
+                        </div>
+                        <p class="mb-1 small text-muted">${r.content.substring(0, 80)}...</p>
+                        <small class="text-muted">by ${r.anonymous ? 'Anonymous' : r.reviewerName}</small>
+                    </div>
+                `;
+                            $container.append(reviewHtml);
+                        });
+                    },
+                    error: (xhr) => {
+                        console.error("Failed to load recent reviews:", xhr.responseText);
+                    }
+                });
+            }
+
             if (!numericPostId) {
                 console.error("No numeric post_id in response");
             } else {
@@ -625,7 +699,6 @@ $(document).ready(() => {
 
     $('#viewAllReviewsBtn').on('click', function () {
         console.log('View all reviews clicked');
-        // window.location.href = `reviews.html?postId=${numericPostId}`;
     });
 
     addBreadcrumb("Home", "../index.html");
@@ -639,7 +712,6 @@ $(document).ready(() => {
 
         let isValid = true;
 
-        // Validate category
         const category = $('#reportCategory').val();
         if (!category) {
             $('#reportCategory').addClass('is-invalid');
@@ -648,7 +720,6 @@ $(document).ready(() => {
             $('#reportCategory').removeClass('is-invalid').addClass('is-valid');
         }
 
-        // Validate custom reason if "other" is selected
         if (category === 'other') {
             const customReason = $('#customReason').val().trim();
             if (!customReason) {
@@ -659,7 +730,6 @@ $(document).ready(() => {
             }
         }
 
-        // Validate email format if provided
         const email = $('#reporterContact').val().trim();
         if (email && !isValidEmail(email)) {
             $('#reporterContact').addClass('is-invalid');
@@ -671,10 +741,8 @@ $(document).ready(() => {
 
         if (!isValid) return;
 
-        // Disable button and show loading
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Submitting...');
 
-        // Get the numeric post ID
         let finalPostId = numericPostId;
         if (!finalPostId || isNaN(finalPostId)) {
             console.error("Invalid numeric postId:", numericPostId);
@@ -683,7 +751,6 @@ $(document).ready(() => {
             return;
         }
 
-        // Prepare report data
         const reportData = {
             reason: category,
             customReason: category === 'other' ? $('#customReason').val().trim() : null,
@@ -695,10 +762,8 @@ $(document).ready(() => {
 
         console.log('Submitting report:', reportData);
 
-        // Get token for authentication
         const token = getCookie('token');
 
-        // Submit report via AJAX
         $.ajax({
             url: 'http://localhost:8080/api/reports',
             method: 'POST',
@@ -734,3 +799,350 @@ $(document).ready(() => {
     });
 });
 
+function generateStarDisplay(rating, large = false) {
+    let stars = '';
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 1; i <= 5; i++) {
+        if (i <= fullStars) {
+            stars += '<i class="bi bi-star-fill"></i>';
+        } else if (i === fullStars + 1 && hasHalfStar) {
+            stars += '<i class="bi bi-star-half"></i>';
+        } else {
+            stars += '<i class="bi bi-star"></i>';
+        }
+    }
+
+    return `<div class="star-display ${large ? 'large' : ''}">${stars}</div>`;
+}
+
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now - date);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) return 'Yesterday';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    if (diffDays < 30) return `${Math.ceil(diffDays / 7)} weeks ago`;
+    if (diffDays < 365) return `${Math.ceil(diffDays / 30)} months ago`;
+    return `${Math.ceil(diffDays / 365)} years ago`;
+}
+
+function createReviewCard(review) {
+    const aspectRatings = [];
+
+    if (review.qualityRating) {
+        aspectRatings.push({
+            label: 'Quality',
+            rating: review.qualityRating,
+            icon: 'bi-gem'
+        });
+    }
+    if (review.communicationRating) {
+        aspectRatings.push({
+            label: 'Communication',
+            rating: review.communicationRating,
+            icon: 'bi-chat-dots'
+        });
+    }
+    if (review.valueRating) {
+        aspectRatings.push({
+            label: 'Value',
+            rating: review.valueRating,
+            icon: 'bi-currency-dollar'
+        });
+    }
+    if (review.deliveryRating) {
+        aspectRatings.push({
+            label: 'Delivery',
+            rating: review.deliveryRating,
+            icon: 'bi-truck'
+        });
+    }
+
+    const aspectRatingsHtml = aspectRatings.length > 0 ? `
+        <div class="aspect-ratings">
+            ${aspectRatings.map(aspect => `
+                <div class="aspect-rating">
+                    <i class="bi ${aspect.icon} text-primary-emerald mb-1"></i>
+                    <div class="fw-semibold small">${aspect.label}</div>
+                    ${generateStarDisplay(aspect.rating)}
+                </div>
+            `).join('')}
+        </div>
+    ` : '';
+
+    const recommendationBadge = review.recommendation ? `
+        <span class="recommendation-badge recommendation-${review.recommendation.toLowerCase()}">
+            <i class="bi ${review.recommendation === 'YES' ? 'bi-hand-thumbs-up' : 'bi-hand-thumbs-down'} me-1"></i>
+            ${review.recommendation === 'YES' ? 'Recommended' : 'Not Recommended'}
+        </span>
+    ` : '';
+
+    return `
+        <div class="review-card" data-rating="${review.rating}" data-verified="${review.verified}" data-recommended="${review.recommendation}">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="d-flex align-items-center">
+                    <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(review.reviewerName || 'Anonymous')}&background=059669&color=fff&size=48&rounded=true" 
+                         class="reviewer-avatar me-3" alt="Reviewer">
+                    <div>
+                        <div class="fw-semibold">${review.reviewerName || 'Anonymous User'}</div>
+                        <div class="d-flex align-items-center gap-2">
+                            ${generateStarDisplay(review.rating)}
+                            <span class="text-muted small">${formatDate(review.created_at)}</span>
+                            ${review.verified ? '<span class="badge bg-success">Verified</span>' : ''}
+                        </div>
+                    </div>
+                </div>
+                ${recommendationBadge}
+            </div>
+            
+            <h6 class="fw-bold mb-2">${review.title}</h6>
+            <p class="text-muted mb-3">${review.content}</p>
+            
+            ${aspectRatingsHtml}
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="d-flex gap-2">
+                    <button class="btn btn-sm btn-outline-secondary helpful-btn" data-review-id="${review.review_id}">
+                        <i class="bi bi-hand-thumbs-up me-1"></i>Helpful
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary report-review-btn" data-review-id="${review.review_id}">
+                        <i class="bi bi-flag me-1"></i>Report
+                    </button>
+                </div>
+                <small class="text-muted">Review #${review.review_id}</small>
+            </div>
+        </div>
+    `;
+}
+
+function loadAllReviews(postId) {
+    $.ajax({
+        url: `http://localhost:8080/api/reviews/post/${postId}`,
+        method: 'GET',
+        success: function (reviews) {
+            console.log('Loaded reviews:', reviews);
+            allReviews = reviews;
+            filteredReviews = [...reviews];
+            displayReviews();
+        },
+        error: function (xhr) {
+            console.error('Failed to load reviews:', xhr);
+            showNoReviews();
+        }
+    });
+}
+
+function loadReviewStatsForModal(postId) {
+    $.ajax({
+        url: `http://localhost:8080/api/reviews/post/${postId}/stats`,
+        method: 'GET',
+        success: function (stats) {
+            console.log('Loaded stats for modal:', stats);
+            updateModalStats(stats);
+        },
+        error: function (xhr) {
+            console.error('Failed to load stats for modal:', xhr);
+        }
+    });
+}
+
+function updateModalStats(stats) {
+    $('#modalOverallRating').text(stats.averageRating.toFixed(1));
+    $('#modalTotalReviews').text(stats.totalReviews);
+    $('#recommendedPercentage').text(stats.recommended + '%');
+    $('#verifiedReviewsCount').text(stats.verifiedCount);
+
+    const $stars = $('#modalOverallStars').empty();
+    const rating = stats.averageRating;
+    for (let i = 1; i <= 5; i++) {
+        if (i <= Math.floor(rating)) {
+            $stars.append('<i class="bi bi-star-fill"></i>');
+        } else if (i - rating < 1) {
+            $stars.append('<i class="bi bi-star-half"></i>');
+        } else {
+            $stars.append('<i class="bi bi-star"></i>');
+        }
+    }
+
+    const total = stats.totalReviews;
+    if (total > 0) {
+        const ratings = [
+            {count: stats.fiveStar, id: 'rating5'},
+            {count: stats.fourStar, id: 'rating4'},
+            {count: stats.threeStar, id: 'rating3'},
+            {count: stats.twoStar, id: 'rating2'},
+            {count: stats.oneStar, id: 'rating1'}
+        ];
+
+        ratings.forEach(rating => {
+            const percentage = total > 0 ? (rating.count / total) * 100 : 0;
+            $(`#${rating.id}Count`).text(rating.count);
+            $(`#${rating.id}Bar`).css('width', percentage + '%');
+        });
+    }
+}
+
+function displayReviews() {
+    const container = $('#reviewsContainer');
+
+    if (filteredReviews.length === 0) {
+        showNoReviews();
+        return;
+    }
+
+    if (currentPage === 0) {
+        container.empty();
+    }
+    $('#noReviewsMessage').hide();
+
+    const startIndex = currentPage * reviewsPerPage;
+    const endIndex = Math.min(startIndex + reviewsPerPage, filteredReviews.length);
+
+    for (let i = startIndex; i < endIndex; i++) {
+        container.append(createReviewCard(filteredReviews[i]));
+    }
+
+    $('#reviewsCount').text(`Showing ${Math.min(endIndex, filteredReviews.length)} of ${filteredReviews.length} reviews`);
+
+    if (endIndex < filteredReviews.length) {
+        $('#loadMoreReviews').show();
+    } else {
+        $('#loadMoreReviews').hide();
+    }
+}
+
+function showNoReviews() {
+    $('#reviewsContainer').empty();
+    $('#noReviewsMessage').show();
+    $('#reviewsCount').text('No reviews found');
+    $('#loadMoreReviews').hide();
+}
+
+function filterReviews(filter) {
+    currentFilter = filter;
+    currentPage = 0;
+
+    switch (filter) {
+        case 'all':
+            filteredReviews = [...allReviews];
+            break;
+        case '5':
+        case '4':
+        case '3':
+        case '2':
+        case '1':
+            filteredReviews = allReviews.filter(review => Math.floor(review.rating) === parseInt(filter));
+            break;
+        case 'verified':
+            filteredReviews = allReviews.filter(review => review.verified);
+            break;
+        case 'recommended':
+            filteredReviews = allReviews.filter(review => review.recommendation === 'YES');
+            break;
+        default:
+            filteredReviews = [...allReviews];
+    }
+
+    sortReviews(currentSort);
+    displayReviews();
+}
+
+function sortReviews(sort) {
+    currentSort = sort;
+
+    switch (sort) {
+        case 'newest':
+            filteredReviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            break;
+        case 'oldest':
+            filteredReviews.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+            break;
+        case 'highest':
+            filteredReviews.sort((a, b) => b.rating - a.rating);
+            break;
+        case 'lowest':
+            filteredReviews.sort((a, b) => a.rating - b.rating);
+            break;
+        case 'helpful':
+            // For now, sort by rating and date (you can implement helpful votes later)
+            filteredReviews.sort((a, b) => {
+                if (b.rating !== a.rating) return b.rating - a.rating;
+                return new Date(b.created_at) - new Date(a.created_at);
+            });
+            break;
+    }
+
+    displayReviews();
+}
+
+function openAllReviewsModal(postId) {
+    currentPage = 0;
+    currentFilter = 'all';
+    currentSort = 'newest';
+
+    $('.filter-btn').removeClass('active');
+    $('.filter-btn[data-filter="all"]').addClass('active');
+    $('#sortReviews').val('newest');
+
+    $('#allReviewsModal').modal('show');
+    loadAllReviews(postId);
+    loadReviewStatsForModal(postId);
+}
+
+function initializeReviewsModal() {
+    $(document).on('click', '.filter-btn', function () {
+        $('.filter-btn').removeClass('active');
+        $(this).addClass('active');
+        const filter = $(this).data('filter');
+        filterReviews(filter);
+    });
+
+    $(document).on('change', '#sortReviews', function () {
+        const sort = $(this).val();
+        sortReviews(sort);
+    });
+
+    $(document).on('click', '#loadMoreReviews', function () {
+        currentPage++;
+        displayReviews();
+    });
+
+    $(document).on('click', '#writeReviewBtn, #firstReviewBtn', function () {
+        $('#allReviewsModal').modal('hide');
+        setTimeout(() => {
+            $('#addReviewBtnSidebar').trigger('click');
+        }, 300);
+    });
+
+    $(document).on('click', '.helpful-btn', function () {
+        const reviewId = $(this).data('review-id');
+        const $btn = $(this);
+
+        $btn.addClass('btn-outline-success').removeClass('btn-outline-secondary');
+        $btn.find('i').addClass('text-success');
+
+        console.log('Marked review as helpful:', reviewId);
+    });
+
+    $(document).on('click', '.report-review-btn', function () {
+        const reviewId = $(this).data('review-id');
+
+        if (confirm('Are you sure you want to report this review?')) {
+            console.log('Reported review:', reviewId);
+            alert('Review reported successfully. Our team will review it.');
+        }
+    });
+}
+
+$('#viewAllReviewsBtn').off('click').on('click', function () {
+    if (numericPostId) {
+        openAllReviewsModal(numericPostId);
+    } else {
+        console.error('No post ID available for reviews');
+        alert('Unable to load reviews. Please refresh the page and try again.');
+    }
+});
