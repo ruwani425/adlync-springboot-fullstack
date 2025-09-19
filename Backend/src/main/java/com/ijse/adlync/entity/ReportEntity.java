@@ -15,13 +15,28 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class ReportEntity {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(unique = true)
+    @Column(name = "report_id")
     private Long report_id;
 
+    @Column(name = "reason", nullable = false)
     private String reason;
 
+    @Column(name = "custom_reason")
+    private String customReason;
+
+    @Column(name = "description", columnDefinition = "TEXT")
+    private String description;
+
+    @Column(name = "reporter_contact")
+    private String reporterContact;
+
+    @Column(name = "anonymous")
+    private Boolean anonymous = true;
+
+    @Column(name = "date", nullable = false)
     private LocalDateTime date;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -29,47 +44,17 @@ public class ReportEntity {
     private UserEntity user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;
 
-    public Long getReport_id() {
-        return report_id;
-    }
 
-    public void setReport_id(Long report_id) {
-        this.report_id = report_id;
+    @PrePersist
+    public void prePersist() {
+        if (date == null) {
+            date = LocalDateTime.now();
+        }
+        if (anonymous == null) {
+            anonymous = true;
+        }
     }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public UserEntity getUser() {
-        return user;
-    }
-
-    public void setUser(UserEntity user) {
-        this.user = user;
-    }
-
-    public PostEntity getPost() {
-        return post;
-    }
-
-    public void setPost(PostEntity post) {
-        this.post = post;
-    }
-
 }

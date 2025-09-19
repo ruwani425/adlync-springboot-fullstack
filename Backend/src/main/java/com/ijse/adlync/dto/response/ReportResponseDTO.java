@@ -15,5 +15,12 @@ public class ReportResponseDTO {
 
     private Long report_id;
     private String reason;
+    private String customReason;
+    private String description;
+    private String reporterContact;
+    private Boolean anonymous;
+    private Long postId;
+    private String postTitle;
+    private String reporterName;
     private LocalDateTime date;
 }

@@ -14,5 +14,10 @@ import java.time.LocalDateTime;
 public class ReportRequestDTO {
 
     private String reason;
+    private String customReason;
+    private String description;
+    private String reporterContact;
+    private Boolean anonymous;
+    private Long postId;
     private LocalDateTime date;
 }

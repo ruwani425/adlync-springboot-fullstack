@@ -49,6 +49,7 @@ function showReviewSuccessMessage() {
     }, 5000);
 }
 
+// Helper function to show success messages (add this if not already present)
 function showReportSuccessMessage() {
     const alertHtml = `
         <div class="alert alert-success alert-dismissible fade show position-fixed" 
@@ -65,12 +66,13 @@ function showReportSuccessMessage() {
     }, 5000);
 }
 
-function showReportErrorMessage() {
+// Helper function to show error messages (add this if not already present)
+function showReportErrorMessage(message) {
     const alertHtml = `
         <div class="alert alert-danger alert-dismissible fade show position-fixed" 
              style="top: 20px; right: 20px; z-index: 9999; min-width: 300px;" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i>
-            <strong>Error!</strong> Failed to submit report. Please try again later.
+            <strong>Error!</strong> ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     `;
@@ -491,61 +493,6 @@ $(document).ready(() => {
         $('#reportModal').modal('show');
     });
 
-    $('#submitReportBtn').on('click', function () {
-        const $btn = $(this);
-        const form = $('#reportForm')[0];
-
-        let isValid = true;
-
-        const category = $('#reportCategory').val();
-        if (!category) {
-            $('#reportCategory').addClass('is-invalid');
-            isValid = false;
-        } else {
-            $('#reportCategory').removeClass('is-invalid').addClass('is-valid');
-        }
-
-        if (category === 'other') {
-            const customReason = $('#customReason').val().trim();
-            if (!customReason) {
-                $('#customReason').addClass('is-invalid');
-                isValid = false;
-            } else {
-                $('#customReason').removeClass('is-invalid').addClass('is-valid');
-            }
-        }
-
-        const email = $('#reporterContact').val().trim();
-        if (email && !isValidEmail(email)) {
-            $('#reporterContact').addClass('is-invalid');
-            isValid = false;
-        } else {
-            $('#reporterContact').removeClass('is-invalid');
-            if (email) $('#reporterContact').addClass('is-valid');
-        }
-
-        if (!isValid) return;
-
-        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Submitting...');
-
-        const reportData = {
-            postId: $('#reportPostId').text(),
-            category: category,
-            customReason: category === 'other' ? $('#customReason').val().trim() : null,
-            description: $('#reportDescription').val().trim(),
-            reporterContact: email || null,
-            anonymous: $('#anonymousReport').is(':checked'),
-            timestamp: new Date().toISOString()
-        };
-
-        setTimeout(() => {
-            console.log('Report submitted:', reportData);
-            showReportSuccessMessage();
-            $('#reportModal').modal('hide');
-            $btn.prop('disabled', false).html('<i class="bi bi-flag me-2"></i>Submit Report');
-        }, 2000);
-    });
-
     $('#addReviewBtnSidebar').on('click', function () {
         const adTitle = $('#adTitle').text() || 'Advertisement';
         const sellerName = $('#sellerNameValue').text() || 'Seller';
@@ -684,4 +631,106 @@ $(document).ready(() => {
     addBreadcrumb("Home", "../index.html");
     addBreadcrumb(categoryName, "#");
     addBreadcrumb("Ad Details", "#");
+
+
+    $('#submitReportBtn').on('click', function () {
+        const $btn = $(this);
+        const form = $('#reportForm')[0];
+
+        let isValid = true;
+
+        // Validate category
+        const category = $('#reportCategory').val();
+        if (!category) {
+            $('#reportCategory').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#reportCategory').removeClass('is-invalid').addClass('is-valid');
+        }
+
+        // Validate custom reason if "other" is selected
+        if (category === 'other') {
+            const customReason = $('#customReason').val().trim();
+            if (!customReason) {
+                $('#customReason').addClass('is-invalid');
+                isValid = false;
+            } else {
+                $('#customReason').removeClass('is-invalid').addClass('is-valid');
+            }
+        }
+
+        // Validate email format if provided
+        const email = $('#reporterContact').val().trim();
+        if (email && !isValidEmail(email)) {
+            $('#reporterContact').addClass('is-invalid');
+            isValid = false;
+        } else {
+            $('#reporterContact').removeClass('is-invalid');
+            if (email) $('#reporterContact').addClass('is-valid');
+        }
+
+        if (!isValid) return;
+
+        // Disable button and show loading
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2" role="status"></span>Submitting...');
+
+        // Get the numeric post ID
+        let finalPostId = numericPostId;
+        if (!finalPostId || isNaN(finalPostId)) {
+            console.error("Invalid numeric postId:", numericPostId);
+            showReportErrorMessage('Invalid ad ID. Please refresh the page and try again.');
+            $btn.prop('disabled', false).html('<i class="bi bi-flag me-2"></i>Submit Report');
+            return;
+        }
+
+        // Prepare report data
+        const reportData = {
+            reason: category,
+            customReason: category === 'other' ? $('#customReason').val().trim() : null,
+            description: $('#reportDescription').val().trim() || null,
+            reporterContact: email || null,
+            anonymous: $('#anonymousReport').is(':checked'),
+            postId: finalPostId
+        };
+
+        console.log('Submitting report:', reportData);
+
+        // Get token for authentication
+        const token = getCookie('token');
+
+        // Submit report via AJAX
+        $.ajax({
+            url: 'http://localhost:8080/api/reports',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': token ? 'Bearer ' + token : ''
+            },
+            data: JSON.stringify(reportData),
+            success: function (response) {
+                console.log('Report submitted successfully:', response);
+                showReportSuccessMessage();
+                $('#reportModal').modal('hide');
+            },
+            error: function (xhr, status, error) {
+                console.error('Report submission failed:', xhr.responseText);
+                let errorMessage = 'Failed to submit report. Please try again later.';
+
+                if (xhr.status === 400) {
+                    errorMessage = 'Invalid report data. Please check your inputs and try again.';
+                } else if (xhr.status === 404) {
+                    errorMessage = 'Advertisement not found. Please refresh the page and try again.';
+                } else if (xhr.status === 500) {
+                    errorMessage = 'Server error. Please try again later.';
+                }
+
+                showReportErrorMessage(errorMessage);
+            },
+            complete: function () {
+                // Re-enable button
+                $btn.prop('disabled', false).html('<i class="bi bi-flag me-2"></i>Submit Report');
+            }
+        });
+    });
 });
+

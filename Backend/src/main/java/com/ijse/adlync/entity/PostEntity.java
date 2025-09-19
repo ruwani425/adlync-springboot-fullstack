@@ -44,14 +44,10 @@ public class PostEntity {
     @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "report_id")
-    private ReportEntity report;
-
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PaymentEntity payment;
 
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ReportEntity> reports = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
