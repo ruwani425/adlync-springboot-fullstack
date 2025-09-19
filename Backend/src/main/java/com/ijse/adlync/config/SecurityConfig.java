@@ -50,6 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/checkEmail", "/api/users/sendOTP", "/api/users/verifyOTP", "/api/users/resetPassword").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
+                        .requestMatchers("/api/chat/**").permitAll()
                         .anyRequest().authenticated())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

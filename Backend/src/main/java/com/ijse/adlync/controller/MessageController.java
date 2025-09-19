@@ -24,8 +24,8 @@ public class MessageController {
     @GetMapping
     @Operation(summary = "Get all Messages", description = "Retrieve a list of all Message entities")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved list of Messages"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved list of Messages"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<List<MessageResponseDTO>> getAllMessages() {
         List<MessageResponseDTO> response = service.findAll();
@@ -35,9 +35,9 @@ public class MessageController {
     @GetMapping("/{id}")
     @Operation(summary = "Get Message by ID", description = "Retrieve a Message entity by its ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully retrieved Message"),
-        @ApiResponse(responseCode = "404", description = "Message not found"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved Message"),
+            @ApiResponse(responseCode = "404", description = "Message not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<MessageResponseDTO> getMessageById(@Parameter(description = "ID of the Message to retrieve") @PathVariable Long id) {
         MessageResponseDTO response = service.findById(id);
@@ -47,9 +47,9 @@ public class MessageController {
     @PostMapping
     @Operation(summary = "Create new Message", description = "Create a new Message entity")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully created Message"),
-        @ApiResponse(responseCode = "400", description = "Invalid input data"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Successfully created Message"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<MessageResponseDTO> createMessage(@Parameter(description = "Message data to create") @RequestBody MessageRequestDTO requestDTO) {
         MessageResponseDTO response = service.create(requestDTO);
@@ -59,10 +59,10 @@ public class MessageController {
     @PutMapping("/{id}")
     @Operation(summary = "Update Message", description = "Update an existing Message entity")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully updated Message"),
-        @ApiResponse(responseCode = "404", description = "Message not found"),
-        @ApiResponse(responseCode = "400", description = "Invalid input data"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Successfully updated Message"),
+            @ApiResponse(responseCode = "404", description = "Message not found"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<MessageResponseDTO> updateMessage(@Parameter(description = "ID of the Message to update") @PathVariable Long id, @Parameter(description = "Updated Message data") @RequestBody MessageRequestDTO requestDTO) {
         MessageResponseDTO response = service.update(id, requestDTO);
@@ -72,9 +72,9 @@ public class MessageController {
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete Message", description = "Delete a Message entity by its ID")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "204", description = "Successfully deleted Message"),
-        @ApiResponse(responseCode = "404", description = "Message not found"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "204", description = "Successfully deleted Message"),
+            @ApiResponse(responseCode = "404", description = "Message not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<Void> deleteMessage(@Parameter(description = "ID of the Message to delete") @PathVariable Long id) {
         service.deleteById(id);

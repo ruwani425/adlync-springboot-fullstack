@@ -47,7 +47,25 @@ $(document).ready(function () {
                     let token = response.data.token;
                     var role = response.data.role;
                     setCookie("token", token, 1);
-                    setCookie("msgId", loginIdentifier + "MSG")
+                    setCookie("msgId", loginIdentifier + "MSG");
+
+                    // Get user details including user ID
+                    $.ajax({
+                        url: 'http://localhost:8080/api/users/getUserByToken',
+                        type: 'GET',
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        },
+                        success: function (userResponse) {
+                            // Store the actual user ID for chat functionality
+                            setCookie("userId", userResponse.id, 1);
+                            console.log("User ID stored:", userResponse.id);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error('Failed to get user details:', error);
+                        }
+                    });
+
                     console.log(document.cookie);
                     Swal.fire({
                         icon: 'success',
@@ -95,7 +113,15 @@ function togglePassword() {
 
 function socialLogin(provider) {
     console.log(`Social login with ${provider}`);
-    showAlert(`Redirecting to ${provider} login...`, 'success');
+
+    if (provider === 'google') {
+        // Call the Google LOGIN function from firebase.js
+        handleGoogleLogin();
+    } else if (provider === 'facebook') {
+        showAlert('Facebook login coming soon!', 'info');
+    } else {
+        showAlert(`${provider} login coming soon!`, 'info');
+    }
 }
 
 function showForgotPassword() {

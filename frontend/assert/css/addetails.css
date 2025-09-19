@@ -56,6 +56,477 @@ body {
     text-decoration: none;
 }
 
+/* ===============================
+   ENHANCED CHAT UI STYLES
+   =============================== */
+
+/* Client Chat Modal Styles */
+.modal-dialog .modal-content {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+.modal-header.bg-primary-emerald {
+    background: linear-gradient(135deg, var(--emerald-600) 0%, var(--emerald-700) 100%) !important;
+    border: none;
+    padding: 20px 25px;
+}
+
+.modal-header h5 {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Chat Messages Container - Client */
+#chatMessages {
+    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    max-height: 350px;
+    min-height: 200px;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+    padding: 15px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#chatMessages::-webkit-scrollbar {
+    width: 6px;
+}
+
+#chatMessages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#chatMessages::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+#chatMessages::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Message Bubbles */
+.message-bubble {
+    margin-bottom: 15px;
+    animation: fadeInUp 0.3s ease-out;
+    max-width: 75%;
+    word-wrap: break-word;
+}
+
+.message-bubble .rounded-4 {
+    word-wrap: break-word;
+    word-break: break-word;
+    hyphens: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    min-width: 60px;
+    max-width: 100%;
+}
+
+/* Sender Messages (Right side - User's messages) */
+.justify-content-end .message-bubble .bg-primary {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: white !important;
+    border: none !important;
+}
+
+.justify-content-end .message-bubble .bg-primary p,
+.justify-content-end .message-bubble .bg-primary small,
+.justify-content-end .message-bubble .bg-primary .message-text,
+.justify-content-end .message-bubble .bg-primary .message-time {
+    color: white !important;
+}
+
+/* Receiver Messages (Left side - Other person's messages) */
+.justify-content-start .message-bubble .bg-white {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 2px solid #e9ecef !important;
+}
+
+.justify-content-start .message-bubble .bg-white p,
+.justify-content-start .message-bubble .bg-white small,
+.justify-content-start .message-bubble .bg-white .message-text,
+.justify-content-start .message-bubble .bg-white .message-time {
+    color: #333333 !important;
+}
+
+/* Force colors for all message elements */
+#chatMessages .bg-primary,
+#activeChatMessages .bg-primary {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    color: white !important;
+}
+
+#chatMessages .bg-primary *,
+#activeChatMessages .bg-primary * {
+    color: white !important;
+}
+
+#chatMessages .bg-white,
+#activeChatMessages .bg-white {
+    background: #ffffff !important;
+    color: #333333 !important;
+    border: 2px solid #e9ecef !important;
+}
+
+#chatMessages .bg-white *,
+#activeChatMessages .bg-white * {
+    color: #333333 !important;
+}
+
+/* Message Text Styling */
+.message-text {
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    white-space: pre-wrap !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    font-size: 14px !important;
+}
+
+.message-time {
+    font-size: 11px !important;
+    opacity: 0.7 !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+}
+
+/* Ensure message containers don't overflow */
+#chatMessages {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+#activeChatMessages {
+    word-wrap: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Fix for long words and URLs */
+.message-bubble p {
+    word-break: break-all !important;
+    overflow-wrap: anywhere !important;
+    hyphens: auto !important;
+}
+
+/* Chat Input Styling */
+#chat {
+    display: flex !important;
+    gap: 10px;
+    align-items: center;
+}
+
+#messageInput {
+    flex: 1;
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    padding: 12px 18px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#messageInput:focus {
+    outline: none;
+    border-color: var(--emerald-600);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+#chat button {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border: none !important;
+    border-radius: 50% !important;
+    width: 45px !important;
+    height: 45px !important;
+    color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+#chat button:hover,
+#chat button:focus,
+#chat button:active {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3) !important;
+    border: none !important;
+}
+
+#chat button i {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+/* ===============================
+   ADMIN CHAT LIST MODAL STYLES
+   =============================== */
+
+/* Chat List Modal */
+#chatListModal .modal-dialog {
+    max-width: 1200px;
+}
+
+#chatListModal .modal-content {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+}
+
+/* Chat List Sidebar */
+.chat-list-container {
+    height: 520px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+}
+
+.chat-list-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.chat-list-container::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 10px;
+}
+
+.chat-list-container::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+.chat-list-container::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Chat List Items */
+.chat-list-item {
+    border: none !important;
+    padding: 18px 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    border-bottom: 1px solid #f1f3f4 !important;
+}
+
+.chat-list-item:hover {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    transform: translateX(5px);
+}
+
+.chat-list-item.active {
+    background: linear-gradient(135deg, var(--emerald-600) 0%, var(--emerald-700) 100%) !important;
+    color: white !important;
+    transform: translateX(8px);
+    box-shadow: 0 5px 15px rgba(5, 150, 105, 0.3);
+}
+
+.chat-list-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.chat-list-item.active h6,
+.chat-list-item.active p,
+.chat-list-item.active small {
+    color: white !important;
+}
+
+.chat-list-item img {
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+}
+
+.chat-list-item.active img {
+    border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* Active Chat Messages Container */
+#activeChatMessages {
+    height: 400px !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    padding: 20px !important;
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e0 transparent;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#activeChatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#activeChatMessages::-webkit-scrollbar-track {
+    background: #f1f3f4;
+    border-radius: 10px;
+}
+
+#activeChatMessages::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 10px;
+}
+
+#activeChatMessages::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* Admin Chat Header */
+#activeChatHeader {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border-bottom: 2px solid #e9ecef !important;
+    padding: 20px 25px !important;
+}
+
+#activeChatHeader img {
+    border: 3px solid #e9ecef;
+    width: 50px !important;
+    height: 50px !important;
+}
+
+/* Admin Message Input */
+#activeChatInput {
+    background: #ffffff !important;
+    border-top: 2px solid #e9ecef !important;
+    padding: 20px 25px !important;
+}
+
+#ownerMessageInput {
+    border: 2px solid #e9ecef;
+    border-radius: 25px;
+    padding: 15px 20px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+#ownerMessageInput:focus {
+    outline: none;
+    border-color: var(--emerald-600);
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+#ownerSendBtn {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    border: none !important;
+    border-radius: 25px !important;
+    padding: 15px 25px !important;
+    color: white !important;
+    font-weight: 500 !important;
+    transition: all 0.3s ease !important;
+}
+
+#ownerSendBtn:hover,
+#ownerSendBtn:focus,
+#ownerSendBtn:active {
+    background: linear-gradient(135deg, #047857 0%, #065f46 100%) !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(5, 150, 105, 0.3) !important;
+    border: none !important;
+}
+
+#ownerSendBtn i {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+/* Empty States */
+#noChatMessage,
+#selectChatMessage {
+    padding: 60px 20px !important;
+}
+
+#noChatMessage i,
+#selectChatMessage i {
+    color: var(--emerald-600);
+    opacity: 0.3;
+    animation: pulse 2s infinite;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 0.3;
+    }
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    #chatListModal .modal-dialog {
+        margin: 10px;
+        max-width: calc(100vw - 20px);
+    }
+
+    .chat-list-container {
+        height: 300px !important;
+    }
+
+    #activeChatMessages {
+        height: 250px !important;
+        padding: 15px !important;
+    }
+
+    .message-bubble {
+        max-width: 85% !important;
+    }
+
+    #chatMessages {
+        max-height: 250px !important;
+        min-height: 150px !important;
+    }
+
+    .message-text {
+        font-size: 13px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .message-bubble {
+        max-width: 90% !important;
+    }
+
+    #chatMessages {
+        padding: 10px !important;
+    }
+
+    #activeChatMessages {
+        padding: 10px !important;
+    }
+}
+
 .link-faded:hover {
     color: #fff;
 }
@@ -221,6 +692,9 @@ body {
     text-align: center;
 }
 
+/* Add these styles to your addetails.css file */
+
+/* Message Seller Modal Styles */
 #messageSellerModal .modal-content {
     border-radius: 16px;
     border: none;
@@ -244,7 +718,7 @@ body {
     border-top: 1px solid #e5e7eb;
 }
 
-
+/* Seller Info Bar */
 .seller-info-bar {
     border-left: 4px solid #059669;
 }
@@ -253,6 +727,7 @@ body {
     border: 2px solid #059669;
 }
 
+/* Form Styling */
 #messageSellerModal .form-label {
     font-weight: 600;
     color: #374151;
@@ -282,11 +757,13 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
 }
 
+/* Character Counter */
 #messageCharCount {
     font-weight: 600;
     color: #059669;
 }
 
+/* Alert Styling */
 #messageSellerModal .alert-info {
     background-color: rgba(5, 150, 105, 0.1);
     border-color: rgba(5, 150, 105, 0.2);
@@ -295,6 +772,7 @@ body {
     border-radius: 8px;
 }
 
+/* Button Styling */
 #messageSellerModal .btn-emerald {
     background: linear-gradient(135deg, #059669, #047857);
     border: none;
@@ -317,6 +795,7 @@ body {
     transition: all 0.3s ease;
 }
 
+/* Loading State */
 #messageSellerModal .btn-emerald.loading {
     position: relative;
     pointer-events: none;
@@ -386,6 +865,7 @@ body {
     }
 }
 
+/* Additional styles for the report modal */
 #reportModal .modal-content {
     border-radius: 16px;
     border: none;

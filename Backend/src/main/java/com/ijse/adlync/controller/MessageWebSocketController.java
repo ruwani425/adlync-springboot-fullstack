@@ -20,6 +20,6 @@ public class MessageWebSocketController {
     @MessageMapping("/send-message")
     public void sendMessage(MessageRequestDTO dto) {
         MessageResponseDTO savedMessage = service.sendMessage(dto);
-        template.convertAndSend("/topic/messages/" + dto.getPostId(), savedMessage);
+        template.convertAndSend("/topic/messages/" + dto.getChatId(), savedMessage);
     }
 }

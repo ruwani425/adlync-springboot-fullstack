@@ -35,15 +35,19 @@
                 <button class="btn btn-emerald" id="postAdBtn">Post Ad</button>
                 <!-- Updated profile dropdown to match advertisement page with proper avatar -->
                 <div class="dropdown" id="profileDropdown" style="display: none;">
-                    <button class="btn btn-link p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=40&rounded=true"
-                             alt="Profile"
-                             class="profile-avatar">
+                    <button aria-expanded="false" class="btn btn-link p-0" data-bs-toggle="dropdown" type="button">
+                        <img alt="Profile"
+                             class="profile-avatar"
+                             src="https://ui-avatars.com/api/?name=User&background=10b981&color=fff&size=40&rounded=true">
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#" id="profileLink"><i class="bi bi-person me-2"></i>Profile</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i>Log out</a></li>
+                        <li><a class="dropdown-item" href="#" id="profileLink"><i class="bi bi-person me-2"></i>Profile</a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item" href="#" id="logoutLink"><i class="bi bi-box-arrow-right me-2"></i>Log
+                            out</a></li>
                     </ul>
                 </div>
                 <button class="btn btn-outline-secondary" id="signInBtn">Sign In</button>

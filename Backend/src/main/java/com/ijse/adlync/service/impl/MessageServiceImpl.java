@@ -2,8 +2,8 @@ package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.dto.request.MessageRequestDTO;
 import com.ijse.adlync.dto.response.MessageResponseDTO;
+import com.ijse.adlync.entity.ChatEntity;
 import com.ijse.adlync.entity.MessageEntity;
-import com.ijse.adlync.entity.PostEntity;
 import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.MessageRepository;
 import com.ijse.adlync.service.MessageService;
@@ -66,13 +66,13 @@ public class MessageServiceImpl implements MessageService {
     public MessageResponseDTO sendMessage(MessageRequestDTO dto) {
         MessageEntity entity = new MessageEntity();
         UserEntity userEntity = new UserEntity();
-        PostEntity postEntity = new PostEntity();
-        userEntity.setId(dto.getFromUserId());
-        postEntity.setPost_id(dto.getPostId());
+        ChatEntity chatEntity = new ChatEntity();
+        userEntity.setId(dto.getSenderUserId());
+        chatEntity.setChat_id(dto.getChatId());
         entity.setContent(dto.getContent());
         entity.setSent_at(LocalDateTime.now());
-        entity.setUser(userEntity);
-        entity.setPost(postEntity);
+        entity.setSenderUser(userEntity);
+        entity.setChat(chatEntity);
         entity = repository.save(entity);
 
         return toResponseDTO(entity);
@@ -83,8 +83,10 @@ public class MessageServiceImpl implements MessageService {
         dto.setMessage_id(entity.getMessage_id());
         dto.setSent_at(entity.getSent_at());
         dto.setContent(entity.getContent());
-        dto.setToUser_id(entity.getUser() != null ? entity.getUser().getId() : null);
-        dto.setPostId(entity.getPost() != null ? entity.getPost().getPost_id() : null);
+        dto.setSenderUserId(entity.getSenderUser() != null ? entity.getSenderUser().getId() : null);
+        dto.setSenderUserName(entity.getSenderUser() != null ?
+                entity.getSenderUser().getName() : null);
+        dto.setChatId(entity.getChat() != null ? entity.getChat().getChat_id() : null);
         return dto;
     }
 
@@ -92,15 +94,15 @@ public class MessageServiceImpl implements MessageService {
         MessageEntity entity = new MessageEntity();
         entity.setContent(dto.getContent());
         entity.setSent_at(LocalDateTime.now());
-        if (dto.getFromUserId() != null) {
+        if (dto.getSenderUserId() != null) {
             UserEntity user = new UserEntity();
-            user.setId(dto.getFromUserId());
-            entity.setUser(user);
+            user.setId(dto.getSenderUserId());
+            entity.setSenderUser(user);
         }
-        if (dto.getPostId() != null) {
-            PostEntity post = new PostEntity();
-            post.setPost_id(dto.getPostId());
-            entity.setPost(post);
+        if (dto.getChatId() != null) {
+            ChatEntity chat = new ChatEntity();
+            chat.setChat_id(dto.getChatId());
+            entity.setChat(chat);
         }
         return entity;
     }

@@ -12,17 +12,10 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 public class MessageResponseDTO {
-
     private Long message_id;
-    private Long toUser_id;
+    private Long senderUserId;
+    private String senderUserName;
+    private Long chatId;
     private LocalDateTime sent_at;
     private String content;
-    private Long postId;
-
-    public MessageResponseDTO(Long fromUserId, String content, String room) {
-        this.message_id = fromUserId;
-        this.content = content;
-        this.postId = fromUserId;
-        this.sent_at = LocalDateTime.now();
-    }
 }

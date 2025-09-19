@@ -1,18 +1,25 @@
 function socialSignup(provider) {
-    showAlert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} signup initiated...`, 'info');
+    if (provider === 'google') {
+        // Call the Google REGISTRATION function from firebase.js
+        handleGoogleRegistration();
+    } else if (provider === 'facebook') {
+        showAlert('Facebook signup coming soon!', 'info');
+    } else {
+        showAlert(`${provider.charAt(0).toUpperCase() + provider.slice(1)} signup initiated...`, 'info');
 
-    const $btn = $(`.btn-${provider}`);
-    $btn.addClass('loading').css('pointerEvents', 'none');
-
-    setTimeout(() => {
-        $btn.removeClass('loading').css('pointerEvents', 'auto');
-
-        showAlert(`Successfully signed up with ${provider}! Redirecting...`, 'success');
+        const $btn = $(`.btn-${provider}`);
+        $btn.addClass('loading').css('pointerEvents', 'none');
 
         setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 2000);
-    }, 2500);
+            $btn.removeClass('loading').css('pointerEvents', 'auto');
+
+            showAlert(`Successfully signed up with ${provider}! Redirecting...`, 'success');
+
+            setTimeout(() => {
+                window.location.href = 'index.html';
+            }, 2000);
+        }, 2500);
+    }
 }
 
 $('#signupForm').on('submit', function (e) {

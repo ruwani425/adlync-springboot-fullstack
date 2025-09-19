@@ -53,8 +53,14 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ReviewEntity> reviews = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MessageEntity> messages = new ArrayList<>();
+    @OneToMany(mappedBy = "senderUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<MessageEntity> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "clientUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChatEntity> clientChats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "ownerUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChatEntity> ownerChats = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<PostEntity> posts = new ArrayList<>();

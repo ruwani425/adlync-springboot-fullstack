@@ -1,6 +1,5 @@
 const $ = window.jQuery;
 
-let stompClient = null;
 let allReviews = [];
 let filteredReviews = [];
 let currentFilter = 'all';
@@ -447,6 +446,7 @@ $(document).ready(() => {
                     url: `http://localhost:8080/api/reviews/post/${postId}/stats`, // <-- adjust to your API
                     method: "GET",
                     success: (stats) => {
+                        console.log(stats)
                         $('#sidebarOverallRating').text(stats.averageRating.toFixed(1));
                         $('#sidebarTotalReviews').text(stats.totalReviews);
 

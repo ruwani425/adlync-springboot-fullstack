@@ -12,8 +12,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageRequestDTO {
-    private Long fromUserId;
-    private Long postId;
-    private LocalDateTime sent_at;
+    private Long senderUserId;
+    private Long chatId;
     private String content;
+    private LocalDateTime sent_at;
 }

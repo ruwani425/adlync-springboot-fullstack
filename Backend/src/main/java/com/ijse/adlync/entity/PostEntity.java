@@ -59,7 +59,7 @@ public class PostEntity {
     private LocationEntity location;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<MessageEntity> messages = new ArrayList<>();
+    private List<ChatEntity> chats = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
