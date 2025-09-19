@@ -2,7 +2,10 @@ package com.ijse.adlync.entity;
 
 import com.ijse.adlync.entity.enums.PostEntityStatusEnum;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -22,17 +25,17 @@ public class PostEntity {
     @Column(unique = true)
     private Long post_id;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PostEntityStatusEnum status;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String title;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String description;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     private String contact_number;
 
     private double price;
@@ -88,7 +91,7 @@ public class PostEntity {
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private ElectronicEntity electronic;
 
-    @OneToOne(mappedBy = "post",cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
     private EntertaintmentEntity entertainment;
 
     @OneToOne(mappedBy = "post", cascade = CascadeType.ALL)
@@ -120,4 +123,8 @@ public class PostEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ImageEntity> images = new ArrayList<>();
+
+    // NEW: Relationship to reviews
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ReviewEntity> reviews = new ArrayList<>();
 }

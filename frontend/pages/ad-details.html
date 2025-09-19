@@ -293,6 +293,84 @@
                     </button>
                 </div>
             </div>
+
+            <div class="card card-hover">
+                <div class="card-body">
+                    <h6 class="fw-bold mb-3">
+                        <i class="bi bi-star me-2 text-primary-emerald"></i>Reviews & Ratings
+                    </h6>
+
+                    <!-- Overall Rating Display -->
+                    <div class="text-center mb-3">
+                        <div class="display-6 fw-bold text-primary-emerald mb-1" id="sidebarOverallRating">4.2</div>
+                        <div class="text-warning mb-2" id="sidebarOverallStars">
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star-fill"></i>
+                            <i class="bi bi-star"></i>
+                        </div>
+                        <small class="text-muted">Based on <span id="sidebarTotalReviews">12</span> reviews</small>
+                    </div>
+
+                    <!-- Recent Reviews Preview -->
+                    <div class="mb-3" id="recentReviewsPreview">
+                        <!-- Recent reviews will be populated here -->
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-emerald" id="addReviewBtnSidebar">
+                            <i class="bi bi-plus-circle me-2"></i>Write a Review
+                        </button>
+                        <button class="btn btn-outline-secondary" id="viewAllReviewsBtn">
+                            <i class="bi bi-eye me-2"></i>View All Reviews
+                        </button>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="row g-2 mt-3 text-center">
+                        <div class="col-4">
+                            <div class="p-2 bg-soft-green rounded-3">
+                                <div class="fw-bold text-primary-emerald" id="fiveStarCount">8</div>
+                                <small class="text-muted">5★</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 bg-soft-green rounded-3">
+                                <div class="fw-bold text-primary-emerald" id="fourStarCount">3</div>
+                                <small class="text-muted">4★</small>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="p-2 bg-soft-green rounded-3">
+                                <div class="fw-bold text-primary-emerald" id="recommendedCount">85%</div>
+                                <small class="text-muted">Recommended</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Trust Indicators -->
+                    <div class="mt-3 p-3 bg-soft-green rounded-4">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <small class="fw-semibold">
+                                <i class="bi bi-shield-check text-primary-emerald me-1"></i>
+                                Verified Reviews
+                            </small>
+                            <span class="badge bg-primary">
+                    <span id="verifiedCount">6</span> verified
+                </span>
+                        </div>
+                        <div class="d-flex align-items-center justify-content-between">
+                            <small class="fw-semibold">
+                                <i class="bi bi-hand-thumbs-up text-primary-emerald me-1"></i>
+                                Seller Rating
+                            </small>
+                            <span class="badge bg-success">4.5/5</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -448,6 +526,206 @@
                 </button>
                 <button class="btn btn-danger" id="submitReportBtn" type="button">
                     <i class="bi bi-flag me-2"></i>Submit Report
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Review Modal -->
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-emerald text-white">
+                <h5 class="modal-title" id="reviewModalLabel">
+                    <i class="bi bi-star me-2"></i>Write a Review
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Ad Info Section -->
+                <div class="alert alert-light border-start border-4 border-success">
+                    <h6 class="alert-heading mb-2">
+                        <i class="bi bi-info-circle text-success me-2"></i>Review This Ad
+                    </h6>
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="bg-soft-green rounded-3 p-2">
+                                <i class="bi bi-star text-primary-emerald fs-4"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="mb-1 fw-semibold" id="reviewAdTitle">Ad Title</p>
+                            <small class="text-muted">
+                                <i class="bi bi-person me-1"></i>Seller: <span id="reviewSellerName">-</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Review Form -->
+                <form id="reviewForm">
+                    <!-- Rating Selection -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-star me-2 text-primary-emerald"></i>Overall Rating *
+                        </label>
+                        <div class="rating-selector d-flex align-items-center gap-2 mb-2">
+                            <div class="star-rating" data-rating="0">
+                                <i class="bi bi-star star-btn" data-value="1"></i>
+                                <i class="bi bi-star star-btn" data-value="2"></i>
+                                <i class="bi bi-star star-btn" data-value="3"></i>
+                                <i class="bi bi-star star-btn" data-value="4"></i>
+                                <i class="bi bi-star star-btn" data-value="5"></i>
+                            </div>
+                            <span class="ms-2 text-muted" id="ratingText">Click stars to rate</span>
+                        </div>
+                        <input type="hidden" id="selectedRating" name="rating" required>
+                        <div class="invalid-feedback">
+                            Please select a rating.
+                        </div>
+                    </div>
+
+                    <!-- Review Title -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" for="reviewTitle">
+                            <i class="bi bi-pencil me-2 text-primary-emerald"></i>Review Title *
+                        </label>
+                        <input class="form-control" id="reviewTitle" name="title"
+                               placeholder="Summarize your experience in a few words"
+                               maxlength="100" required>
+                        <div class="form-text">
+                            <span id="titleCharCount">0</span>/100 characters
+                        </div>
+                        <div class="invalid-feedback">
+                            Please provide a review title.
+                        </div>
+                    </div>
+
+                    <!-- Review Content -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold" for="reviewContent">
+                            <i class="bi bi-chat-left-text me-2 text-primary-emerald"></i>Your Review *
+                        </label>
+                        <textarea class="form-control" id="reviewContent" name="content"
+                                  rows="4" maxlength="1000" required
+                                  placeholder="Share details about your experience with this ad and seller..."></textarea>
+                        <div class="form-text">
+                            <span id="contentCharCount">0</span>/1000 characters
+                        </div>
+                        <div class="invalid-feedback">
+                            Please write your review.
+                        </div>
+                    </div>
+
+                    <!-- Aspects Rating -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-list-check me-2 text-primary-emerald"></i>Rate Specific Aspects
+                        </label>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="aspect-rating" data-aspect="quality">
+                                    <label class="form-label small mb-1">Product Quality</label>
+                                    <div class="star-rating small" data-rating="0">
+                                        <i class="bi bi-star star-btn" data-value="1"></i>
+                                        <i class="bi bi-star star-btn" data-value="2"></i>
+                                        <i class="bi bi-star star-btn" data-value="3"></i>
+                                        <i class="bi bi-star star-btn" data-value="4"></i>
+                                        <i class="bi bi-star star-btn" data-value="5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="aspect-rating" data-aspect="communication">
+                                    <label class="form-label small mb-1">Communication</label>
+                                    <div class="star-rating small" data-rating="0">
+                                        <i class="bi bi-star star-btn" data-value="1"></i>
+                                        <i class="bi bi-star star-btn" data-value="2"></i>
+                                        <i class="bi bi-star star-btn" data-value="3"></i>
+                                        <i class="bi bi-star star-btn" data-value="4"></i>
+                                        <i class="bi bi-star star-btn" data-value="5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="aspect-rating" data-aspect="value">
+                                    <label class="form-label small mb-1">Value for Money</label>
+                                    <div class="star-rating small" data-rating="0">
+                                        <i class="bi bi-star star-btn" data-value="1"></i>
+                                        <i class="bi bi-star star-btn" data-value="2"></i>
+                                        <i class="bi bi-star star-btn" data-value="3"></i>
+                                        <i class="bi bi-star star-btn" data-value="4"></i>
+                                        <i class="bi bi-star star-btn" data-value="5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="aspect-rating" data-aspect="delivery">
+                                    <label class="form-label small mb-1">Delivery/Pickup</label>
+                                    <div class="star-rating small" data-rating="0">
+                                        <i class="bi bi-star star-btn" data-value="1"></i>
+                                        <i class="bi bi-star star-btn" data-value="2"></i>
+                                        <i class="bi bi-star star-btn" data-value="3"></i>
+                                        <i class="bi bi-star star-btn" data-value="4"></i>
+                                        <i class="bi bi-star star-btn" data-value="5"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendation -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold">
+                            <i class="bi bi-hand-thumbs-up me-2 text-primary-emerald"></i>Would you recommend this to others?
+                        </label>
+                        <div class="btn-group w-100" role="group" data-bs-toggle="buttons">
+                            <input type="radio" class="btn-check" name="recommendation" id="recommendYes" value="yes">
+                            <label class="btn btn-outline-success" for="recommendYes">
+                                <i class="bi bi-hand-thumbs-up me-2"></i>Yes, I recommend
+                            </label>
+
+                            <input type="radio" class="btn-check" name="recommendation" id="recommendNo" value="no">
+                            <label class="btn btn-outline-danger" for="recommendNo">
+                                <i class="bi bi-hand-thumbs-down me-2"></i>No, I don't recommend
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Privacy Options -->
+                    <div class="mb-4">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="anonymousReview" name="anonymous">
+                            <label class="form-check-label" for="anonymousReview">
+                                Post this review anonymously
+                            </label>
+                        </div>
+                        <small class="form-text text-muted">
+                            When checked, your name will not be displayed with the review.
+                        </small>
+                    </div>
+
+                    <!-- Guidelines -->
+                    <div class="alert alert-info border-start border-4 border-info">
+                        <h6 class="alert-heading mb-2">
+                            <i class="bi bi-info-circle me-2"></i>Review Guidelines
+                        </h6>
+                        <ul class="mb-0 small">
+                            <li>Be honest and constructive in your feedback</li>
+                            <li>Focus on your personal experience with the product/seller</li>
+                            <li>Keep your language respectful and appropriate</li>
+                            <li>Don't include personal contact information</li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer bg-light">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-lg me-2"></i>Cancel
+                </button>
+                <button type="button" class="btn btn-emerald" id="submitReviewBtn">
+                    <i class="bi bi-check-lg me-2"></i>Submit Review
                 </button>
             </div>
         </div>

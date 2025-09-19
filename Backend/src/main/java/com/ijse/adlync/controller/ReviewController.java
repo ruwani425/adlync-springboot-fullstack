@@ -1,6 +1,10 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.entity.UserEntity;
+import com.ijse.adlync.repository.UserRepository;
+import com.ijse.adlync.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -20,6 +24,12 @@ public class ReviewController {
 
     @Autowired
     private ReviewServiceImpl service;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @GetMapping
     @Operation(summary = "Get all Reviews", description = "Retrieve a list of all Review entities")
@@ -43,17 +53,37 @@ public class ReviewController {
         ReviewResponseDTO response = service.findById(id);
         return ResponseEntity.ok(response);
     }
-
     @PostMapping
     @Operation(summary = "Create new Review", description = "Create a new Review entity")
     @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "Successfully created Review"),
-        @ApiResponse(responseCode = "400", description = "Invalid input data"),
-        @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "200", description = "Successfully created Review"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "401", description = "Unauthorized"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<ReviewResponseDTO> createReview(@Parameter(description = "Review data to create") @RequestBody ReviewRequestDTO requestDTO) {
-        ReviewResponseDTO response = service.create(requestDTO);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<ReviewResponseDTO> createReview(
+            @Parameter(description = "Review data to create") @RequestBody ReviewRequestDTO requestDTO,
+            @RequestHeader("Authorization") String authHeader) {
+        try {
+            // Validate token
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            }
+            String token = authHeader.substring(7);
+            String username = jwtUtil.extractUsername(token);
+
+            // Fetch user
+            UserEntity user = userRepository.findByUsername(username)
+                    .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+            // Create review
+            ReviewResponseDTO response = service.create(requestDTO, user);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 
     @PutMapping("/{id}")
