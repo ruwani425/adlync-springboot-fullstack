@@ -134,7 +134,7 @@ function renderCategories() {
     let html = `<div class="row g-4">`;
     $.each(currentCategories, function (_, category) {
         html += `
-            <div class="col-md-6 col-lg-4 col-xl-3">
+            <div class="col-md-6 col-lg-4 col-xl-3" data-aos="flip-right" data-aos-delay="200">
                 <div class="card card-hover h-100 text-center p-4 category-card" data-category="${category.id}">
                     <div class="icon-pill ${category.color} mx-auto mb-3">
                         <i class="${category.icon}"></i>

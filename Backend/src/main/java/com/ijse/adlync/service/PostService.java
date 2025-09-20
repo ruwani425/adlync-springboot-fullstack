@@ -68,4 +68,18 @@ public interface PostService {
     List<PostResponseDTO> findPostsByUser(Long userId);
 
     PageResponse<PostResponseDTO> findPostsByUserWithPagination(Long userId, String status, Pageable pageable);
+
+    PageResponse<PostResponseDTO> advancedFilterPosts(
+            PostEntityStatusEnum status,
+            CategoryEntityNameEnum category,
+            String startDate,
+            String endDate,
+            String search,
+            String location,
+            String condition,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable
+    );
+
 }

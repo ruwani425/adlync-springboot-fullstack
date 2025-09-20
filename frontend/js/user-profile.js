@@ -563,7 +563,7 @@ function getUserByToken() {
     });
 }
 
-function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 6) {
+function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 3) {
     const container = $('#userAdsContainer');
     container.html(`
         <div class="col-12">
@@ -585,13 +585,14 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 6) {
         success: function (response) {
             let posts = response.content || [];
 
+            // ✅ Filter by status if needed
             if (status !== 'all') {
                 posts = posts.filter(p => p.status.toLowerCase() === status.toLowerCase());
             }
 
             renderUserAds(posts);
             updateStats(posts);
-            renderPagination(response, status);
+            renderPagination(response, status, userId, size);
         },
         error: function (xhr, status, error) {
             console.error("Error loading ads:", error);
@@ -607,6 +608,49 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 6) {
         }
     });
 }
+
+
+function renderPagination(response, status, userId, size) {
+    const {totalPages, number: currentPage} = response;
+    const paginationContainer = $('#paginationContainer');
+    paginationContainer.empty();
+
+    if (totalPages <= 1) return;
+
+    let html = `<nav><ul class="pagination">`;
+
+    html += `
+        <li class="page-item ${currentPage === 0 ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${currentPage - 1}">Previous</a>
+        </li>
+    `;
+
+    for (let i = 0; i < totalPages; i++) {
+        html += `
+            <li class="page-item ${i === currentPage ? 'active' : ''}">
+                <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
+            </li>
+        `;
+    }
+
+    html += `
+        <li class="page-item ${currentPage === totalPages - 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" data-page="${currentPage + 1}">Next</a>
+        </li>
+    `;
+
+    html += `</ul></nav>`;
+    paginationContainer.html(html);
+
+    paginationContainer.find('a.page-link').on('click', function (e) {
+        e.preventDefault();
+        const targetPage = $(this).data('page');
+        if (targetPage >= 0 && targetPage < totalPages) {
+            loadUserAdsByUserId(userId, status, targetPage, size);
+        }
+    });
+}
+
 
 function renderUserAds(posts) {
     const container = $('#userAdsContainer');
@@ -797,20 +841,6 @@ function getCookie(name) {
 
 function deleteCookie(name) {
     document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/";
-}
-
-function renderPagination(response, status = 'all') {
-    const container = $('#paginationContainer');
-    container.empty();
-
-    for (let i = 0; i < response.totalPages; i++) {
-        const activeClass = i === response.number ? 'active' : '';
-        container.append(`
-            <li class="page-item ${activeClass}">
-                <a class="page-link" href="#" onclick="changePage(${i}, '${status}')">${i + 1}</a>
-            </li>
-        `);
-    }
 }
 
 function changePage(page, status = 'all') {

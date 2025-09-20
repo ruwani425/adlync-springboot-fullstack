@@ -142,8 +142,10 @@ function logout() {
     if (confirm("Are you sure you want to logout?")) {
         deleteCookie("token");
         deleteCookie("user");
+        deleteCookie("userId")
         window.location.href = "../index.html";
     }
+    localStorage.clear();
 }
 
 function updateCategoryDetailsTitle(iconClass, categoryName) {
@@ -799,7 +801,7 @@ $(document).ready(() => {
             reporterContact: email || null,
             anonymous: $('#anonymousReport').is(':checked'),
             postId: finalPostId,
-            status:"PENDING"
+            status: "PENDING"
         };
 
         console.log('Submitting report:', reportData);

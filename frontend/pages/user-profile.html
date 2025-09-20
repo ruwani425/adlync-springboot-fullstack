@@ -26,7 +26,6 @@
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item"><a class="nav-link" href="../index.html">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Browse</a></li>
-                <li class="nav-item"><a class="nav-link" href="#">Sell</a></li>
             </ul>
             <div class="d-flex gap-2 align-items-center">
                 <button class="btn btn-emerald" id="postAdBtn">Post Ad</button>
@@ -132,12 +131,12 @@
                     <i class="bi bi-grid-3x3-gap-fill me-2"></i>My Ads
                 </button>
             </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" data-bs-target="#reviews" data-bs-toggle="tab" id="reviews-tab"
-                        role="tab" type="button">
-                    <i class="bi bi-star-fill me-2"></i>Reviews
-                </button>
-            </li>
+            <!--            <li class="nav-item" role="presentation">-->
+            <!--                <button class="nav-link" data-bs-target="#reviews" data-bs-toggle="tab" id="reviews-tab"-->
+            <!--                        role="tab" type="button">-->
+            <!--                    <i class="bi bi-star-fill me-2"></i>Reviews-->
+            <!--                </button>-->
+            <!--            </li>-->
             <li class="nav-item" role="presentation">
                 <button class="nav-link" data-bs-target="#settings" data-bs-toggle="tab" id="settings-tab"
                         role="tab" type="button">
@@ -288,42 +287,7 @@
 
                 <!-- Pagination -->
                 <div class="d-flex justify-content-center mt-4">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item disabled">
-                                <a class="page-link" href="#" tabindex="-1">Previous</a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#">Next</a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-
-            <!-- Reviews Tab -->
-            <div class="tab-pane fade" id="reviews" role="tabpanel">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h3 class="mb-0">Customer Reviews</h3>
-                    <div class="d-flex gap-2">
-                        <select class="form-select form-select-sm" id="postSelect" style="width: auto;">
-                            <option value="all">All Posts</option>
-                            <!-- Options will be populated dynamically -->
-                        </select>
-                    </div>
-                </div>
-                <div id="reviewsContainer">
-                    <!-- Reviews will be loaded here dynamically -->
-                    <div class="col-12">
-                        <div class="empty-state">
-                            <i class="bi bi-arrow-clockwise"></i>
-                            <h4>Loading reviews...</h4>
-                            <p>Please wait while we fetch your reviews.</p>
-                        </div>
-                    </div>
+                    <div id="paginationContainer"></div>
                 </div>
             </div>
 

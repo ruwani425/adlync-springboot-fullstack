@@ -195,3 +195,96 @@ body {
 .profile-avatar:hover {
     border-color: var(--emerald-600);
 }
+
+/* Smooth floating animation */
+@keyframes floatUpDown {
+    0%   { transform: translateY(0); }
+    50%  { transform: translateY(-8px); }
+    100% { transform: translateY(0); }
+}
+
+/* Apply to each number */
+.hero-gradient .fs-2 {
+    display: inline-block;
+    animation: floatUpDown 3s ease-in-out infinite;
+}
+
+/* Stagger delay for each column to create a wave effect */
+.hero-gradient .col-6:nth-child(1) .fs-2 { animation-delay: 0s; }
+.hero-gradient .col-6:nth-child(2) .fs-2 { animation-delay: 0.3s; }
+.hero-gradient .col-6:nth-child(3) .fs-2 { animation-delay: 0.6s; }
+.hero-gradient .col-6:nth-child(4) .fs-2 { animation-delay: 0.9s; }
+
+.hero-gradient {
+    background: linear-gradient(135deg, #e6f9ec 0%, #ffffff 100%);
+}
+
+/* container for animated shapes */
+.animated-bg {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.shape {
+    position: absolute;
+    display: block;
+    opacity: 0.2;
+    animation: floatUp 20s linear infinite;
+}
+
+/* circles */
+.shape.circle {
+    width: 80px;
+    height: 80px;
+    background: #90EE90; /* light green */
+    border-radius: 50%;
+    left: 10%;
+    bottom: -100px;
+}
+
+/* second circle */
+.shape.circle.delay {
+    width: 120px;
+    height: 120px;
+    background: #32cd32; /* darker light green */
+    left: 70%;
+    bottom: -150px;
+    animation-delay: 10s;
+}
+
+/* rectangles */
+.shape.rect {
+    width: 60px;
+    height: 150px;
+    background: #90EE90;
+    left: 40%;
+    bottom: -200px;
+    transform: rotate(15deg);
+}
+
+.shape.rect.delay {
+    width: 40px;
+    height: 120px;
+    background: #32cd32;
+    left: 85%;
+    bottom: -150px;
+    transform: rotate(-20deg);
+    animation-delay: 5s;
+}
+
+@keyframes floatUp {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+    100% {
+        transform: translateY(-120vh) rotate(360deg);
+    }
+}
+
+/* make sure content stays above shapes */
+.hero-gradient .container {
+    position: relative;
+    z-index: 1;
+}

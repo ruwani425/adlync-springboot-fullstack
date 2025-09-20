@@ -43,4 +43,54 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
     Page<PostEntity> findByUser_idAndStatus(Long userId, PostEntityStatusEnum status, Pageable pageable);
 
     Page<PostEntity> findByUser_Id(Long userId, Pageable pageable);
+
+    @Query("""
+            SELECT DISTINCT p FROM PostEntity p
+            LEFT JOIN p.location l
+            LEFT JOIN p.vehicle v
+            LEFT JOIN p.electronic e
+            LEFT JOIN p.mobile m
+            LEFT JOIN p.agriculture a
+            LEFT JOIN p.entertainment ent
+            LEFT JOIN p.essentials es
+            LEFT JOIN p.fashion_and_beauty f
+            LEFT JOIN p.home_and_garden h
+            LEFT JOIN p.kids k
+            LEFT JOIN p.sport s
+            WHERE (:status IS NULL OR p.status = :status)
+              AND (:category IS NULL OR p.category.name = :category)
+              AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                  OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))
+              AND (:startDate IS NULL OR p.createdAt >= :startDate)
+              AND (:endDate IS NULL OR p.createdAt <= :endDate)
+              AND (:location IS NULL OR LOWER(l.city) LIKE LOWER(CONCAT('%', :location, '%'))
+                  OR LOWER(l.district) LIKE LOWER(CONCAT('%', :location, '%'))
+                  OR LOWER(l.address) LIKE LOWER(CONCAT('%', :location, '%')))
+              AND (:condition IS NULL OR 
+                  LOWER(v.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(e.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(m.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(a.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(ent.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(es.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(f.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(h.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(k.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(s.condition) LIKE LOWER(CONCAT('%', :condition, '%')))
+              AND (:minPrice IS NULL OR p.price >= :minPrice)
+              AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+            """)
+    Page<PostEntity> findAdvancedFilteredPosts(
+            @Param("status") PostEntityStatusEnum status,
+            @Param("category") CategoryEntityNameEnum category,
+            @Param("search") String search,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("location") String location,
+            @Param("condition") String condition,
+            @Param("minPrice") Double minPrice,
+            @Param("maxPrice") Double maxPrice,
+            Pageable pageable
+    );
+
 }

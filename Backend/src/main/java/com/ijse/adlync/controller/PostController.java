@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,127 @@ public class PostController {
 
     private final PostService service;
     private final JwtUtil jwtUtil;
+
+    // Add this method to your existing PostController.java class
+// Place it after the existing @GetMapping("/page") method
+
+    @GetMapping("/page/advanced")
+    @Operation(summary = "Advanced Filter Posts", description = "Filter posts with location, condition, price range, and other parameters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved filtered posts"),
+            @ApiResponse(responseCode = "400", description = "Invalid filter parameters"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<PageResponse<PostResponseDTO>> getAdvancedFilteredPosts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) PostEntityStatusEnum status,
+            @RequestParam(required = false) CategoryEntityNameEnum category,
+            @RequestParam(required = false) String startDate,
+            @RequestParam(required = false) String endDate,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String location,
+            @RequestParam(required = false) String condition,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) String sortBy
+    ) {
+        try {
+            // Log incoming parameters for debugging
+            System.out.println("=== Advanced Filter Request ===");
+            System.out.println("Page: " + page + ", Size: " + size);
+            System.out.println("Status: " + status);
+            System.out.println("Category: " + category);
+            System.out.println("Search: " + search);
+            System.out.println("Location: " + location);
+            System.out.println("Condition: " + condition);
+            System.out.println("MinPrice: " + minPrice);
+            System.out.println("MaxPrice: " + maxPrice);
+            System.out.println("SortBy: " + sortBy);
+
+            // Validate page and size parameters
+            if (page < 0) page = 0;
+            if (size <= 0) size = 10;
+            if (size > 100) size = 100; // Limit maximum page size
+
+            // Create pageable with sorting
+            Pageable pageable;
+            if (sortBy != null && !sortBy.trim().isEmpty()) {
+                Sort sort = createSort(sortBy.trim());
+                pageable = PageRequest.of(page, size, sort);
+            } else {
+                // Default sort by creation date descending
+                Sort defaultSort = Sort.by(Sort.Direction.DESC, "createdAt");
+                pageable = PageRequest.of(page, size, defaultSort);
+            }
+
+            // Validate price parameters
+            if (minPrice != null && minPrice < 0) minPrice = null;
+            if (maxPrice != null && maxPrice < 0) maxPrice = null;
+
+            // Ensure logical price range
+            if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+                Double temp = minPrice;
+                minPrice = maxPrice;
+                maxPrice = temp;
+            }
+
+            // Default status to APPROVED if not provided
+            if (status == null) {
+                status = PostEntityStatusEnum.APPROVED;
+            }
+
+            // Call service method
+            PageResponse<PostResponseDTO> response = service.advancedFilterPosts(
+                    status, category, startDate, endDate, search,
+                    location, condition, minPrice, maxPrice, pageable
+            );
+
+            System.out.println("Service returned " + response.getContent().size() + " results");
+
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.err.println("Error in getAdvancedFilteredPosts: " + e.getMessage());
+            e.printStackTrace();
+
+            // Return empty response for errors
+            PageResponse<PostResponseDTO> emptyResponse = new PageResponse<>(
+                    List.of(), 0, size, 0L, 0, true
+            );
+            return ResponseEntity.status(500).body(emptyResponse);
+        }
+    }
+
+    /**
+     * Create Sort object based on sortBy parameter
+     */
+    private Sort createSort(String sortBy) {
+        switch (sortBy.toLowerCase()) {
+            case "price-low":
+            case "price_low":
+            case "price-asc":
+                return Sort.by(Sort.Direction.ASC, "price");
+
+            case "price-high":
+            case "price_high":
+            case "price-desc":
+                return Sort.by(Sort.Direction.DESC, "price");
+
+            case "oldest":
+            case "date-asc":
+                return Sort.by(Sort.Direction.ASC, "createdAt");
+
+            case "popular":
+            case "popularity":
+                return Sort.by(Sort.Direction.DESC, "createdAt");
+
+            case "newest":
+            case "date-desc":
+            default:
+                return Sort.by(Sort.Direction.DESC, "createdAt");
+        }
+    }
 
     @GetMapping
     @Operation(summary = "Get all Posts", description = "Retrieve a list of all Post entities")

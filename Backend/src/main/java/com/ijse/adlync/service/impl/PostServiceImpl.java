@@ -57,8 +57,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public PageResponse<PostResponseDTO> findAll(Pageable pageable) {
-//        Page<PostEntity> postPage = repository.findAll(pageable);
-//        Page<PostResponseDTO> dtoPage = postPage.map(this::toResponseDTO);
         Pageable page = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
         Page<PostEntity> dtoPage = repository.findAll(page);
         List<PostResponseDTO> contentlist = new ArrayList<>();
@@ -718,8 +716,6 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> findPostsByUser(Long userId) {
-//        UserEntity user = userRepository.findById(userId)
-//                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         List<PostEntity> posts = repository.findPostEntitYByUser_id(userId);
         System.out.println(posts.toString());
         return posts.stream()
@@ -733,10 +729,8 @@ public class PostServiceImpl implements PostService {
 
         if (status != null && !status.equalsIgnoreCase("all")) {
             PostEntityStatusEnum statusEnum = PostEntityStatusEnum.valueOf(status.toUpperCase());
-//            postsPage = repository.findByUser_IdAndStatus(userId, statusEnum, pageable);
             postsPage = repository.findByUser_idAndStatus(userId, statusEnum, pageable);
         } else {
-//            postsPage = repository.findByUser_Id(userId, pageable);
             postsPage = repository.findByUser_Id(userId, pageable);
         }
 
@@ -753,5 +747,115 @@ public class PostServiceImpl implements PostService {
                 postsPage.getTotalPages(),
                 postsPage.isLast()
         );
+    }
+
+    @Override
+    public PageResponse<PostResponseDTO> advancedFilterPosts(
+            PostEntityStatusEnum status,
+            CategoryEntityNameEnum category,
+            String startDate,
+            String endDate,
+            String search,
+            String location,
+            String condition,
+            Double minPrice,
+            Double maxPrice,
+            Pageable pageable
+    ) {
+        System.out.println("=== Advanced Filter Parameters ===");
+        System.out.println("Status: " + status);
+        System.out.println("Category: " + category);
+        System.out.println("Search: " + search);
+        System.out.println("Location: " + location);
+        System.out.println("Condition: " + condition);
+        System.out.println("Min Price: " + minPrice);
+        System.out.println("Max Price: " + maxPrice);
+
+        LocalDateTime start = null;
+        LocalDateTime end = null;
+
+        try {
+            if (startDate != null && !startDate.trim().isEmpty()) {
+                start = LocalDate.parse(startDate.trim()).atStartOfDay();
+            }
+            if (endDate != null && !endDate.trim().isEmpty()) {
+                end = LocalDate.parse(endDate.trim()).atTime(23, 59, 59);
+            }
+        } catch (Exception e) {
+            System.err.println("Date parsing error: " + e.getMessage());
+            start = null;
+            end = null;
+        }
+
+        String cleanCondition = null;
+        if (condition != null && !condition.trim().isEmpty()) {
+            cleanCondition = condition.trim();
+        }
+
+        String cleanLocation = null;
+        if (location != null && !location.trim().isEmpty()) {
+            cleanLocation = location.trim();
+        }
+
+        String cleanSearch = null;
+        if (search != null && !search.trim().isEmpty()) {
+            cleanSearch = search.trim();
+        }
+
+        Double validMinPrice = (minPrice != null && minPrice >= 0) ? minPrice : null;
+        Double validMaxPrice = (maxPrice != null && maxPrice > 0) ? maxPrice : null;
+
+        if (validMinPrice != null && validMaxPrice != null && validMinPrice > validMaxPrice) {
+            Double temp = validMinPrice;
+            validMinPrice = validMaxPrice;
+            validMaxPrice = temp;
+        }
+
+        try {
+            Page<PostEntity> pageResult = repository.findAdvancedFilteredPosts(
+                    status,
+                    category,
+                    cleanSearch,
+                    start,
+                    end,
+                    cleanLocation,
+                    cleanCondition,
+                    validMinPrice,
+                    validMaxPrice,
+                    pageable
+            );
+
+            System.out.println("Query executed successfully");
+            System.out.println("Total elements found: " + pageResult.getTotalElements());
+
+            List<PostResponseDTO> dtos = pageResult.getContent()
+                    .stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+
+            PageResponse<PostResponseDTO> response = new PageResponse<>(
+                    dtos,
+                    pageResult.getNumber(),
+                    pageResult.getSize(),
+                    pageResult.getTotalElements(),
+                    pageResult.getTotalPages(),
+                    pageResult.isLast()
+            );
+
+            return response;
+
+        } catch (Exception e) {
+            System.err.println("Error in advancedFilterPosts: " + e.getMessage());
+            e.printStackTrace();
+
+            return new PageResponse<>(
+                    new ArrayList<>(),
+                    0,
+                    pageable.getPageSize(),
+                    0L,
+                    0,
+                    true
+            );
+        }
     }
 }

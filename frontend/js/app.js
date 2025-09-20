@@ -62,7 +62,6 @@ $(() => {
     updateDots()
     checkAuth()
 })
-
 function checkAuth() {
     const $authBtn = $("#signInBtn")
     const $postAdBtn = $("#postAdBtn")
@@ -93,6 +92,8 @@ function checkAuth() {
                 timer: 1500,
                 showConfirmButton: false
             }).then(() => {
+                // Update CTA after logout
+                updateCTASection()
                 window.location.href = redirectUrl;
             });
         }
@@ -117,8 +118,10 @@ function checkAuth() {
             location.href = "pages/signup.html"
         })
     }
-}
 
+    // Always update CTA section after auth check
+    updateCTASection()
+}
 function fetchUserProfile(token) {
     $.ajax({
         url: "http://localhost:8080/api/users/getUserByToken",
@@ -211,7 +214,7 @@ $(document).ready(() => {
                 post.images && post.images.length ? post.images[0].image_url : "https://picsum.photos/seed/default/800/480"
 
             const card = `
-                <div class="col-md-6 col-lg-4 ad-item" data-post-id="${post.post_id}">
+                <div class="col-md-6 col-lg-4 ad-item" data-aos="flip-left" data-aos-delay="200" data-post-id="${post.post_id}">
                     <div class="card card-hover h-100 overflow-hidden">
                         <div class="position-relative">
                             <img alt="${post.title}" class="w-100 object-cover" src="${imageUrl}" style="height:220px"/>
@@ -269,6 +272,7 @@ $(document).ready(() => {
         const postId = $card.data("post-id") || "";
         window.location.href = `pages/ad-details.html?categoryName=${encodeURIComponent(categoryValue)}&postId=${postId}`;
     });
+    updateCTASection()
 })
 
 const categoryMap = {
@@ -317,3 +321,42 @@ $(document).on('click', '.category-col .card a', function (e) {
     // Trigger the card click instead
     $(this).closest('.card').trigger('click');
 });
+function updateCTASection() {
+    const token = getCookie("token")
+    const $ctaTitle = $("#ctaTitle")
+    const $ctaDescription = $("#ctaDescription")
+    const $ctaMainBtn = $("#ctaMainBtn")
+
+    // Remove any existing click handlers
+    $ctaMainBtn.off("click")
+
+    if (token) {
+        // User is logged in - encourage them to post an ad
+        $ctaTitle.text("Ready to Post an Ad?")
+        $ctaDescription.text("Create your advertisement and reach thousands of potential buyers")
+        $ctaMainBtn.text("Post Ad")
+        $ctaMainBtn.removeClass("btn-light").addClass("btn-light") // Ensure consistent styling
+
+        // Navigate directly to post ad page
+        $ctaMainBtn.on("click", (e) => {
+            e.preventDefault()
+            window.location.href = "pages/postad.html"
+        })
+
+        console.log("CTA updated for authenticated user")
+    } else {
+        // User is not logged in - encourage signup
+        $ctaTitle.text("Ready to Start Selling?")
+        $ctaDescription.text("Join thousands of sellers and reach millions of buyers")
+        $ctaMainBtn.text("Post Your First Ad")
+        $ctaMainBtn.removeClass("btn-light").addClass("btn-light")
+
+        // Navigate to signup page to get started
+        $ctaMainBtn.on("click", (e) => {
+            e.preventDefault()
+            window.location.href = "pages/signup.html"
+        })
+
+        console.log("CTA updated for guest user")
+    }
+}
