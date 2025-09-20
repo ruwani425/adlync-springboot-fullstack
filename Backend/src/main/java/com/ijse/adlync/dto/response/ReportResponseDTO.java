@@ -1,5 +1,6 @@
 package com.ijse.adlync.dto.response;
 
+import com.ijse.adlync.entity.enums.ReportStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,4 +24,5 @@ public class ReportResponseDTO {
     private String postTitle;
     private String reporterName;
     private LocalDateTime date;
+    private ReportStatusEnum status;
 }

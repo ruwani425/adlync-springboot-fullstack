@@ -1,20 +1,21 @@
 package com.ijse.adlync.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.time.LocalDateTime;
-
-import com.ijse.adlync.entity.ReportEntity;
-import com.ijse.adlync.entity.UserEntity;
-import com.ijse.adlync.entity.PostEntity;
-import com.ijse.adlync.repository.ReportRepository;
-import com.ijse.adlync.repository.UserRepository;
-import com.ijse.adlync.repository.PostRepository;
 import com.ijse.adlync.dto.request.ReportRequestDTO;
 import com.ijse.adlync.dto.response.ReportResponseDTO;
+import com.ijse.adlync.entity.PostEntity;
+import com.ijse.adlync.entity.ReportEntity;
+import com.ijse.adlync.entity.UserEntity;
+import com.ijse.adlync.entity.enums.ReportStatusEnum;
+import com.ijse.adlync.repository.PostRepository;
+import com.ijse.adlync.repository.ReportRepository;
+import com.ijse.adlync.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReportServiceImpl {
@@ -40,9 +41,35 @@ public class ReportServiceImpl {
         return toResponseDTO(entity);
     }
 
+    public List<ReportResponseDTO> findByStatus(String status) {
+        try {
+            ReportStatusEnum statusEnum = ReportStatusEnum.valueOf(status);
+            return repository.findByStatusOrderByDateDesc(statusEnum).stream()
+                    .map(this::toResponseDTO)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+    }
+
+
+    @Transactional
+    public ReportResponseDTO updateStatus(Long reportId, String status) {
+        ReportEntity report = repository.findById(reportId)
+                .orElseThrow(() -> new RuntimeException("Report not found with id: " + reportId));
+
+        try {
+            ReportStatusEnum statusEnum = ReportStatusEnum.valueOf(status);
+            report.setStatus(statusEnum);
+            repository.save(report);
+            return toResponseDTO(report);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Invalid status: " + status);
+        }
+    }
+
     @Transactional
     public ReportResponseDTO create(ReportRequestDTO requestDTO, String username) {
-        // Validate required fields
         if (requestDTO.getReason() == null || requestDTO.getReason().trim().isEmpty()) {
             throw new IllegalArgumentException("Report reason is required");
         }
@@ -51,7 +78,6 @@ public class ReportServiceImpl {
             throw new IllegalArgumentException("Post ID is required");
         }
 
-        // Find the post
         PostEntity post = postRepository.findById(requestDTO.getPostId())
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + requestDTO.getPostId()));
 
@@ -62,6 +88,7 @@ public class ReportServiceImpl {
         entity.setReporterContact(requestDTO.getReporterContact());
         entity.setAnonymous(requestDTO.getAnonymous() != null ? requestDTO.getAnonymous() : true);
         entity.setDate(LocalDateTime.now());
+        entity.setStatus(requestDTO.getStatus());
         entity.setPost(post);
 
         // Set user if not anonymous and username is provided
@@ -115,6 +142,7 @@ public class ReportServiceImpl {
         dto.setReporterContact(entity.getReporterContact());
         dto.setAnonymous(entity.getAnonymous());
         dto.setDate(entity.getDate());
+        dto.setStatus(entity.getStatus() != null ? entity.getStatus() : ReportStatusEnum.PENDING);
 
         if (entity.getPost() != null) {
             dto.setPostId(entity.getPost().getPost_id());

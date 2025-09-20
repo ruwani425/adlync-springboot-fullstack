@@ -206,8 +206,9 @@ $(document).on('click', '[data-section="reports"]', function () {
 function loadReports(page = 0) {
     currentReportsPage = page;
 
+    // Load only PENDING reports
     $.ajax({
-        url: "http://localhost:8080/api/reports",
+        url: "http://localhost:8080/api/reports/status/PENDING",
         method: "GET",
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (reports) {
@@ -283,7 +284,6 @@ function renderReports(reports) {
     });
 }
 
-// Handle "Reviewed" action - Update post status to REPORTED
 function markAsReviewed(reportId) {
     const report = reportsList.find(r => r.report_id === reportId);
     if (!report) {
@@ -291,38 +291,59 @@ function markAsReviewed(reportId) {
         return;
     }
 
-    if (!confirm('This will mark the reported post as "REPORTED". Are you sure?')) {
+    if (!confirm('This will mark the report as "REVIEWED" and the reported post as "REPORTED". Are you sure?')) {
         return;
     }
 
     const postId = report.postId;
 
-    // Update post status to REPORTED (you'll need to add this enum to your PostEntityStatusEnum)
     $.ajax({
-        url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
+        url: `http://localhost:8080/api/reports/${reportId}/status/APPROVED`,
         method: "PUT",
         headers: {"Authorization": "Bearer " + getCookie("token")},
-        success: function (response) {
-            // Remove the report card from UI
-            $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
-                $(this).remove();
-                updateReportsCount();
-            });
+        success: function () {
+            // Step 2: Update post status to REPORTED
+            $.ajax({
+                url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
+                method: "PUT",
+                headers: {"Authorization": "Bearer " + getCookie("token")},
+                success: function (response) {
+                    // Update local reportsList to reflect the new report status
+                    reportsList = reportsList.map(r =>
+                        r.report_id === reportId ? {...r, status: 'REVIEWED'} : r
+                    );
 
-            showToast('Post marked as REPORTED successfully!', 'success');
+                    // Remove the report card from UI (since it's no longer PENDING)
+                    $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
+                        $(this).remove();
+                        updateReportsCount();
+                    });
+
+                    showToast('Report marked as REVIEWED and post marked as REPORTED successfully!', 'success');
+                },
+                error: function (xhr) {
+                    console.error("Failed to update post status:", xhr);
+                    if (xhr.status === 404) {
+                        showToast('Post not found', 'error');
+                    } else {
+                        showToast('Failed to update post status. Please try again.', 'error');
+                    }
+                }
+            });
         },
         error: function (xhr) {
-            console.error("Failed to update post status:", xhr);
+            console.error("Failed to update report status:", xhr);
             if (xhr.status === 404) {
-                showToast('Post not found', 'error');
+                showToast('Report not found', 'error');
+            } else if (xhr.status === 400) {
+                showToast('Invalid report status update', 'error');
             } else {
-                showToast('Failed to update post status. Please try again.', 'error');
+                showToast('Failed to mark report as reviewed. Please try again.', 'error');
             }
         }
     });
 }
 
-// Handle "Rejected" action - Delete the report
 function markAsRejected(reportId) {
     if (!confirm('This will permanently delete the report. Are you sure?')) {
         return;
@@ -333,13 +354,11 @@ function markAsRejected(reportId) {
         method: "DELETE",
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function () {
-            // Remove the report card from UI
             $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
                 $(this).remove();
                 updateReportsCount();
             });
 
-            // Remove from local array
             reportsList = reportsList.filter(r => r.report_id !== reportId);
 
             showToast('Report deleted successfully!', 'success');
@@ -355,20 +374,17 @@ function markAsRejected(reportId) {
     });
 }
 
-// Helper function to update reports count after actions
 function updateReportsCount() {
     const visibleReports = $('.report-card:visible').length;
     $('#reportsCount').text(visibleReports);
     $('#totalReports').text(visibleReports);
     $('#pendingReports').text(visibleReports);
 
-    // If no reports left, show empty state
     if (visibleReports === 0) {
         $('#reportsContainer').html('<p class="text-center text-muted">No reports found</p>');
     }
 }
 
-// Enhanced showToast function with type support
 function showToast(message, type = 'success') {
     $('.toast-notification').remove();
 
@@ -389,7 +405,7 @@ function showToast(message, type = 'success') {
 
 function updateReportsStats(reports) {
     $('#totalReports').text(reports.length);
-    $('#pendingReports').text(reports.length); // All reports are essentially "pending review"
+    $('#pendingReports').text(reports.length);
 }
 
 function viewReportDetail(reportId) {
@@ -411,15 +427,10 @@ function viewReportDetail(reportId) {
     $('#modalPostTitle').text(report.postTitle || 'Unknown Post');
     $('#modalPostId').text(report.postId);
 
-    // Set up view post button
     $('#viewPostBtn').off('click').on('click', function () {
-        // You can implement this to show the post detail modal
-        // For now, just close the report modal
         $('#reportDetailModal').modal('hide');
-        // Then show post detail if you have that functionality
     });
 
-    // Set up delete button
     $('#deleteReportBtn').off('click').on('click', function () {
         deleteReport(reportId);
         $('#reportDetailModal').modal('hide');
@@ -464,7 +475,6 @@ function renderReportsPagination(current, totalPages) {
         <a class="page-link" href="#" onclick="loadReports(${current + 1})">Next</a></li>`);
 }
 
-// Search functionality for reports
 $('#searchReports').on('input', function () {
     const searchTerm = $(this).val().toLowerCase();
     $('.report-card').each(function () {

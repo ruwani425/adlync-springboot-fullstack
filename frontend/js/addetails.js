@@ -799,7 +799,8 @@ $(document).ready(() => {
             description: $('#reportDescription').val().trim() || null,
             reporterContact: email || null,
             anonymous: $('#anonymousReport').is(':checked'),
-            postId: finalPostId
+            postId: finalPostId,
+            status:"PENDING"
         };
 
         console.log('Submitting report:', reportData);

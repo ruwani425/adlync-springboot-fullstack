@@ -1,5 +1,6 @@
 package com.ijse.adlync.entity;
 
+import com.ijse.adlync.entity.enums.ReportStatusEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,6 +48,8 @@ public class ReportEntity {
     @JoinColumn(name = "post_id", nullable = false)
     private PostEntity post;
 
+    @Enumerated(EnumType.STRING)
+    private ReportStatusEnum status;
 
     @PrePersist
     public void prePersist() {

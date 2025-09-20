@@ -1,5 +1,6 @@
 package com.ijse.adlync.dto.request;
 
+import com.ijse.adlync.entity.enums.ReportStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class ReportRequestDTO {
     private Boolean anonymous;
     private Long postId;
     private LocalDateTime date;
+    private ReportStatusEnum status;
 }

@@ -28,6 +28,38 @@ public class ReportController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @GetMapping("/status/{status}")
+    @Operation(summary = "Get Reports by Status", description = "Retrieve reports filtered by status")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved reports"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<ReportResponseDTO>> getReportsByStatus(
+            @Parameter(description = "Status to filter by (PENDING, REVIEWED, REJECTED)")
+            @PathVariable String status) {
+        try {
+            List<ReportResponseDTO> response = service.findByStatus(status.toUpperCase());
+            return ResponseEntity.ok(response);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().build();
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/{id}/status/{status}")
+    @Operation(summary = "Update Report Status", description = "Update report status")
+    public ResponseEntity<ReportResponseDTO> updateReportStatus(
+            @PathVariable Long id,
+            @PathVariable String status) {
+        try {
+            ReportResponseDTO response = service.updateStatus(id, status.toUpperCase());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @GetMapping
     @Operation(summary = "Get all Reports", description = "Retrieve a list of all Report entities")
     @ApiResponses(value = {
