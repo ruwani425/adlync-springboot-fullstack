@@ -82,40 +82,6 @@ public class PostController {
         );
         return ResponseEntity.ok(response);
     }
-//    @GetMapping("/filter")
-//    @Operation(summary = "Filter Posts for Advertisement Page", description = "Filter posts by status, category, date range, and search")
-//    public ResponseEntity<PageResponse<PostResponseDTO>> filterPosts(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestParam(required = false) PostEntityStatusEnum status,
-//            @RequestParam(required = false) CategoryEntityNameEnum category,
-//            @RequestParam(required = false) String startDate,
-//            @RequestParam(required = false) String endDate,
-//            @RequestParam(required = false) String search
-//    ) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        PageResponse<PostResponseDTO> response = service.filterPostsForAds(
-//                status, category, startDate, endDate, search, pageable
-//        );
-//        return ResponseEntity.ok(response);
-//    }
-
-//    @GetMapping("/public/filter")
-//    @Operation(summary = "Filter Posts for Advertisement Page", description = "Filter posts by category, price, location, condition, and search")
-//    public ResponseEntity<PageResponse<PostResponseDTO>> filterPostsForAds(
-//            @RequestParam(defaultValue = "0") int page,
-//            @RequestParam(defaultValue = "10") int size,
-//            @RequestParam(required = false) String category,
-//            @RequestParam(required = false) Double minPrice,
-//            @RequestParam(required = false) Double maxPrice,
-//            @RequestParam(required = false) String location,
-//            @RequestParam(required = false) List<String> condition,
-//            @RequestParam(required = false) String search
-//    ) {
-//        Pageable pageable = PageRequest.of(page, size);
-//        return ResponseEntity.ok(service.filterPostsForAds(category, minPrice, maxPrice, location, condition, search, pageable));
-//    }
-
 
     @GetMapping("/approved/all")
     public ResponseEntity<PageResponse<PostResponseDTO>> getApprovedPostsPage(

@@ -226,39 +226,37 @@
             </div>
         </div>
 
-        <div class="content-section" id="users-section">
-            <div class="section-header">
-                <h3 class="text-primary-emerald mb-0">Users Management</h3>
-            </div>
+        <!-- Updated Users Management Section in admindashboard.html -->
+        <section id="users-section" class="content-section">
+            <h2 class="section-header">Users Management</h2>
 
             <div class="card">
                 <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5 class="card-title mb-0">All Users</h5>
-                    <div class="d-flex gap-2">
-                        <input class="form-control" placeholder="Search users..." style="width: 300px;" type="search">
-                        <button class="btn btn-outline-emerald">
-                            <i class="bi bi-download"></i> Export
-                        </button>
-                    </div>
+                    <h5 class="mb-0">All Users</h5>
+                    <button class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-download me-1"></i> Export
+                    </button>
                 </div>
                 <div class="card-body p-0">
                     <div class="table-responsive">
                         <table class="table table-hover mb-0">
-                            <thead class="table-light">
+                            <thead class="bg-light">
                             <tr>
                                 <th>User</th>
                                 <th>Email</th>
                                 <th>Posts</th>
                                 <th>Joined</th>
+                                <th>Actions</th> <!-- Added Actions column -->
                             </tr>
                             </thead>
                             <tbody id="userTableBody">
+                            <!-- Rows will be populated by JS -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <div class="content-section" id="moderators-section">
             <div class="section-header d-flex justify-content-between align-items-center">
@@ -285,10 +283,9 @@
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    <!-- Moderator data will be populated here -->
+                                    <tbody id="moderatorsTableBody">
                                     <tr>
-                                        <td colspan="6">
+                                        <td class="text-center" colspan="4">
                                             <div class="empty-state">
                                                 <i class="bi bi-people"></i>
                                                 <h6>No moderators found</h6>
@@ -301,9 +298,13 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Add pagination container -->
+                    <nav class="mt-4">
+                        <ul class="pagination justify-content-center" id="moderatorsPagination"></ul>
+                    </nav>
                 </div>
                 <div class="col-lg-4">
-                    <div class="card">
+                    <div class="card" id="moderatorStats">
                         <div class="card-header">
                             <h5 class="card-title mb-0">Moderator Statistics</h5>
                         </div>
@@ -325,6 +326,7 @@
                 </div>
             </div>
         </div>
+
         <div class="content-section" id="posts-section">
             <div class="section-header">
                 <h3 class="text-primary-emerald mb-0">Posts Management</h3>

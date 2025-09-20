@@ -8,6 +8,12 @@ const pageSize = 5;
 let reportsList = [];
 let currentReportsPage = 0;
 const reportsPageSize = 10;
+let moderatorsList = [];
+let currentModeratorsPage = 0;
+const moderatorsPageSize = 5;
+let selectedCategory = 'all';
+let selectedDateRange = 'all';
+let searchTerm = '';
 
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
@@ -45,6 +51,7 @@ $(document).ready(function () {
 
                 $("#loadingSpinner").addClass("d-none");
                 $("#submitModeratorBtn").prop("disabled", false);
+                loadModerators();
             },
             error: function (xhr) {
                 if (xhr.responseJSON) {
@@ -70,7 +77,8 @@ $(document).ready(function () {
         method: "GET",
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (users) {
-            const normalUsers = users.filter(user => user.role !== "ADMIN");
+            console.log(users)
+            const normalUsers = users.filter(user => user.role !== "ADMIN" && user.role !== "MODERATOR");
             $('.stat-card:eq(0) h2.mb-0').text(normalUsers.length.toLocaleString());
         },
         error: function (xhr) {
@@ -114,6 +122,8 @@ $(document).ready(function () {
         }
     });
 
+    loadModerators();
+
     $.ajax({
         url: "http://localhost:8080/api/users/all",
         method: "GET",
@@ -125,7 +135,9 @@ $(document).ready(function () {
             const $tbody = $("#userTableBody");
             $tbody.empty();
 
-            const normalUsers = users.filter(user => user.role !== "ADMIN");
+            const normalUsers = users.filter(user =>
+                user.role !== "ADMIN" && user.role !== "MODERATOR"
+            );
 
             for (const user of normalUsers) {
                 let postsCount = 0;
@@ -205,45 +217,180 @@ $(document).ready(function () {
         $mainContent.toggleClass('expanded');
     });
 
-    const $categoryItems = $('.category-item');
-    const $selectedCategory = $('#selectedCategory');
-    const $statusFilter = $('#statusFilter');
-    const $searchPosts = $('#searchPosts');
-
-    let currentFilters = {
-        category: 'all',
-        status: 'pending',
-        search: ''
-    };
-
-    $categoryItems.on('click', function (e) {
+    $('.category-item').on('click', function (e) {
         e.preventDefault();
-        $categoryItems.removeClass('active');
+        $('.category-item').removeClass('active');
         $(this).addClass('active');
 
         const categoryName = $(this).text().trim().split('\n')[0];
         const categoryIcon = $(this).find('i').prop('outerHTML');
-        $selectedCategory.html(categoryIcon + ' ' + categoryName);
+        $('#selectedCategory').html(categoryIcon + ' ' + categoryName);
 
-        currentFilters.category = $(this).data('category') || 'all';
-        applyAllFilters();
+        currentPage = 0;
+        loadPosts();
     });
 
-    $statusFilter.on('change', function () {
-        const newStatus = $(this).val().toUpperCase();
-        selectedStatus = newStatus;
-        currentFilters.status = newStatus.toLowerCase();
-        loadPosts(0, newStatus);
+    $('#statusFilter').on('change', function () {
+        selectedStatus = $(this).val();
+        currentPage = 0;
+        loadPosts();
     });
 
-    $searchPosts.on('input', function () {
-        currentFilters.search = $(this).val().toLowerCase();
-        applyAllFilters();
+    $('#dateFilter').on('change', function () {
+        currentPage = 0;
+        loadPosts();
     });
+
+    $('#searchPosts').on('input', debounce(function () {
+        currentPage = 0;
+        loadPosts();
+    }, 300));
 
     loadPosts(0);
 });
 
+
+// Debounce function for search
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Update reset filters function
+function resetFilters() {
+    $('#statusFilter').val('PENDING');
+    selectedStatus = 'PENDING';
+
+    $('.category-item').removeClass('active');
+    $('.category-item[data-category="all"]').addClass('active');
+    $('#selectedCategory').html('<i class="bi bi-grid me-2"></i>All Categories');
+
+    $('#dateFilter').val('all');
+    $('#searchPosts').val('');
+
+    currentPage = 0;
+    loadPosts();
+
+    showToast('Filters have been reset successfully!');
+}
+
+// New function to load moderators
+function loadModerators(page = 0) {
+    currentModeratorsPage = page;
+    $.ajax({
+        url: "http://localhost:8080/api/users/all",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (users) {
+            moderatorsList = users.filter(user => user.role === "MODERATOR");
+            renderModerators(moderatorsList);
+            updateModeratorStats(moderatorsList);
+            renderModeratorsPagination(page, Math.ceil(moderatorsList.length / moderatorsPageSize));
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch moderators:", xhr);
+            $('#moderatorsTableBody').html('<tr><td colspan="4" class="text-center">Failed to load moderators</td></tr>');
+        }
+    });
+}
+
+// Function to render moderators table
+function renderModerators(moderators) {
+    const $tbody = $('#moderatorsTableBody');
+    $tbody.empty();
+
+    if (moderators.length === 0) {
+        $tbody.html(`
+            <tr>
+                <td colspan="4" class="text-center">
+                    <div class="empty-state">
+                        <i class="bi bi-people"></i>
+                        <h6>No moderators found</h6>
+                        <p class="mb-0">Add moderators to get started</p>
+                    </div>
+                </td>
+            </tr>
+        `);
+        return;
+    }
+
+    const start = currentModeratorsPage * moderatorsPageSize;
+    const end = Math.min(start + moderatorsPageSize, moderators.length);
+    const paginatedModerators = moderators.slice(start, end);
+
+    paginatedModerators.forEach(moderator => {
+        const row = `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <img alt="Moderator" class="avatar me-3" 
+                             src="${moderator.profileImageUrl || 'https://picsum.photos/seed/default/40/40'}">
+                        <div>
+                            <div class="fw-semibold">${moderator.name}</div>
+                            <small class="text-muted">ID: #${moderator.id}</small>
+                        </div>
+                    </td>
+                    <td>${moderator.email}</td>
+                    <td>${new Date(moderator.joinDate).toLocaleDateString()}</td>
+                    <td>
+                        <button class="btn btn-outline-danger btn-sm">
+                            <i class="bi bi-slash-circle me-1"></i>Block
+                        </button>
+                    </td>
+            </tr>
+        `;
+        $tbody.append(row);
+    });
+}
+
+// New function to update moderator statistics
+function updateModeratorStats(moderators) {
+    const totalModerators = moderators.length;
+    const activeModerators = moderators.filter(m => m.status === "ACTIVE").length;
+    $('#moderatorStats .card:eq(0) h2').text(totalModerators.toLocaleString());
+    $('#moderatorStats .card:eq(1) h2').text(activeModerators.toLocaleString());
+}
+
+// New function to render moderators pagination
+function renderModeratorsPagination(current, totalPages) {
+    const $pagination = $('#moderatorsPagination');
+    $pagination.empty();
+
+    if (totalPages <= 1) return;
+
+    $pagination.append(`
+        <li class="page-item ${current === 0 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeModeratorsPage(${current - 1})">Previous</a>
+        </li>
+    `);
+
+    for (let i = 0; i < totalPages; i++) {
+        $pagination.append(`
+            <li class="page-item ${i === current ? 'active' : ''}">
+                <a class="page-link" href="#" onclick="changeModeratorsPage(${i})">${i + 1}</a>
+            </li>
+        `);
+    }
+
+    $pagination.append(`
+        <li class="page-item ${current === totalPages - 1 ? 'disabled' : ''}">
+            <a class="page-link" href="#" onclick="changeModeratorsPage(${current + 1})">Next</a>
+        </li>
+    `);
+}
+
+// New function to change moderators page
+function changeModeratorsPage(page) {
+    if (page < 0 || page >= Math.ceil(moderatorsList.length / moderatorsPageSize)) return;
+    loadModerators(page);
+}
 
 // Load reports when reports section is activated
 $(document).on('click', '[data-section="reports"]', function () {
@@ -728,25 +875,76 @@ function updateImageDisplay() {
     $indicators.each((i, el) => $(el).toggleClass('active', i === currentImageIndex));
 }
 
-function loadPosts(page = 0, status) {
+// Update the loadPosts function to use the filtering endpoint
+function loadPosts(page = 0, status = null) {
     currentPage = page;
     if (status) selectedStatus = status;
 
+    // Build filter parameters
+    let params = {
+        page: currentPage,
+        size: pageSize
+    };
+
+    // Add status filter
+    if (selectedStatus && selectedStatus !== 'ALL') {
+        params.status = selectedStatus;
+    }
+
+    // Add category filter
+    const activeCategory = $('.category-item.active').data('category');
+    if (activeCategory && activeCategory !== 'all') {
+        params.category = activeCategory;
+    }
+
+    // Add date range filter
+    const dateRange = $('#dateFilter').val();
+    if (dateRange && dateRange !== 'all') {
+        const now = new Date();
+        let startDate = null;
+
+        switch (dateRange) {
+            case 'today':
+                startDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                break;
+            case 'week':
+                startDate = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                break;
+            case 'month':
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+                break;
+        }
+
+        if (startDate) {
+            params.startDate = startDate.toISOString().split('T')[0];
+        }
+    }
+
+    // Add search filter
+    const search = $('#searchPosts').val();
+    if (search && search.trim()) {
+        params.search = search.trim();
+    }
+
+    const queryString = new URLSearchParams(params).toString();
+
     $.ajax({
-        url: `http://localhost:8080/api/posts/page?page=${page}&size=${pageSize}&status=${encodeURIComponent(selectedStatus)}`,
+        url: `http://localhost:8080/api/posts/page?${queryString}`,
         method: "GET",
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (data) {
             postList = data.content || [];
             renderPosts(postList);
             renderPagination(data.pageNumber, data.totalPages);
-            applyAllFilters();
+            $('#postsCount').text(data.totalElements.toLocaleString());
         },
         error: function (xhr) {
             console.error("Failed to load posts:", xhr);
+            $('#postsContainer').html("<p class='text-center text-muted'>Failed to load posts</p>");
         }
     });
 }
+
 
 function renderPosts(posts) {
     const $container = $("#postsContainer");
@@ -824,33 +1022,6 @@ function changePage(page) {
     if (page < 0) return;
     loadPosts(page);
 }
-
-function resetFilters() {
-    $('#statusFilter').val('PENDING');
-    selectedStatus = 'PENDING';
-
-    $('.category-item').removeClass('active');
-    $('.category-item[data-category="all"]').addClass('active');
-
-    const $selectedCategory = $('#selectedCategory');
-    $selectedCategory.html('<i class="bi bi-grid me-2"></i>All Categories');
-
-    $('#dateFilter').val('all');
-
-    $('#searchPosts').val('');
-
-    currentFilters = {
-        category: 'all',
-        status: 'pending',
-        search: ''
-    };
-
-    currentPage = 0;
-    loadPosts(0, 'PENDING');
-
-    showToast('Filters have been reset successfully!');
-}
-
 
 function resetStatusFilter() {
     $('#statusFilter').val('PENDING');
