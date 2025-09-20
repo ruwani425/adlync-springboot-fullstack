@@ -65,6 +65,54 @@ $(document).ready(function () {
             }
         });
     });
+    $.ajax({
+        url: "http://localhost:8080/api/users/all",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (users) {
+            const normalUsers = users.filter(user => user.role !== "ADMIN");
+            $('.stat-card:eq(0) h2.mb-0').text(normalUsers.length.toLocaleString());
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch users count:", xhr);
+        }
+    });
+
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1&status=APPROVED",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            $('.stat-card:eq(1) h2.mb-0').text(data.totalElements.toLocaleString());
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch active posts count:", xhr);
+        }
+    });
+
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1&status=PENDING",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            $('.stat-card:eq(2) h2.mb-0').text(data.totalElements.toLocaleString());
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch pending posts count:", xhr);
+        }
+    });
+
+    $.ajax({
+        url: "http://localhost:8080/api/reports/status/PENDING",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (reports) {
+            $('.stat-card:eq(3) h2.mb-0').text(reports.length.toLocaleString());
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch reports count:", xhr);
+        }
+    });
 
     $.ajax({
         url: "http://localhost:8080/api/users/all",
@@ -119,7 +167,6 @@ $(document).ready(function () {
         }
     });
 
-// Helper function to format date
     function formatDate(dateString) {
         const options = {year: 'numeric', month: 'short', day: 'numeric'};
         const date = new Date(dateString);
@@ -777,8 +824,6 @@ function changePage(page) {
     if (page < 0) return;
     loadPosts(page);
 }
-
-// Add this function to your admindashboard.js file
 
 function resetFilters() {
     $('#statusFilter').val('PENDING');
