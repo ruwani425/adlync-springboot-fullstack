@@ -283,15 +283,108 @@ function renderReports(reports) {
     });
 }
 
-// Placeholder functions for the buttons (you'll implement logic later)
+// Handle "Reviewed" action - Update post status to REPORTED
 function markAsReviewed(reportId) {
-    console.log('Mark as reviewed:', reportId);
-    // Your logic here
+    const report = reportsList.find(r => r.report_id === reportId);
+    if (!report) {
+        showToast('Report not found', 'error');
+        return;
+    }
+
+    if (!confirm('This will mark the reported post as "REPORTED". Are you sure?')) {
+        return;
+    }
+
+    const postId = report.postId;
+
+    // Update post status to REPORTED (you'll need to add this enum to your PostEntityStatusEnum)
+    $.ajax({
+        url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
+        method: "PUT",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (response) {
+            // Remove the report card from UI
+            $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
+                $(this).remove();
+                updateReportsCount();
+            });
+
+            showToast('Post marked as REPORTED successfully!', 'success');
+        },
+        error: function (xhr) {
+            console.error("Failed to update post status:", xhr);
+            if (xhr.status === 404) {
+                showToast('Post not found', 'error');
+            } else {
+                showToast('Failed to update post status. Please try again.', 'error');
+            }
+        }
+    });
 }
 
+// Handle "Rejected" action - Delete the report
 function markAsRejected(reportId) {
-    console.log('Mark as rejected:', reportId);
-    // Your logic here
+    if (!confirm('This will permanently delete the report. Are you sure?')) {
+        return;
+    }
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}`,
+        method: "DELETE",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            // Remove the report card from UI
+            $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
+                $(this).remove();
+                updateReportsCount();
+            });
+
+            // Remove from local array
+            reportsList = reportsList.filter(r => r.report_id !== reportId);
+
+            showToast('Report deleted successfully!', 'success');
+        },
+        error: function (xhr) {
+            console.error("Failed to delete report:", xhr);
+            if (xhr.status === 404) {
+                showToast('Report not found', 'error');
+            } else {
+                showToast('Failed to delete report. Please try again.', 'error');
+            }
+        }
+    });
+}
+
+// Helper function to update reports count after actions
+function updateReportsCount() {
+    const visibleReports = $('.report-card:visible').length;
+    $('#reportsCount').text(visibleReports);
+    $('#totalReports').text(visibleReports);
+    $('#pendingReports').text(visibleReports);
+
+    // If no reports left, show empty state
+    if (visibleReports === 0) {
+        $('#reportsContainer').html('<p class="text-center text-muted">No reports found</p>');
+    }
+}
+
+// Enhanced showToast function with type support
+function showToast(message, type = 'success') {
+    $('.toast-notification').remove();
+
+    const iconClass = type === 'success' ? 'bi-check-circle' : 'bi-exclamation-triangle';
+    const bgClass = type === 'success' ? 'alert-success' : 'alert-danger';
+
+    const $toast = $(`
+        <div class="toast-notification position-fixed top-0 end-0 m-3 alert ${bgClass}" style="z-index: 9999;">
+            <i class="${iconClass} me-2"></i>${message}
+            <button type="button" class="btn-close ms-2"></button>
+        </div>
+    `);
+
+    $toast.find('.btn-close').on('click', () => $toast.remove());
+    $('body').append($toast);
+    setTimeout(() => $toast.remove(), 3000);
 }
 
 function updateReportsStats(reports) {
@@ -493,19 +586,6 @@ function rejectPostFromModal() {
             showToast('Failed to reject post.');
         }
     });
-}
-
-function showToast(message) {
-    $('.toast-notification').remove();
-    const $toast = $(`
-        <div class="toast-notification position-fixed top-0 end-0 m-3 alert alert-success" style="z-index: 9999;">
-            <i class="bi bi-check-circle me-2"></i>${message}
-            <button type="button" class="btn-close ms-2"></button>
-        </div>
-    `);
-    $toast.find('.btn-close').on('click', () => $toast.remove());
-    $('body').append($toast);
-    setTimeout(() => $toast.remove(), 3000);
 }
 
 function applyAllFilters() {

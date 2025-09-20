@@ -9,5 +9,6 @@ public enum PostEntityStatusEnum {
     RENTED,
     EXPIRED,
     DELETED,
+    REPORTED,
     ALL
 }

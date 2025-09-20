@@ -32,8 +32,6 @@ public class ReviewController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    
-
     @GetMapping("/post/{postId}")
     @Operation(summary = "Get reviews by post ID", description = "Retrieve reviews for a specific post with optional limit")
     @ApiResponses(value = {
