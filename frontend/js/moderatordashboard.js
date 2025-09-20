@@ -13,6 +13,23 @@ let selectedReportDateRange = 'all';
 
 $(document).ready(function () {
     loadPosts();
+
+    if ($('#dashboard').hasClass('active')) {
+        loadDashboardStatsOptimized(); // Use optimized version for better performance
+    }
+
+    // Also load stats when dashboard section is shown
+    $(document).on('click', '[onclick*="showSection(\'dashboard\')"]', function () {
+        setTimeout(() => {
+            loadDashboardStatsOptimized();
+        }, 100);
+    });
+
+    // Refresh stats after post actions
+    $(document).on('postActionCompleted', function () {
+        refreshDashboardStats();
+    });
+
     $('#reportStatusFilter').on('change', () => {
         selectedReportStatus = $('#reportStatusFilter').val();
         currentReportsPage = 0;
@@ -449,6 +466,13 @@ function updateCategoryCounts() {
     // For now, we'll keep the placeholder counts
 }
 
+function loadDashboardStats() {
+    loadPendingPostsCount();
+    loadApprovedPostsCount();
+    loadRejectedPostsCount();
+    loadTotalPostsCount();
+}
+
 function logout() {
     document.cookie = "token=;expires=Thu, 01 Jan 1970 00:00:01 GMT;path=/";
     window.location.href = "../index.html";
@@ -637,4 +661,167 @@ function markAsRejected(reportId) {
             }
         }
     });
+}
+
+function loadPendingPostsCount() {
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1&status=PENDING",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            const count = data.totalElements || 0;
+            $('#pendingCount').text(count.toLocaleString());
+
+            // Update trend (optional - you can calculate based on previous data)
+            updateStatTrend('pending', count);
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch pending posts count:", xhr);
+            $('#pendingCount').text('0');
+        }
+    });
+}
+
+// Function to load approved posts count
+function loadApprovedPostsCount() {
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1&status=APPROVED",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            const count = data.totalElements || 0;
+            $('#approvedCount').text(count.toLocaleString());
+
+            // Update trend (optional)
+            updateStatTrend('approved', count);
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch approved posts count:", xhr);
+            $('#approvedCount').text('0');
+        }
+    });
+}
+
+// Function to load rejected posts count
+function loadRejectedPostsCount() {
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1&status=REJECTED",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            const count = data.totalElements || 0;
+            $('#rejectedCount').text(count.toLocaleString());
+
+            // Update trend (optional)
+            updateStatTrend('rejected', count);
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch rejected posts count:", xhr);
+            $('#rejectedCount').text('0');
+        }
+    });
+}
+
+// Function to load total posts count
+function loadTotalPostsCount() {
+    $.ajax({
+        url: "http://localhost:8080/api/posts/page?page=0&size=1",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (data) {
+            const count = data.totalElements || 0;
+            $('#totalCount').text(count.toLocaleString());
+
+            // Update trend (optional)
+            updateStatTrend('total', count);
+        },
+        error: function (xhr) {
+            console.error("Failed to fetch total posts count:", xhr);
+            $('#totalCount').text('0');
+        }
+    });
+}
+
+// Optional function to update trend indicators (you can customize this)
+function updateStatTrend(type, currentCount) {
+    // This is optional - you can implement trend calculation based on stored previous values
+    // For now, we'll just update with sample trends or leave as is
+
+    const trends = {
+        pending: {icon: 'bi-arrow-down', text: '-5% from last week', class: 'text-success'},
+        approved: {icon: 'bi-arrow-up', text: '+8% from last month', class: 'text-success'},
+        rejected: {icon: 'bi-arrow-up', text: '+3 new today', class: 'text-warning'},
+        total: {icon: 'bi-arrow-up', text: '+12% from last month', class: 'text-success'}
+    };
+
+    if (trends[type]) {
+        const trendElement = $(`#${type}Count`).siblings('.stat-trend').find('small');
+        if (trendElement.length) {
+            const trend = trends[type];
+            trendElement.html(`<i class="${trend.icon} ${trend.class}"></i> ${trend.text}`);
+        }
+    }
+}
+
+// Function to refresh all statistics (useful after actions like approve/reject)
+function refreshDashboardStats() {
+    loadDashboardStats();
+}
+
+// Alternative method using Promise.all for better performance (load all at once)
+function loadDashboardStatsOptimized() {
+    const requests = [
+        $.ajax({
+            url: "http://localhost:8080/api/posts/page?page=0&size=1&status=PENDING",
+            method: "GET",
+            headers: {"Authorization": "Bearer " + getCookie("token")}
+        }),
+        $.ajax({
+            url: "http://localhost:8080/api/posts/page?page=0&size=1&status=APPROVED",
+            method: "GET",
+            headers: {"Authorization": "Bearer " + getCookie("token")}
+        }),
+        $.ajax({
+            url: "http://localhost:8080/api/posts/page?page=0&size=1&status=REJECTED",
+            method: "GET",
+            headers: {"Authorization": "Bearer " + getCookie("token")}
+        }),
+        $.ajax({
+            url: "http://localhost:8080/api/posts/page?page=0&size=1",
+            method: "GET",
+            headers: {"Authorization": "Bearer " + getCookie("token")}
+        })
+    ];
+
+    Promise.all(requests)
+        .then(results => {
+            // Update pending count
+            const pendingCount = results[0].totalElements || 0;
+            $('#pendingCount').text(pendingCount.toLocaleString());
+
+            // Update approved count
+            const approvedCount = results[1].totalElements || 0;
+            $('#approvedCount').text(approvedCount.toLocaleString());
+
+            // Update rejected count
+            const rejectedCount = results[2].totalElements || 0;
+            $('#rejectedCount').text(rejectedCount.toLocaleString());
+
+            // Update total count
+            const totalCount = results[3].totalElements || 0;
+            $('#totalCount').text(totalCount.toLocaleString());
+
+            // Update trends
+            updateStatTrend('pending', pendingCount);
+            updateStatTrend('approved', approvedCount);
+            updateStatTrend('rejected', rejectedCount);
+            updateStatTrend('total', totalCount);
+
+            console.log('Dashboard statistics loaded successfully');
+        })
+        .catch(error => {
+            console.error('Failed to load dashboard statistics:', error);
+            // Set default values on error
+            $('#pendingCount, #approvedCount, #rejectedCount, #totalCount').text('0');
+        });
 }

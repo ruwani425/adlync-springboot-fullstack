@@ -8,7 +8,6 @@ let currentPage = 0;
 let reviewsPerPage = 10;
 let numericPostId = null;
 
-
 function getCookie(name) {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);

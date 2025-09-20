@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface ReportRepository extends JpaRepository<ReportEntity, Long> {
     List<ReportEntity> findByStatus(ReportStatusEnum status);
-    List<ReportEntity> findByStatusOrderByDateDesc(ReportStatusEnum status);}
+    List<ReportEntity> findByStatusOrderByDateDesc(ReportStatusEnum status);
+}

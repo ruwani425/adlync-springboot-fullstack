@@ -6,7 +6,52 @@ const pageSize = 9
 let currentPage = 0
 let totalPages = 0
 let postsCache = []
-const selectedStatus = "APPROVED"
+let categoryFromURL = null // Store category from URL
+
+// Function to get URL parameters
+function getUrlParameter(name) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(name);
+}
+
+// Function to set category filter from URL
+function initializeFromURL() {
+    const categoryParam = getUrlParameter('category');
+    if (categoryParam) {
+        categoryFromURL = categoryParam;
+        // Map backend enum to frontend display values
+        const displayCategoryMap = {
+            'VEHICLE': 'vehicles',
+            'ANIMAL': 'animals',
+            'ELECTRONIC': 'electronics',
+            'PROPERTY': 'properties',
+            'JOB': 'jobs',
+            'SERVICES': 'services',
+            'SPORT': 'sports',
+            'AGRICULTURE': 'agriculture',
+            'KIDS': 'kids',
+            'FASHION_AND_BEAUTY': 'fashion',
+            'ENTERTAINTMENT': 'entertainment',
+            'EDUCATION': 'education',
+            'MOBILE': 'mobile',
+            'WORK_OVERSEAS': 'overseas',
+            'HOME_AND_GARDEN': 'home',
+            'ESSENTIALS': 'essentials'
+        };
+
+        const displayValue = displayCategoryMap[categoryParam];
+        if (displayValue) {
+            $("#categoryFilter").val(displayValue);
+            console.log('Set category filter to:', displayValue);
+
+            // Update page header to show filtered category
+            const categoryDisplayName = displayValue.charAt(0).toUpperCase() + displayValue.slice(1);
+            $("#breadcrumbActive").text(`${categoryDisplayName} Ads`);
+            $("#pageTitle").text(`${categoryDisplayName} Advertisements`);
+            $("#pageDescription").text(`Find the best ${displayValue} deals from verified sellers`);
+        }
+    }
+}
 
 $(document).ready(() => {
     // Initialize profile images first
@@ -19,6 +64,9 @@ $(document).ready(() => {
     initializeViewToggle()
     initializeSorting()
 
+    // Initialize category from URL before loading posts
+    initializeFromURL()
+
     loadPosts(0)
 })
 
@@ -28,19 +76,33 @@ function loadPosts(page = 0) {
     }
 
     currentPage = page
-    const url = `${API_BASE}?page=${page}&size=${pageSize}`
+    let url = `${API_BASE}?page=${page}&size=${pageSize}`
+
+    // Check if we have a category filter from URL
+    if (categoryFromURL) {
+        url = `http://localhost:8080/api/posts/page?page=${page}&size=${pageSize}&status=APPROVED&category=${categoryFromURL}`;
+        console.log('Loading posts with category filter:', categoryFromURL);
+    }
 
     $.ajax({
         url,
         method: "GET",
         success: (data) => {
             postsCache = data.content || []
-            console.log(data.totalPages + " " + data.totalElements)
+            console.log('Loaded posts:', data.totalPages + " " + data.totalElements)
             console.log(data)
             totalPages = data.totalPages || Math.ceil((data.totalElements || 0) / pageSize) || 1
             renderPosts(postsCache)
             renderPagination(data.pageNumber !== undefined ? data.pageNumber : page, totalPages)
-            applyFilters()
+
+            // Only apply additional filters if no URL category is specified
+            if (!categoryFromURL) {
+                applyFilters()
+            } else {
+                // Update result count for category-filtered results
+                $("#resultCount").text(data.totalElements.toLocaleString())
+                $("#searchTime").text((Math.random() * 0.5 + 0.1).toFixed(2))
+            }
         },
         error: (xhr) => {
             console.error("Failed to load posts:", xhr)
@@ -66,10 +128,11 @@ function renderPosts(posts) {
         const title = escapeHtml(post.title || "No title")
         const price = Number(post.price || 0)
         const categoryName = (post.category && (post.category.name || post.category)) || post.category_name || "unknown"
-        const locationName = (post.location && (post.location.address || post.location)) || post.locationName || "Unknown"
+        const locationName = (post.location && (post.location.address || post.location.city)) || post.locationName || "Unknown"
         const seller = (post.user && (post.user.name || post.user.username)) || post.seller || "Unknown"
-        const rating = post.rating ? post.rating : post.ratingValue || "N/A"
+        const rating = post.rating ? post.rating : post.ratingValue || "4.5"
         let imageUrl = "https://picsum.photos/seed/default/400/250"
+
         if (Array.isArray(post.images) && post.images.length > 0) {
             const first = post.images[0]
             imageUrl = typeof first === "string" ? first : first.image_url || first.url || imageUrl
@@ -218,30 +281,56 @@ function initializeFilters() {
 
 function applyFilters() {
     const search = $("#searchInput").val().trim().toLowerCase()
-    const category = ($("#categoryFilter").val() || "").toLowerCase()
+    let category = ($("#categoryFilter").val() || "").toLowerCase()
     const location = ($("#locationFilter").val() || "").toLowerCase()
     const minPrice = Number.parseInt($("#minPrice").val()) || 0
     const maxPrice = Number.parseInt($("#maxPrice").val()) || Number.POSITIVE_INFINITY
     const sortBy = $("#sortBy").val() || "newest"
+
+    // If we have a URL category parameter, prioritize it
+    if (categoryFromURL && !category) {
+        const displayCategoryMap = {
+            'VEHICLE': 'vehicles',
+            'ANIMAL': 'animals',
+            'ELECTRONIC': 'electronics',
+            'PROPERTY': 'properties',
+            'JOB': 'jobs',
+            'SERVICES': 'services',
+            'SPORT': 'sports',
+            'AGRICULTURE': 'agriculture',
+            'KIDS': 'kids',
+            'FASHION_AND_BEAUTY': 'fashion',
+            'ENTERTAINTMENT': 'entertainment',
+            'EDUCATION': 'education',
+            'MOBILE': 'mobile',
+            'WORK_OVERSEAS': 'overseas',
+            'HOME_AND_GARDEN': 'home',
+            'ESSENTIALS': 'essentials'
+        };
+        category = displayCategoryMap[categoryFromURL] || "";
+    }
 
     let $items = $(".ad-item")
 
     if (search) {
         $items = $items.filter(function () {
             const t = $(this).find(".card-title").text().toLowerCase()
-            return t.includes(search)
+            const desc = $(this).find(".card-body").text().toLowerCase()
+            return t.includes(search) || desc.includes(search)
         })
     }
 
     if (category) {
         $items = $items.filter(function () {
-            return ($(this).data("category") || "").toString() === category
+            const itemCategory = ($(this).data("category") || "").toString().toLowerCase()
+            return itemCategory.includes(category) || category.includes(itemCategory)
         })
     }
 
     if (location) {
         $items = $items.filter(function () {
-            return ($(this).data("location") || "").toString() === location
+            const itemLocation = ($(this).data("location") || "").toString().toLowerCase()
+            return itemLocation.includes(location) || location.includes(itemLocation)
         })
     }
 
@@ -280,6 +369,14 @@ function sortDomArray(domArray, sortBy) {
     }
 }
 
+// Function to clear category filter from URL
+function clearCategoryFromURL() {
+    const url = new URL(window.location);
+    url.searchParams.delete('category');
+    window.history.replaceState(null, '', url);
+    categoryFromURL = null;
+}
+
 function clearAllFilters() {
     $("#searchInput").val("")
     $("#categoryFilter").val("")
@@ -288,7 +385,17 @@ function clearAllFilters() {
     $("#maxPrice").val("")
     $('input[type="checkbox"]').prop("checked", false)
     $("#sortBy").val("newest")
-    applyFilters()
+
+    // Clear category from URL and reload all posts
+    clearCategoryFromURL()
+
+    // Reset page header
+    $("#breadcrumbActive").text("All Ads");
+    $("#pageTitle").text("All Advertisements");
+    $("#pageDescription").text("Discover amazing deals from verified sellers");
+
+    // Reload posts without category filter
+    loadPosts(0)
 }
 
 function initializeViewToggle() {

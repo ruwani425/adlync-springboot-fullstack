@@ -1,4 +1,3 @@
-
 const $ = window.$
 
 $(() => {
@@ -271,3 +270,50 @@ $(document).ready(() => {
         window.location.href = `pages/ad-details.html?categoryName=${encodeURIComponent(categoryValue)}&postId=${postId}`;
     });
 })
+
+const categoryMap = {
+    'vehicles': 'VEHICLE',
+    'animals': 'ANIMAL',
+    'electronics': 'ELECTRONIC',
+    'properties': 'PROPERTY',
+    'jobs': 'JOB',
+    'services': 'SERVICES',
+    'sports': 'SPORT',
+    'agriculture': 'AGRICULTURE',
+    'kids': 'KIDS',
+    'fashion and beauty': 'FASHION_AND_BEAUTY',
+    'entertainment': 'ENTERTAINTMENT',
+    'education': 'EDUCATION',
+    'mobile': 'MOBILE',
+    'work overseas': 'WORK_OVERSEAS',
+    'home and garden': 'HOME_AND_GARDEN',
+    'essentials': 'ESSENTIALS'
+};
+
+// Category card click handler - add this to app.js
+$(document).on('click', '.category-col .card', function (e) {
+    e.preventDefault();
+
+    // Get the category display name from the card
+    const categoryDisplay = $(this).find('h6').text().trim().toLowerCase();
+    console.log('Clicked category:', categoryDisplay);
+
+    // Map to backend enum value
+    const categoryEnum = categoryMap[categoryDisplay];
+
+    if (categoryEnum) {
+        // Navigate to advertisement page with category filter
+        window.location.href = `pages/advertisement.html?category=${categoryEnum}`;
+    } else {
+        console.warn('Category not found in mapping:', categoryDisplay);
+        // Fallback to show all ads
+        window.location.href = 'pages/advertisement.html';
+    }
+});
+
+// Also handle if category cards have links inside them
+$(document).on('click', '.category-col .card a', function (e) {
+    e.preventDefault();
+    // Trigger the card click instead
+    $(this).closest('.card').trigger('click');
+});
