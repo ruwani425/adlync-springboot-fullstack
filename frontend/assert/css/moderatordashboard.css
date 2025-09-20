@@ -108,10 +108,12 @@ body {
     align-items: center;
 }
 
+/* Update these sections in your moderatordashboard.css file */
+
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
     margin-bottom: 2rem;
 }
 
@@ -120,36 +122,32 @@ body {
     border-radius: 12px;
     padding: 1.5rem;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-}
-
-.stat-icon {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
     color: white;
+    position: relative;
+    overflow: hidden;
 }
 
-.stat-icon.pending {
-    background: #f59e0b;
+/* Individual card colors matching admin dashboard */
+.stat-card:nth-child(1) {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
 }
 
-.stat-icon.approved {
-    background: #10b981;
+.stat-card:nth-child(2) {
+    background: linear-gradient(135deg, var(--emerald-600), #047857);
 }
 
-.stat-icon.rejected {
-    background: #ef4444;
+.stat-card:nth-child(3) {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-.stat-icon.total {
-    background: #6366f1;
+.stat-card:nth-child(4) {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+}
+
+.stat-card .stat-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .stat-card .stat-info {
@@ -158,13 +156,44 @@ body {
 }
 
 .stat-card .stat-number {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 0.25rem;
 }
 
 .stat-card .stat-label {
-    color: #6b7280;
+    color: rgba(255, 255, 255, 0.9);
     font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.stat-card .stat-icon {
+    font-size: 2.5rem;
+    opacity: 0.8;
+}
+
+.stat-card .stat-trend {
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-card .stat-trend i {
+    margin-right: 0.25rem;
+}
+
+/* Remove the old stat-icon styles since we're using the new layout */
+.stat-icon {
+    width: auto;
+    height: auto;
+    border-radius: 0;
+    display: inline;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    background: none;
 }
 
 .filters {
@@ -580,4 +609,79 @@ body {
 .avatar {
     width: 32px;
     height: 32px;
+}
+
+/* Reports Section Styles (Mirrors Admin) */
+.stat-card.danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+}
+
+.stat-card.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.stat-card .stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.stat-card .stat-number {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.stat-card .stat-label {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.875rem;
+}
+
+/* Reports Table */
+.table-hover tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.status-reviewed {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.status-rejected {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* Report Actions */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .btn-group-sm .btn {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+}
+
+/* Detail Groups in Modal */
+.detail-group {
+    margin-bottom: 1rem;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.detail-value {
+    color: #6b7280;
+    word-break: break-word;
 }

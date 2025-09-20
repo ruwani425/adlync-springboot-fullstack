@@ -5,9 +5,25 @@ const pageSize = 10;
 let selectedStatus = 'PENDING';
 let selectedCategory = '';
 let selectedDateRange = 'all';
+let reportsList = [];
+let currentReportsPage = 0;
+const reportsPageSize = 10;
+let selectedReportStatus = 'PENDING';
+let selectedReportDateRange = 'all';
 
 $(document).ready(function () {
     loadPosts();
+    $('#reportStatusFilter').on('change', () => {
+        selectedReportStatus = $('#reportStatusFilter').val();
+        currentReportsPage = 0;
+        loadReports();
+    });
+
+    $('#reportDateFilter').on('change', () => {
+        selectedReportDateRange = $('#reportDateFilter').val();
+        currentReportsPage = 0;
+        loadReports();
+    });
 
     $('.nav-link').on('click', function (e) {
         e.preventDefault();
@@ -83,6 +99,7 @@ function showSection(sectionName, btn) {
     $(btn).addClass('active');
 
     if (sectionName === 'posts') loadPosts();
+    if (sectionName === 'reports') loadReports();
 }
 
 function loadPosts(page = currentPage) {
@@ -120,11 +137,10 @@ function loadPosts(page = currentPage) {
         }
     }
 
-    // Create query string
     const queryString = new URLSearchParams(params).toString();
 
     $.ajax({
-        url: `http://localhost:8080/api/posts/page?${queryString}`, // <-- query string appended here
+        url: `http://localhost:8080/api/posts/page?${queryString}`,
         method: 'GET',
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function (data) {
@@ -139,6 +155,168 @@ function loadPosts(page = currentPage) {
     });
 }
 
+// Load reports - Fixed to match admin dashboard logic
+function loadReports(page = currentReportsPage) {
+    currentReportsPage = page;
+
+    // Load only PENDING reports (same as admin dashboard)
+    $.ajax({
+        url: "http://localhost:8080/api/reports/status/PENDING",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (reports) {
+            reportsList = reports;
+            renderReports(reports);
+            updateReportsStats(reports);
+            renderReportsPagination(page, Math.ceil(reports.length / reportsPageSize));
+            $('#reportsCountInfo').text(`Pending Reports (${reports.length})`);
+        },
+        error: function (xhr) {
+            console.error("Failed to load reports:", xhr);
+            $('#reportsTableBody').html('<tr><td colspan="6" class="text-center text-danger">Failed to load reports.</td></tr>');
+            showToast('Failed to load reports.', 'error');
+        }
+    });
+}
+
+// Updated renderReports function to match admin dashboard structure
+function renderReports(reports) {
+    const tbody = $('#reportsTableBody');
+    tbody.empty();
+
+    if (!reports.length) {
+        tbody.html('<tr><td colspan="6" class="text-center text-muted">No reports found.</td></tr>');
+        return;
+    }
+
+    // Handle pagination for reports (same as admin)
+    const start = currentReportsPage * reportsPageSize;
+    const paginatedReports = reports.slice(start, start + reportsPageSize);
+
+    paginatedReports.forEach(report => {
+        const statusClass = `status-${report.status?.toLowerCase()}`;
+        const reportId = report.id || report.report_id;
+
+        const row = `
+            <tr>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div>
+                            <div class="fw-semibold">${report.reporterName || 'Unknown'}</div>
+                            <small class="text-muted">${report.reporterEmail || ''}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <div class="fw-semibold">${report.postTitle || 'N/A'}</div>
+                    <small class="text-muted">Post ID: #${report.postId || 'N/A'}</small>
+                </td>
+                <td>
+                    <span class="badge bg-secondary">${report.reason || 'Custom Reason'}</span>
+                    <div class="text-muted small mt-1">${report.customReason || report.description || ''}</div>
+                </td>
+                <td>${new Date(report.date).toLocaleDateString()}</td>
+                <td><span class="badge ${statusClass}">${report.status || 'PENDING'}</span></td>
+                <td>
+                    <div class="btn-group btn-group-sm" role="group">
+                        ${report.status === 'PENDING' ? `
+                            <button class="btn btn-success" onclick="markAsReviewed(${reportId})" title="Approve report and mark post as reported">
+                                <i class="bi bi-check"></i> Review
+                            </button>
+                            <button class="btn btn-danger" onclick="markAsRejected(${reportId})" title="Delete this report">
+                                <i class="bi bi-trash"></i> Reject
+                            </button>
+                        ` : `
+                            <button class="btn btn-outline-secondary disabled">Handled</button>
+                        `}
+                        <button class="btn btn-outline-primary" onclick="viewReportDetail(${reportId})">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `;
+        tbody.append(row);
+    });
+}
+
+// Pagination for reports
+function renderReportsPagination(current, totalPages) {
+    const container = $('#reportsPagination');
+    container.empty();
+
+    if (totalPages <= 1) return;
+
+    container.append(`<li class="page-item ${current === 0 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="loadReports(${current - 1})">Previous</a></li>`);
+
+    for (let i = 0; i < totalPages; i++) {
+        const activeClass = i === current ? 'active' : '';
+        container.append(`<li class="page-item ${activeClass}">
+            <a class="page-link" href="#" onclick="loadReports(${i})">${i + 1}</a></li>`);
+    }
+
+    container.append(`<li class="page-item ${current === totalPages - 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="loadReports(${current + 1})">Next</a></li>`);
+}
+
+// View report detail function - updated to match admin dashboard
+function viewReportDetail(reportId) {
+    const report = reportsList.find(r => (r.id || r.report_id) == reportId);
+    if (!report) {
+        console.error('Report not found with ID:', reportId);
+        showToast('Report not found', 'error');
+        return;
+    }
+
+    const modalContent = `
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Reported Post</h5>
+                <p><strong>Title:</strong> ${report.postTitle || 'N/A'}</p>
+                <p><strong>Post ID:</strong> #${report.postId || 'N/A'}</p>
+            </div>
+            <div class="col-md-6">
+                <h5>Report Details</h5>
+                <div class="detail-group">
+                    <div class="detail-label">Reporter:</div>
+                    <div class="detail-value">
+                        ${report.reporterName || 'Unknown'} ${report.reporterEmail ? `(${report.reporterEmail})` : "(No Email Provided)"}
+                    </div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Reason:</div>
+                    <div class="detail-value">${report.reason || 'No reason provided'}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Description:</div>
+                    <div class="detail-value">${report.description || report.customReason || 'No description provided'}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Date:</div>
+                    <div class="detail-value">${new Date(report.date).toLocaleString()}</div>
+                </div>
+                <div class="detail-group">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value"><span class="badge status-${report.status?.toLowerCase()}">${report.status || 'PENDING'}</span></div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    $('#modalBody').html(modalContent);
+    new bootstrap.Modal($('#postDetailModal')[0]).show();
+}
+
+// Reset filters for reports
+function resetReportsFilters() {
+    $('#reportStatusFilter').val('PENDING');
+    $('#reportDateFilter').val('all');
+    selectedReportStatus = 'PENDING';
+    selectedReportDateRange = 'all';
+    currentReportsPage = 0;
+    loadReports();
+}
 
 function renderPosts(posts) {
     const grid = $('#postsGrid');
@@ -350,4 +528,113 @@ function showToast(message, type = 'success') {
     setTimeout(() => toast.css('opacity', 1), 10);
     setTimeout(() => toast.css('opacity', 0), 3000);
     setTimeout(() => toast.remove(), 3500);
+}
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+}
+
+function updateReportsStats(reports) {
+    const totalCount = reports.length;
+    const pendingCount = reports.filter(r => r.status === 'PENDING').length;
+
+    $('#totalReportsCount').text(totalCount);
+    $('#pendingReportsCount').text(pendingCount);
+}
+
+function markAsReviewed(reportId) {
+    const report = reportsList.find(r => (r.id || r.report_id) == reportId);
+    if (!report) {
+        showToast('Report not found', 'error');
+        return;
+    }
+
+    if (!confirm('This will mark the report as "REVIEWED" and the reported post as "REPORTED". Are you sure?')) {
+        return;
+    }
+
+    const postId = report.postId;
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}/status/APPROVED`,
+        method: "PUT",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            $.ajax({
+                url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
+                method: "PUT",
+                headers: {"Authorization": "Bearer " + getCookie("token")},
+                success: function (response) {
+                    // Update local reportsList to reflect the new report status
+                    reportsList = reportsList.map(r =>
+                        (r.id || r.report_id) == reportId ? {...r, status: 'REVIEWED'} : r
+                    );
+
+                    // Remove the report from UI (since it's no longer PENDING)
+                    const row = $(`button[onclick*="markAsReviewed(${reportId})"]`).closest('tr');
+                    row.fadeOut(300, function () {
+                        $(this).remove();
+                        // Update counts
+                        const remainingReports = reportsList.filter(r => r.status === 'PENDING');
+                        updateReportsStats(remainingReports);
+                        $('#reportsCountInfo').text(`Pending Reports (${remainingReports.length})`);
+                    });
+
+                    showToast('Report marked as REVIEWED and post marked as REPORTED successfully!', 'success');
+                },
+                error: function (xhr) {
+                    console.error("Failed to update post status:", xhr);
+                    if (xhr.status === 404) {
+                        showToast('Post not found', 'error');
+                    } else {
+                        showToast('Failed to update post status. Please try again.', 'error');
+                    }
+                }
+            });
+        },
+        error: function (xhr) {
+            console.error("Failed to update report status:", xhr);
+            if (xhr.status === 404) {
+                showToast('Report not found', 'error');
+            } else if (xhr.status === 400) {
+                showToast('Invalid report status update', 'error');
+            } else {
+                showToast('Failed to mark report as reviewed. Please try again.', 'error');
+            }
+        }
+    });
+}
+
+function markAsRejected(reportId) {
+    if (!confirm('This will permanently delete the report. Are you sure?')) {
+        return;
+    }
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}`,
+        method: "DELETE",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            const row = $(`button[onclick*="markAsRejected(${reportId})"]`).closest('tr');
+            row.fadeOut(300, function () {
+                $(this).remove();
+                reportsList = reportsList.filter(r => (r.id || r.report_id) != reportId);
+                updateReportsStats(reportsList);
+                $('#reportsCountInfo').text(`Pending Reports (${reportsList.length})`);
+            });
+
+            showToast('Report deleted successfully!', 'success');
+        },
+        error: function (xhr) {
+            console.error("Failed to delete report:", xhr);
+            if (xhr.status === 404) {
+                showToast('Report not found', 'error');
+            } else {
+                showToast('Failed to delete report. Please try again.', 'error');
+            }
+        }
+    });
 }

@@ -51,14 +51,6 @@
                 Reports
             </button>
         </div>
-
-        <div class="nav-section">
-            <div class="nav-section-title">Account</div>
-            <button class="nav-link" onclick="logout()">
-                <i class="bi bi-box-arrow-right"></i>
-                Logout
-            </button>
-        </div>
     </nav>
 </div>
 
@@ -124,45 +116,59 @@
             </div>
         </div>
 
+        <!-- Replace the existing stats-grid section in moderatordashboard.html with this: -->
+
         <!-- Stats -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-icon pending">
-                    <i class="bi bi-clock-history"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-number" id="pendingCount">12</div>
-                    <div class="stat-label">Pending Posts</div>
-                </div>
-            </div>
-
-            <div class="stat-card">
-                <div class="stat-icon approved">
-                    <i class="bi bi-check-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-number" id="approvedCount">34</div>
-                    <div class="stat-label">Approved Posts</div>
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h5 class="stat-label">Pending Posts</h5>
+                        <h2 class="stat-number" id="pendingCount">12</h2>
+                        <div class="stat-trend">
+                            <small><i class="bi bi-arrow-down"></i> -5% from last week</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-clock-history stat-icon"></i>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon rejected">
-                    <i class="bi bi-x-circle"></i>
-                </div>
-                <div class="stat-info">
-                    <div class="stat-number" id="rejectedCount">5</div>
-                    <div class="stat-label">Rejected Posts</div>
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h5 class="stat-label">Approved Posts</h5>
+                        <h2 class="stat-number" id="approvedCount">34</h2>
+                        <div class="stat-trend">
+                            <small><i class="bi bi-arrow-up"></i> +8% from last month</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-check-circle stat-icon"></i>
                 </div>
             </div>
 
             <div class="stat-card">
-                <div class="stat-icon total">
-                    <i class="bi bi-graph-up"></i>
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h5 class="stat-label">Rejected Posts</h5>
+                        <h2 class="stat-number" id="rejectedCount">5</h2>
+                        <div class="stat-trend">
+                            <small><i class="bi bi-arrow-up"></i> +3 new today</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-x-circle stat-icon"></i>
                 </div>
-                <div class="stat-info">
-                    <div class="stat-number" id="totalCount">51</div>
-                    <div class="stat-label">Total Posts</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-content">
+                    <div class="stat-info">
+                        <h5 class="stat-label">Total Posts</h5>
+                        <h2 class="stat-number" id="totalCount">51</h2>
+                        <div class="stat-trend">
+                            <small><i class="bi bi-arrow-up"></i> +12% from last month</small>
+                        </div>
+                    </div>
+                    <i class="bi bi-graph-up stat-icon"></i>
                 </div>
             </div>
         </div>
@@ -373,18 +379,94 @@
         </nav>
     </div>
 
-    <!-- Reports Section -->
     <div class="section" id="reports">
-        <div class="header">
-            <div>
-                <h1 class="h3 mb-1">Reports</h1>
-                <p class="text-muted mb-0">Handle user reports</p>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Reports</h2>
+            <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary btn-sm" onclick="resetReportsFilters()">Reset Filters</button>
+            </div>
+        </div>
+        <p class="text-muted mb-4">Handle user reports</p>
+
+        <!-- Stats Cards -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="stat-card danger">
+                    <div class="stat-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-number mb-0" id="totalReportsCount">0</h3>
+                        <p class="stat-label mb-0">Total Reports</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="stat-card warning">
+                    <div class="stat-icon pending">
+                        <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 class="stat-number mb-0" id="pendingReportsCount">0</h3>
+                        <p class="stat-label mb-0">Pending Review</p>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Filters (Optional, for future expansion; mirrors admin) -->
+        <div class="filters mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Status</label>
+                    <select class="form-select" id="reportStatusFilter">
+                        <option value="PENDING">Pending</option>
+                        <option value="ALL">All</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold">Date Range</label>
+                    <select class="form-select" id="reportDateFilter">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+                <div class="col-md-6 d-flex align-items-end justify-content-end">
+                    <button class="btn btn-outline-secondary" onclick="loadReports(0)">Apply Filters</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reports Table -->
         <div class="card">
             <div class="card-body">
-                <p class="text-muted">Report management features will be available here.</p>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                        <tr>
+                            <th>Reporter</th>
+                            <th>Reported Post</th>
+                            <th>Reason</th>
+                            <th>Date Reported</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                        </thead>
+                        <tbody id="reportsTableBody">
+                        <!-- Reports loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <div class="text-muted" id="reportsCountInfo">All Reports (0)</div>
+                    <nav>
+                        <ul class="pagination mb-0" id="reportsPagination">
+                            <!-- Pagination loaded via JS -->
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
     </div>

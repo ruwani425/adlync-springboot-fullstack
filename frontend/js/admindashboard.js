@@ -179,13 +179,6 @@ $(document).ready(function () {
         }
     });
 
-    function formatDate(dateString) {
-        const options = {year: 'numeric', month: 'short', day: 'numeric'};
-        const date = new Date(dateString);
-        return date.toLocaleDateString(undefined, options);
-    }
-
-
     function formatDate(isoString) {
         const date = new Date(isoString);
         const day = String(date.getDate()).padStart(2, '0');
@@ -193,6 +186,7 @@ $(document).ready(function () {
         const year = date.getFullYear();
         return `${year}-${month}-${day}`;
     }
+
 
     $(".dropdown-item:contains('Logout')").on("click", function (e) {
         e.preventDefault();
@@ -397,6 +391,11 @@ $(document).on('click', '[data-section="reports"]', function () {
     loadReports();
 });
 
+function updateReportsStats(reports) {
+    $('#totalReports').text(reports.length);
+    $('#pendingReports').text(reports.length);
+}
+
 function loadReports(page = 0) {
     currentReportsPage = page;
 
@@ -475,96 +474,6 @@ function renderReports(reports) {
             </div>
         `;
         $container.append(card);
-    });
-}
-
-function markAsReviewed(reportId) {
-    const report = reportsList.find(r => r.report_id === reportId);
-    if (!report) {
-        showToast('Report not found', 'error');
-        return;
-    }
-
-    if (!confirm('This will mark the report as "REVIEWED" and the reported post as "REPORTED". Are you sure?')) {
-        return;
-    }
-
-    const postId = report.postId;
-
-    $.ajax({
-        url: `http://localhost:8080/api/reports/${reportId}/status/APPROVED`,
-        method: "PUT",
-        headers: {"Authorization": "Bearer " + getCookie("token")},
-        success: function () {
-            // Step 2: Update post status to REPORTED
-            $.ajax({
-                url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
-                method: "PUT",
-                headers: {"Authorization": "Bearer " + getCookie("token")},
-                success: function (response) {
-                    // Update local reportsList to reflect the new report status
-                    reportsList = reportsList.map(r =>
-                        r.report_id === reportId ? {...r, status: 'REVIEWED'} : r
-                    );
-
-                    // Remove the report card from UI (since it's no longer PENDING)
-                    $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
-                        $(this).remove();
-                        updateReportsCount();
-                    });
-
-                    showToast('Report marked as REVIEWED and post marked as REPORTED successfully!', 'success');
-                },
-                error: function (xhr) {
-                    console.error("Failed to update post status:", xhr);
-                    if (xhr.status === 404) {
-                        showToast('Post not found', 'error');
-                    } else {
-                        showToast('Failed to update post status. Please try again.', 'error');
-                    }
-                }
-            });
-        },
-        error: function (xhr) {
-            console.error("Failed to update report status:", xhr);
-            if (xhr.status === 404) {
-                showToast('Report not found', 'error');
-            } else if (xhr.status === 400) {
-                showToast('Invalid report status update', 'error');
-            } else {
-                showToast('Failed to mark report as reviewed. Please try again.', 'error');
-            }
-        }
-    });
-}
-
-function markAsRejected(reportId) {
-    if (!confirm('This will permanently delete the report. Are you sure?')) {
-        return;
-    }
-
-    $.ajax({
-        url: `http://localhost:8080/api/reports/${reportId}`,
-        method: "DELETE",
-        headers: {"Authorization": "Bearer " + getCookie("token")},
-        success: function () {
-            $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
-                $(this).remove();
-                updateReportsCount();
-            });
-
-            reportsList = reportsList.filter(r => r.report_id !== reportId);
-
-            showToast('Report deleted successfully!', 'success');
-        },
-        error: function (xhr) {
-            console.error("Failed to delete report:", xhr);
-            if (xhr.status === 404) {
-                showToast('Report not found', 'error');
-            } else {
-                showToast('Failed to delete report. Please try again.', 'error');
-            }
-        }
     });
 }
 
@@ -1023,6 +932,13 @@ function changePage(page) {
     loadPosts(page);
 }
 
+let currentFilters = {
+    status: 'PENDING',
+    category: 'all',
+    search: ''
+};
+
+
 function resetStatusFilter() {
     $('#statusFilter').val('PENDING');
     selectedStatus = 'PENDING';
@@ -1046,4 +962,94 @@ function resetSearchFilter() {
 
 function resetDateFilter() {
     $('#dateFilter').val('all');
+}
+
+function markAsReviewed(reportId) {
+    const report = reportsList.find(r => r.report_id === reportId);
+    if (!report) {
+        showToast('Report not found', 'error');
+        return;
+    }
+
+    if (!confirm('This will mark the report as "REVIEWED" and the reported post as "REPORTED". Are you sure?')) {
+        return;
+    }
+
+    const postId = report.postId;
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}/status/APPROVED`,
+        method: "PUT",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            // Step 2: Update post status to REPORTED
+            $.ajax({
+                url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
+                method: "PUT",
+                headers: {"Authorization": "Bearer " + getCookie("token")},
+                success: function (response) {
+                    // Update local reportsList to reflect the new report status
+                    reportsList = reportsList.map(r =>
+                        r.report_id === reportId ? {...r, status: 'REVIEWED'} : r
+                    );
+
+                    // Remove the report card from UI (since it's no longer PENDING)
+                    $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
+                        $(this).remove();
+                        updateReportsCount();
+                    });
+
+                    showToast('Report marked as REVIEWED and post marked as REPORTED successfully!', 'success');
+                },
+                error: function (xhr) {
+                    console.error("Failed to update post status:", xhr);
+                    if (xhr.status === 404) {
+                        showToast('Post not found', 'error');
+                    } else {
+                        showToast('Failed to update post status. Please try again.', 'error');
+                    }
+                }
+            });
+        },
+        error: function (xhr) {
+            console.error("Failed to update report status:", xhr);
+            if (xhr.status === 404) {
+                showToast('Report not found', 'error');
+            } else if (xhr.status === 400) {
+                showToast('Invalid report status update', 'error');
+            } else {
+                showToast('Failed to mark report as reviewed. Please try again.', 'error');
+            }
+        }
+    });
+}
+
+function markAsRejected(reportId) {
+    if (!confirm('This will permanently delete the report. Are you sure?')) {
+        return;
+    }
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}`,
+        method: "DELETE",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
+                $(this).remove();
+                updateReportsCount();
+            });
+
+            reportsList = reportsList.filter(r => r.report_id !== reportId);
+
+            showToast('Report deleted successfully!', 'success');
+        },
+        error: function (xhr) {
+            console.error("Failed to delete report:", xhr);
+            if (xhr.status === 404) {
+                showToast('Report not found', 'error');
+            } else {
+                showToast('Failed to delete report. Please try again.', 'error');
+            }
+        }
+    });
 }
