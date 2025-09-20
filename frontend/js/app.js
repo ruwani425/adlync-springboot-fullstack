@@ -1,7 +1,5 @@
-/* global $, getCookie, deleteCookie */
-// jQuery is loaded via CDN in index.html
 
-const $ = window.$ // Declare the $ variable
+const $ = window.$
 
 $(() => {
     const $grid = $("#catGrid")
@@ -79,7 +77,6 @@ function checkAuth() {
         $authBtn.hide()
         $profileDropdown.show()
 
-        // Fetch user profile data including profile photo
         fetchUserProfile(token)
 
         $("#profileLink").on("click", (e) => {
@@ -127,32 +124,28 @@ function fetchUserProfile(token) {
     $.ajax({
         url: "http://localhost:8080/api/users/getUserByToken",
         method: "GET",
-        headers: { "Authorization": "Bearer " + token },
+        headers: {"Authorization": "Bearer " + token},
         success: function (response) {
             console.log("User data loaded for navbar:", response);
             console.log("Profile Image URL:", response.profileImageUrl);
 
-            // Get the profile image in navbar dropdown
             const $navProfileImg = $("#profileDropdown img");
 
             let profileUrl = response.profileImageUrl;
 
-            // Check for null, undefined, empty string, or just whitespace
             if (!profileUrl || profileUrl.trim() === '') {
                 profileUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(response.name)}&background=10b981&color=fff&size=40&rounded=true`;
                 console.log("Using fallback avatar for navbar:", profileUrl);
             } else {
-                profileUrl = profileUrl.trim(); // Remove any whitespace
+                profileUrl = profileUrl.trim();
                 console.log("Using database profile photo for navbar:", profileUrl);
             }
 
-            // Update the navbar profile image
             $navProfileImg.attr('src', profileUrl);
             $navProfileImg.attr('alt', response.name + "'s profile");
         },
         error: function (xhr, status, error) {
             console.error("Error fetching user profile for navbar:", error);
-            // Keep the default avatar if there's an error
         }
     });
 }
@@ -186,19 +179,26 @@ $(document).ready(() => {
             url: `http://localhost:8080/api/posts/approved/recent?page=${page}&size=${cardsPerPage}`,
             method: "GET",
             success: (data) => {
-                // data is a PageResponse object
-                renderPage(data.content)
-                currentPage = data.pageNumber
-                totalPages = data.totalPages
+                console.log("API Response:", data);
 
-                // Enable/disable buttons based on page
-                $("#prevPage").prop("disabled", currentPage <= 0)
-                $("#nextPage").prop("disabled", currentPage >= totalPages - 1)
+                renderPage(data.content || []);
 
-                $("#currentPage").text(currentPage + 1)
+                currentPage = data.pageNumber !== undefined ? data.pageNumber : 0;
+                totalPages = data.totalPages !== undefined ? data.totalPages : 1;
+
+                console.log("Current Page:", currentPage, "Total Pages:", totalPages);
+
+                $("#prevPage").prop("disabled", currentPage <= 0);
+                $("#nextPage").prop("disabled", currentPage >= totalPages - 1);
+                $("#currentPage").text(currentPage + 1);
+
+                if ($("#totalPages").length) {
+                    $("#totalPages").text(totalPages);
+                }
             },
-            error: () => {
-                console.error("Failed to fetch featured posts")
+            error: (xhr, status, error) => {
+                console.error("Failed to fetch featured posts:", error);
+                $("#featuredPostsContainer").html("<p class='text-danger'>Failed to load featured posts.</p>");
             },
         })
     }
@@ -212,11 +212,11 @@ $(document).ready(() => {
                 post.images && post.images.length ? post.images[0].image_url : "https://picsum.photos/seed/default/800/480"
 
             const card = `
-                <div class="col-md-6 col-lg-4">
+                <div class="col-md-6 col-lg-4 ad-item" data-post-id="${post.post_id}">
                     <div class="card card-hover h-100 overflow-hidden">
                         <div class="position-relative">
                             <img alt="${post.title}" class="w-100 object-cover" src="${imageUrl}" style="height:220px"/>
-                            <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3">
+                            <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3 category-badge">
                                 ${post.category ? post.category.name : "Other"}
                             </span>
                         </div>
@@ -229,7 +229,7 @@ $(document).ready(() => {
                             </div>
                             <div class="d-flex justify-content-between align-items-center mt-3">
                                 <small class="text-muted">by ${post.user ? post.user.name : "Unknown"}</small>
-                                <a class="btn btn-emerald btn-sm" href="#">View Details</a>
+                                <a class="btn btn-emerald btn-sm view-details-btn" href="#">View Details</a>
                             </div>
                         </div>
                     </div>
@@ -237,9 +237,10 @@ $(document).ready(() => {
             $container.append(card)
         })
     }
-    $(".nav-link").filter(function() {
+
+    $(".nav-link").filter(function () {
         return $(this).text().trim() === "Browse";
-    }).on("click", function(e) {
+    }).on("click", function (e) {
         e.preventDefault();
         window.location.href = "pages/advertisement.html";
     });
@@ -261,4 +262,12 @@ $(document).ready(() => {
     $("#viewAllBtn").on("click", () => {
         window.location.href = "pages/advertisement.html"
     })
+
+    $(document).on("click", ".view-details-btn", function (e) {
+        e.preventDefault();
+        const $card = $(this).closest(".ad-item");
+        const categoryValue = $card.find(".category-badge").text().trim().toLowerCase();
+        const postId = $card.data("post-id") || "";
+        window.location.href = `pages/ad-details.html?categoryName=${encodeURIComponent(categoryValue)}&postId=${postId}`;
+    });
 })

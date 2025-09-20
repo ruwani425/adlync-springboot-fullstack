@@ -79,6 +79,17 @@ $(document).ready(function () {
         window.location.href = 'postad.html';
     });
 
+    $('#postAdBtn').off('click.auth').on('click.auth', function () {
+        const token = getCookie("token");
+        if (token) {
+            console.log("Authenticated user: Navigating to postad.html");
+            window.location.href = 'postad.html';
+        } else {
+            console.log("Unauthenticated user: Navigating to signup.html");
+            window.location.href = 'signup.html';
+        }
+    });
+
     $('#logoutLink').click(function (e) {
         e.preventDefault();
         Swal.fire({
