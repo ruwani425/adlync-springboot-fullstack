@@ -5,6 +5,16 @@ $(document).ready(function () {
     getUserByToken();
     initPasswordChange();
 
+    $('#postSelect').change(function () {
+        const postId = $(this).val();
+        console.log('Selected post ID:', postId);
+        if (postId === 'all') {
+            loadUserReviews(currentUserId);
+        } else {
+            loadUserReviews(currentUserId, 0, 5, postId);
+        }
+    });
+
     $('#statusFilter').change(function () {
         const selectedStatus = $(this).val();
         console.log('Filter changed to:', selectedStatus);
@@ -540,6 +550,8 @@ function getUserByToken() {
 
             $('#photoPreview').attr('src', profileUrl);
             loadUserAdsByUserId(currentUserId);
+            loadUserPostsForDropdown(currentUserId);
+            loadUserReviews(currentUserId);
         },
         error: function () {
             Swal.fire({
@@ -804,4 +816,300 @@ function renderPagination(response, status = 'all') {
 function changePage(page, status = 'all') {
     if (!currentUserId) return;
     loadUserAdsByUserId(currentUserId, status, page, 6);
+}
+
+function loadUserPostsForDropdown(userId) {
+    const token = getCookie("token");
+    if (!token) {
+        console.error("No token found for dropdown fetch");
+        $('#postSelect').html('<option value="">Please log in to view posts</option>');
+        return;
+    }
+
+    $.ajax({
+        url: `http://localhost:8080/api/posts/by-user/${userId}`,
+        method: "GET",
+        headers: {"Authorization": "Bearer " + token},
+        success: function (response) {
+            console.log("Posts for dropdown:", response);
+            const posts = response.content || [];
+            const dropdown = $('#postSelect');
+            dropdown.empty();
+            dropdown.append('<option value="all">All Posts</option>');
+            if (posts.length === 0) {
+                dropdown.append('<option value="">No posts available</option>');
+            } else {
+                posts.forEach(post => {
+                    dropdown.append(`<option value="${post.post_id || post.id}">${post.title} (ID: ${post.post_id || post.id})</option>`);
+                });
+            }
+        },
+        error: function (xhr) {
+            console.error("Error fetching posts for dropdown:", xhr);
+            $('#postSelect').html('<option value="">No posts available</option>');
+        }
+    });
+}
+
+function loadUserReviews(userId, page = 0, size = 5, postId = null) {
+    const token = getCookie("token");
+    if (!token) {
+        $('#reviewsContainer').html('<p class="text-danger">Please log in to view reviews.</p>');
+        return;
+    }
+
+    const container = $('#reviewsContainer');
+    container.html(`
+        <div class="col-12">
+            <div class="empty-state">
+                <i class="bi bi-arrow-clockwise"></i>
+                <h4>Loading reviews...</h4>
+                <p>Please wait while we fetch the reviews.</p>
+            </div>
+        </div>
+    `);
+
+    if (postId && postId !== 'all') {
+        $.ajax({
+            url: `http://localhost:8080/api/reviews/post/${postId}?limit=5`,
+            method: "GET",
+            headers: {"Authorization": "Bearer " + token},
+            success: function (reviews) {
+                console.log(`Fetched reviews for post ID ${postId}:`, reviews);
+                renderReviews(reviews, postId);
+            },
+            error: function (xhr) {
+                console.error(`Error fetching reviews for post ID ${postId}:`, xhr);
+                container.html('<p class="text-danger">Failed to load reviews for this post. Please try again later.</p>');
+            }
+        });
+    } else {
+        $.ajax({
+            url: `http://localhost:8080/api/posts/by-user/${userId}?page=${page}&size=${size}`,
+            method: "GET",
+            headers: {"Authorization": "Bearer " + token},
+            success: function (response) {
+                console.log("Fetched posts:", response);
+                const posts = (response.content || []).filter(post => ['APPROVED', 'SOLD'].includes(post.status.toUpperCase()));
+                if (posts.length === 0) {
+                    container.html('<p>No reviews yet. Post an ad to receive reviews.</p>');
+                    return;
+                }
+
+                let allReviews = [];
+                let reviewPromises = posts.map(post => {
+                    return $.ajax({
+                        url: `http://localhost:8080/api/reviews/post/${post.post_id || post.id}?limit=5`,
+                        method: "GET",
+                        headers: {"Authorization": "Bearer " + token}
+                    }).then(reviews => {
+                        reviews.forEach(review => {
+                            review.postTitle = post.title;
+                            review.postId = post.post_id || post.id;
+                        });
+                        allReviews = allReviews.concat(reviews);
+                    }).catch(xhr => {
+                        console.error(`Error fetching reviews for post ${post.post_id || post.id}:`, xhr);
+                    });
+                });
+
+                Promise.all(reviewPromises).then(() => {
+                    console.log("All fetched reviews:", allReviews);
+                    allReviews.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                    renderReviews(allReviews);
+                }).catch(error => {
+                    console.error("Error fetching reviews:", error);
+                    container.html('<p class="text-danger">Failed to load reviews. Please try again later.</p>');
+                });
+            },
+            error: function (xhr) {
+                console.error("Error fetching posts:", xhr);
+                container.html('<p class="text-danger">Failed to load reviews. Please try again later.</p>');
+            }
+        });
+    }
+}
+
+function renderReviews(reviews, specificPostId = null) {
+    const container = $('#reviewsContainer');
+    container.empty();
+
+    if (!reviews || reviews.length === 0) {
+        container.html(`
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-star"></i>
+                    <h4>No reviews yet</h4>
+                    <p>You haven't received any reviews${specificPostId ? ` for this post` : ''} yet.</p>
+                </div>
+            </div>
+        `);
+        return;
+    }
+
+    const reviewsHtml = reviews.map(review => {
+        if (!review.reviewerName || !review.rating || !review.title || !review.content || !review.created_at) {
+            console.warn("Invalid review data:", review);
+            return '';
+        }
+
+        const reviewDate = new Date(review.created_at).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        const fullStars = Math.floor(review.rating);
+        const emptyStars = 5 - fullStars;
+        const starsHtml =
+            '<i class="bi bi-star-fill text-warning"></i>'.repeat(fullStars) +
+            '<i class="bi bi-star text-warning"></i>'.repeat(emptyStars);
+
+        const verifiedBadge = review.verified ?
+            '<span class="badge bg-success ms-2"><i class="bi bi-patch-check-fill me-1"></i>Verified</span>' : '';
+
+        const recommendationBadge = review.recommendation === 'YES' ?
+            '<span class="badge bg-emerald ms-2"><i class="bi bi-thumbs-up-fill me-1"></i>Recommends</span>' :
+            review.recommendation === 'NO' ?
+                '<span class="badge bg-danger ms-2"><i class="bi bi-thumbs-down-fill me-1"></i>Not Recommended</span>' : '';
+
+        return `
+            <div class="col-md-6 mb-4">
+                <div class="card h-100 review-card">
+                    <div class="card-body">
+                        <!-- Reviewer Info -->
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://ui-avatars.com/api/?name=${encodeURIComponent(review.reviewerName)}&background=059669&color=fff&size=50&rounded=true" 
+                                 class="rounded-circle me-3" 
+                                 style="width: 50px; height: 50px;"
+                                 alt="${review.reviewerName}">
+                            <div class="flex-grow-1">
+                                <h6 class="mb-0">${review.reviewerName}</h6>
+                                <small class="text-muted">${reviewDate}</small>
+                                ${verifiedBadge}
+                                ${recommendationBadge}
+                            </div>
+                        </div>
+
+                        <!-- Rating Stars -->
+                        <div class="d-flex align-items-center mb-2">
+                            <div class="me-2">${starsHtml}</div>
+                            <span class="text-muted small">(${review.rating}/5)</span>
+                        </div>
+
+                        <!-- Review Title -->
+                        <h5 class="card-title mb-2">${review.title}</h5>
+
+                        <!-- Post Reference -->
+                        <p class="text-muted small mb-3">
+                            <i class="bi bi-box me-1"></i>
+                            For: <strong>${review.postTitle || `Post ID ${review.postId}`}</strong>
+                        </p>
+
+                        <!-- Review Content -->
+                        <p class="card-text">${review.content}</p>
+
+                        <!-- Detailed Ratings -->
+                        ${review.qualityRating || review.communicationRating || review.deliveryRating || review.valueRating ? `
+                            <div class="mt-3 pt-3 border-top">
+                                <h6 class="text-muted small mb-2">Detailed Ratings:</h6>
+                                <div class="row g-2 text-center">
+                                    ${review.qualityRating ? `
+                                        <div class="col-6 col-md-3">
+                                            <div class="small text-muted">Quality</div>
+                                            <div class="fw-bold text-emerald">${review.qualityRating}/5</div>
+                                        </div>
+                                    ` : ''}
+                                    ${review.communicationRating ? `
+                                        <div class="col-6 col-md-3">
+                                            <div class="small text-muted">Communication</div>
+                                            <div class="fw-bold text-emerald">${review.communicationRating}/5</div>
+                                        </div>
+                                    ` : ''}
+                                    ${review.deliveryRating ? `
+                                        <div class="col-6 col-md-3">
+                                            <div class="small text-muted">Delivery</div>
+                                            <div class="fw-bold text-emerald">${review.deliveryRating}/5</div>
+                                        </div>
+                                    ` : ''}
+                                    ${review.valueRating ? `
+                                        <div class="col-6 col-md-3">
+                                            <div class="small text-muted">Value</div>
+                                            <div class="fw-bold text-emerald">${review.valueRating}/5</div>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }).filter(html => html !== '').join('');
+
+    if (reviewsHtml) {
+        container.html(`<div class="row">${reviewsHtml}</div>`);
+
+        const avgRating = (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1);
+        const recommendedCount = reviews.filter(r => r.recommendation === 'YES').length;
+        const recommendationPercentage = ((recommendedCount / reviews.length) * 100).toFixed(0);
+
+        container.prepend(`
+            <div class="row mb-4">
+                <div class="col-12">
+                    <div class="card bg-light">
+                        <div class="card-body">
+                            <div class="row text-center">
+                                <div class="col-md-3">
+                                    <h3 class="text-emerald mb-0">${avgRating}</h3>
+                                    <small class="text-muted">Average Rating</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-emerald mb-0">${reviews.length}</h3>
+                                    <small class="text-muted">Total Reviews</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <h3 class="text-emerald mb-0">${recommendationPercentage}%</h3>
+                                    <small class="text-muted">Recommend</small>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="mb-1">${'<i class="bi bi-star-fill text-warning"></i>'.repeat(Math.floor(avgRating))}</div>
+                                    <small class="text-muted">Overall</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `);
+    } else {
+        container.html(`
+            <div class="col-12">
+                <div class="empty-state">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <h4>No valid reviews found</h4>
+                    <p>The review data appears to be incomplete${specificPostId ? ` for this post` : ''}.</p>
+                </div>
+            </div>
+        `);
+    }
+}
+
+function initializeReviewsTab() {
+    const reviewsTabContent = `
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Customer Reviews</h3>
+            <div class="d-flex gap-2">
+                <select class="form-select form-select-sm" id="postSelect" style="width: auto;">
+                    <option value="all">All Posts</option>
+                    <!-- Options will be populated dynamically -->
+                </select>
+            </div>
+        </div>
+        <div id="reviewsContainer">
+            <!-- Reviews will be loaded here -->
+        </div>
+    `;
+
+    $('#reviews .container, #reviews').html(reviewsTabContent);
 }

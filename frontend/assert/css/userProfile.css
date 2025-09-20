@@ -429,3 +429,60 @@ body {
         transform: rotate(1turn);
     }
 }
+/* Review Cards Styling */
+.review-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e5e7eb;
+}
+
+.review-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border-color: var(--emerald-600);
+}
+
+.review-card .card-title {
+    color: #374151;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.review-card .card-text {
+    color: #6b7280;
+    line-height: 1.6;
+}
+
+.badge.bg-emerald {
+    background-color: var(--emerald-600) !important;
+}
+
+/* Review Summary Card */
+.card.bg-light {
+    background-color: #f8fafc !important;
+    border: 1px solid #e2e8f0;
+}
+
+/* Empty State Styling */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+
+.empty-state h4 {
+    color: #6b7280;
+    margin-bottom: 0.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .review-card .row.g-2.text-center > .col-6 {
+        margin-bottom: 0.5rem;
+    }
+}
