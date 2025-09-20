@@ -5,6 +5,9 @@ let currentPostCard = null;
 let postImages = [];
 let currentImageIndex = 0;
 const pageSize = 5;
+let reportsList = [];
+let currentReportsPage = 0;
+const reportsPageSize = 10;
 
 $(document).ready(function () {
     const $navLinks = $('.nav-link');
@@ -191,103 +194,190 @@ $(document).ready(function () {
         applyAllFilters();
     });
 
-    // Function to add a new moderator row to the table
-//     function addModeratorRow(moderatorData) {
-//         const $moderatorTableBody = $('#moderators-section tbody');
-//
-//         // Remove the empty state row if it exists
-//         $moderatorTableBody.find('.empty-state').closest('tr').remove();
-//
-//         // Create the new moderator row with actions dropdown
-//         const moderatorRow = `
-//         <tr data-moderator-id="${moderatorData.id}">
-//             <td>
-//                 <div class="d-flex align-items-center">
-//                     <img alt="Moderator" class="avatar me-3 rounded-circle"
-//                          src="${moderatorData.avatarUrl || 'https://picsum.photos/seed/' + moderatorData.id + '/40/40'}">
-//                     <div>
-//                         <div class="fw-semibold">${moderatorData.name}</div>
-//                         <small class="text-muted">ID: #${moderatorData.id}</small>
-//                     </div>
-//                 </div>
-//             </td>
-//             <td>${moderatorData.email}</td>
-//             <td>${formatDate(moderatorData.joinDate || new Date().toISOString())}</td>
-//             <td>
-//                 <div class="dropdown">
-//                     <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
-//                             type="button"
-//                             data-bs-toggle="dropdown"
-//                             aria-expanded="false">
-//                         Actions
-//                     </button>
-//                     <ul class="dropdown-menu">
-//                         <li>
-//                             <a class="dropdown-item" href="#" onclick="editModerator(${moderatorData.id})">
-//                                 <i class="bi bi-pencil me-2"></i>Edit
-//                             </a>
-//                         </li>
-//                         <li>
-//                             <a class="dropdown-item" href="#" onclick="viewModeratorDetails(${moderatorData.id})">
-//                                 <i class="bi bi-eye me-2"></i>View Details
-//                             </a>
-//                         </li>
-//                         <li><hr class="dropdown-divider"></li>
-//                         <li>
-//                             <a class="dropdown-item text-warning" href="#" onclick="suspendModerator(${moderatorData.id})">
-//                                 <i class="bi bi-pause-circle me-2"></i>Suspend
-//                             </a>
-//                         </li>
-//                         <li>
-//                             <a class="dropdown-item text-danger" href="#" onclick="removeModerator(${moderatorData.id})">
-//                                 <i class="bi bi-trash me-2"></i>Remove
-//                             </a>
-//                         </li>
-//                     </ul>
-//                 </div>
-//             </td>
-//         </tr>
-//     `;
-//
-//         // Append the new row to the table body
-//         $moderatorTableBody.append(moderatorRow);
-//
-//         // Update moderator count
-//         updateModeratorStats();
-//     }
-//
-// // Action functions for the dropdown (implement your own logic)
-//     function editModerator(moderatorId) {
-//         console.log('Edit moderator:', moderatorId);
-//         // Add your edit functionality here
-//     }
-//
-//     function viewModeratorDetails(moderatorId) {
-//         console.log('View moderator details:', moderatorId);
-//         // Add your view details functionality here
-//     }
-//
-//     function suspendModerator(moderatorId) {
-//         console.log('Suspend moderator:', moderatorId);
-//         // Add your suspend functionality here
-//     }
-//
-//     function removeModerator(moderatorId) {
-//         console.log('Remove moderator:', moderatorId);
-//         // Add your remove functionality here
-//     }
-//
-//     function updateModeratorStats() {
-//         const totalModerators = $('#moderators-section tbody tr').not(':has(.empty-state)').length;
-//
-//         // Update the statistics in the sidebar card
-//         $('#moderators-section .card-body .d-flex:first-child .fw-bold').text(totalModerators);
-//         $('#moderators-section .card-body .d-flex:last-child .fw-bold').text(totalModerators);
-//     }
-
-// Note: Change the empty state colspan in your HTML from 6 to 4:
-// <td colspan="4"> instead of <td colspan="6">
     loadPosts(0);
+});
+
+
+// Load reports when reports section is activated
+$(document).on('click', '[data-section="reports"]', function () {
+    loadReports();
+});
+
+function loadReports(page = 0) {
+    currentReportsPage = page;
+
+    $.ajax({
+        url: "http://localhost:8080/api/reports",
+        method: "GET",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function (reports) {
+            reportsList = reports;
+            renderReports(reports);
+            updateReportsStats(reports);
+            renderReportsPagination(page, Math.ceil(reports.length / reportsPageSize));
+        },
+        error: function (xhr) {
+            console.error("Failed to load reports:", xhr);
+            $('#reportsContainer').html('<p class="text-center text-muted">Failed to load reports</p>');
+        }
+    });
+}
+
+function renderReports(reports) {
+    const $container = $("#reportsContainer");
+    $container.empty();
+
+    if (!reports.length) {
+        $container.html('<p class="text-center text-muted">No reports found</p>');
+        $('#reportsCount').text('0');
+        return;
+    }
+
+    const start = currentReportsPage * reportsPageSize;
+    const paginatedReports = reports.slice(start, start + reportsPageSize);
+
+    $('#reportsCount').text(reports.length);
+
+    paginatedReports.forEach(report => {
+        const reportDate = new Date(report.date).toLocaleDateString();
+        const isAnonymous = report.anonymous || !report.reporterName;
+
+        const card = `
+            <div class="card mb-3 report-card" data-report-id="${report.report_id}">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col-md-7">
+                            <div class="d-flex align-items-center mb-2">
+                                <span class="badge bg-danger me-2">
+                                    <i class="bi bi-flag-fill me-1"></i>Report #${report.report_id}
+                                </span>
+                                <span class="text-muted small">${reportDate}</span>
+                                ${isAnonymous ? '<span class="badge bg-secondary ms-2">Anonymous</span>' : ''}
+                            </div>
+                            <h6 class="mb-1">${report.reason}</h6>
+                            <p class="text-muted mb-2">${report.description || 'No description provided'}</p>
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-file-post me-1"></i>
+                                <small class="text-primary">Post: ${report.postTitle || `ID #${report.postId}`}</small>
+                            </div>
+                            ${!isAnonymous ? `<div class="mt-1"><i class="bi bi-person me-1"></i><small>By: ${report.reporterName}</small></div>` : ''}
+                        </div>
+                        <div class="col-md-5 text-end">
+                            <div class="d-flex gap-2 flex-wrap justify-content-end">
+                                <button class="btn btn-outline-primary btn-sm" onclick="viewReportDetail(${report.report_id})">
+                                    <i class="bi bi-eye me-1"></i>View Details
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="markAsReviewed(${report.report_id})">
+                                    <i class="bi bi-check-circle me-1"></i>Reviewed
+                                </button>
+                                <button class="btn btn-outline-danger btn-sm" onclick="markAsRejected(${report.report_id})">
+                                    <i class="bi bi-x-circle me-1"></i>Rejected
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        $container.append(card);
+    });
+}
+
+// Placeholder functions for the buttons (you'll implement logic later)
+function markAsReviewed(reportId) {
+    console.log('Mark as reviewed:', reportId);
+    // Your logic here
+}
+
+function markAsRejected(reportId) {
+    console.log('Mark as rejected:', reportId);
+    // Your logic here
+}
+
+function updateReportsStats(reports) {
+    $('#totalReports').text(reports.length);
+    $('#pendingReports').text(reports.length); // All reports are essentially "pending review"
+}
+
+function viewReportDetail(reportId) {
+    const report = reportsList.find(r => r.report_id === reportId);
+    if (!report) return;
+
+    $('#modalReportReason').text(report.reason);
+
+    if (report.customReason) {
+        $('#modalCustomReason').text(report.customReason);
+        $('#modalCustomReasonDiv').show();
+    } else {
+        $('#modalCustomReasonDiv').hide();
+    }
+
+    $('#modalReportDescription').text(report.description || 'No description provided');
+    $('#modalReporterContact').text(report.reporterContact || 'Not provided');
+    $('#modalReportDate').text(new Date(report.date).toLocaleString());
+    $('#modalPostTitle').text(report.postTitle || 'Unknown Post');
+    $('#modalPostId').text(report.postId);
+
+    // Set up view post button
+    $('#viewPostBtn').off('click').on('click', function () {
+        // You can implement this to show the post detail modal
+        // For now, just close the report modal
+        $('#reportDetailModal').modal('hide');
+        // Then show post detail if you have that functionality
+    });
+
+    // Set up delete button
+    $('#deleteReportBtn').off('click').on('click', function () {
+        deleteReport(reportId);
+        $('#reportDetailModal').modal('hide');
+    });
+
+    $('#reportDetailModal').modal('show');
+}
+
+function deleteReport(reportId) {
+    if (!confirm('Are you sure you want to delete this report?')) return;
+
+    $.ajax({
+        url: `http://localhost:8080/api/reports/${reportId}`,
+        method: "DELETE",
+        headers: {"Authorization": "Bearer " + getCookie("token")},
+        success: function () {
+            showToast('Report deleted successfully!');
+            loadReports(currentReportsPage);
+        },
+        error: function (xhr) {
+            console.error("Failed to delete report:", xhr);
+            showToast('Failed to delete report', 'error');
+        }
+    });
+}
+
+function renderReportsPagination(current, totalPages) {
+    const $pagination = $("#reportsPagination");
+    $pagination.empty();
+
+    if (totalPages <= 1) return;
+
+    $pagination.append(`<li class="page-item ${current === 0 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="loadReports(${current - 1})">Previous</a></li>`);
+
+    for (let i = 0; i < totalPages; i++) {
+        $pagination.append(`<li class="page-item ${i === current ? 'active' : ''}">
+            <a class="page-link" href="#" onclick="loadReports(${i})">${i + 1}</a></li>`);
+    }
+
+    $pagination.append(`<li class="page-item ${current === totalPages - 1 ? 'disabled' : ''}">
+        <a class="page-link" href="#" onclick="loadReports(${current + 1})">Next</a></li>`);
+}
+
+// Search functionality for reports
+$('#searchReports').on('input', function () {
+    const searchTerm = $(this).val().toLowerCase();
+    $('.report-card').each(function () {
+        const reportText = $(this).text().toLowerCase();
+        $(this).toggle(reportText.includes(searchTerm));
+    });
 });
 
 function showPostDetail(postData) {
@@ -597,6 +687,7 @@ function changePage(page) {
     if (page < 0) return;
     loadPosts(page);
 }
+
 // Add this function to your admindashboard.js file
 
 function resetFilters() {

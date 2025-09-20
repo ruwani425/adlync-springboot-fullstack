@@ -615,3 +615,40 @@ body {
         text-align: center;
     }
 }
+.report-card {
+    border-left: 4px solid #ef4444;
+    transition: all 0.3s ease;
+}
+
+.report-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-left-color: #dc2626;
+}
+
+.report-card .badge.bg-danger {
+    background-color: #ef4444 !important;
+}
+
+.report-card .btn-group-vertical .btn {
+    width: 120px;
+}
+.report-card .btn-sm {
+    font-size: 0.75rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.report-card .d-flex.gap-2 {
+    gap: 0.5rem !important;
+}
+
+@media (max-width: 768px) {
+    .report-card .d-flex.gap-2 {
+        flex-direction: column;
+    }
+
+    .report-card .btn-sm {
+        width: 100%;
+        margin-bottom: 0.25rem;
+    }
+}
