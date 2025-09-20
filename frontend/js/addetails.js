@@ -441,6 +441,48 @@ $(document).ready(() => {
                 loadRecentReviews(numericPostId);
             }
 
+            const token = getCookie("token");
+            if (token) {
+                $.ajax({
+                    url: "http://localhost:8080/api/users/getUserByToken",
+                    method: "GET",
+                    headers: {"Authorization": "Bearer " + token},
+                    success: (userData) => {
+                        const loggedInUserId = userData.id;
+
+                        const isSeller = loggedInUserId === data.user.id;
+
+                        if (isSeller) {
+                            $('#reportBtn').hide();
+                            $('#addReviewBtnSidebar').hide();
+                            $('#messageBtn').show();
+                            $('#viewChatsBtn').show();
+                            $('#callBtn').show();
+                        } else {
+                            $('#reportBtn').show();
+                            $('#addReviewBtnSidebar').show();
+                            $('#messageBtn').show();
+                            $('#viewChatsBtn').hide();
+                            $('#callBtn').show();
+                        }
+                    },
+                    error: (xhr) => {
+                        console.error("Error fetching user data:", xhr);
+                        $('#reportBtn').show();
+                        $('#addReviewBtnSidebar').show();
+                        $('#messageBtn').show();
+                        $('#viewChatsBtn').hide();
+                        $('#callBtn').show();
+                    }
+                });
+            } else {
+                $('#reportBtn').show();
+                $('#addReviewBtnSidebar').show();
+                $('#messageBtn').show();
+                $('#viewChatsBtn').hide();
+                $('#callBtn').show();
+            }
+
             function loadSidebarReviewStats(postId) {
                 $.ajax({
                     url: `http://localhost:8080/api/reviews/post/${postId}/stats`, // <-- adjust to your API
