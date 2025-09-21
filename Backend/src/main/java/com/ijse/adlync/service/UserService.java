@@ -25,8 +25,10 @@ public interface UserService {
     UserResponseDTO getUserByUsername(String username);
 
     UserResponseDTO updateProfilePhoto(String username, String profileImageUrl);
+
     void resetPassword(String email, String newPassword) throws Exception;
-    public boolean checkEmailExists(String email);
+
+    boolean checkEmailExists(String email);
 
     void changePassword(String username, String currentPassword, String newPassword);
 }
