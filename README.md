@@ -23,8 +23,11 @@ efficiently connect, communicate, and manage listings with ease.
 
 ---
 
-## 🖼️ Screenshots
-*(Replace the placeholder image links with actual screenshots after deployment)*
+## 🖼️ Screenshots & Demo
+*(Replace the placeholder image links with actual screenshots after deployment)*  
+
+🎬 **Watch Demo on YouTube:**  
+[Adlync Smart Classified Ads & Marketplace Demo](https://youtu.be/KOzYJi-yzoY?si=ifmAegE9Jgo9vXV0)
 
 
 ---
