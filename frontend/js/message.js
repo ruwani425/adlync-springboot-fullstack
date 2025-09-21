@@ -1,4 +1,3 @@
-// Chat functionality for Adlync
 class ChatManager {
     constructor() {
         this.stompClient = null;
@@ -10,35 +9,37 @@ class ChatManager {
         this.isOwner = false;
         this.ownerChats = [];
         this.activeOwnerChatId = null;
-        
+
         this.initializeEventListeners();
     }
 
     initializeEventListeners() {
-        // Message button click
         $('#messageBtn').on('click', () => {
+            const token = getCookie('token');
+
+            if (!token) {
+                alert('You need to sign up or log in to chat.');
+                window.location.href = 'signup.html';
+                return;
+            }
             this.openChat();
         });
 
-        // View Chats button click (for ad owners)
         $('#viewChatsBtn').on('click', () => {
             this.openOwnerChatList();
         });
 
-        // Send message on button click
         $(document).on('click', 'button[onclick="sendMessage()"]', (e) => {
             e.preventDefault();
             this.sendMessage();
         });
 
-        // Enter key to send message
         $('#messageInput').on('keypress', (e) => {
             if (e.which === 13) {
                 this.sendMessage();
             }
         });
 
-        // Owner message input events
         $('#ownerMessageInput').on('keypress', (e) => {
             if (e.which === 13) {
                 this.sendOwnerMessage();
@@ -49,13 +50,11 @@ class ChatManager {
             this.sendOwnerMessage();
         });
 
-        // Chat list item click
         $(document).on('click', '.chat-list-item', (e) => {
             const chatId = $(e.currentTarget).data('chat-id');
             this.selectOwnerChat(chatId);
         });
 
-        // Disconnect when modals close
         $('#chatModal').on('hidden.bs.modal', () => {
             this.disconnect();
         });
@@ -64,7 +63,6 @@ class ChatManager {
             this.disconnect();
         });
 
-        // Check if user is ad owner when page loads
         $(document).ready(() => {
             setTimeout(() => {
                 this.checkIfOwner();
@@ -74,25 +72,22 @@ class ChatManager {
 
     async openChat() {
         try {
-            // Get user ID from cookie (use actual user ID, not msgId)
             this.currentUserId = getCookie("userId");
-            
+
             if (!this.currentUserId) {
-                // Fallback: try to get user ID from token if not in cookie
                 const token = getCookie("token");
                 if (token) {
                     await this.getUserIdFromToken(token);
                 }
             }
-            
-            // Get current ad and seller data
+
             this.currentPostId = window.currentAdData?.post_id;
             this.currentOwnerId = window.currentSellerData?.id;
 
             if (!this.currentUserId) {
                 alert('Please sign in to chat with the seller.');
-        return;
-    }
+                return;
+            }
 
             console.log("Current User ID:", this.currentUserId);
             console.log("Current Post ID:", this.currentPostId);
@@ -108,16 +103,12 @@ class ChatManager {
                 return;
             }
 
-            // Check if chat already exists or create new one
             await this.createOrGetChat();
 
-            // Show modal
             $('#chatModal').modal('show');
 
-            // Load chat history
             await this.loadChatHistory();
 
-            // Connect to WebSocket
             await this.connect();
 
         } catch (error) {
@@ -129,8 +120,7 @@ class ChatManager {
     async createOrGetChat() {
         try {
             console.log(`Checking for existing chat: postId=${this.currentPostId}, userId=${this.currentUserId}, ownerId=${this.currentOwnerId}`);
-            
-            // First check if chat exists
+
             const existingChatResponse = await fetch(
                 `http://localhost:8080/api/chat/between/${this.currentPostId}/${this.currentUserId}/${this.currentOwnerId}`
             );
@@ -138,12 +128,12 @@ class ChatManager {
             if (existingChatResponse.ok) {
                 const responseText = await existingChatResponse.text();
                 console.log('Existing chat response text:', responseText);
-                
+
                 if (responseText) {
                     try {
                         const existingChat = JSON.parse(responseText);
                         console.log('Existing chat response:', existingChat);
-                        
+
                         if (existingChat && existingChat.chat_id) {
                             this.currentChatId = existingChat.chat_id;
                             console.log('Found existing chat with ID:', this.currentChatId);
@@ -161,7 +151,6 @@ class ChatManager {
 
             console.log('No existing chat found, creating new chat...');
 
-            // Create new chat with first message
             const chatData = {
                 clientUserId: parseInt(this.currentUserId),
                 ownerUserId: parseInt(this.currentOwnerId),
@@ -184,7 +173,7 @@ class ChatManager {
             if (response.ok) {
                 const responseText = await response.text();
                 console.log('Create chat response text:', responseText);
-                
+
                 if (responseText) {
                     try {
                         const chat = JSON.parse(responseText);
@@ -218,18 +207,16 @@ class ChatManager {
             if (response.ok) {
                 const messages = await response.json();
                 console.log('Loaded chat history:', messages);
-                
-                // Clear existing messages
+
                 $('#messages').empty();
                 $('#chatMessages').empty();
                 $('#noChatHistory').hide();
-                
+
                 if (messages.length === 0) {
                     $('#noChatHistory').show();
                     return;
                 }
-                
-                // Display each message
+
                 messages.forEach(msg => {
                     const isOwnMessage = msg.senderUserId == this.currentUserId;
                     this.displayMessage({
@@ -238,7 +225,7 @@ class ChatManager {
                         timestamp: new Date(msg.sent_at)
                     }, isOwnMessage);
                 });
-                
+
                 this.scrollToBottom();
             } else {
                 console.error('Failed to load chat history, status:', response.status);
@@ -256,27 +243,25 @@ class ChatManager {
                 console.log("hi")
                 const socket = new SockJS('http://localhost:8080/ws');
                 this.stompClient = Stomp.over(socket);
-                
+
                 this.stompClient.connect({}, (frame) => {
                     console.log('Connected to chat:', frame);
                     this.isConnected = true;
-                    
-                    // Subscribe to the chat room using chat ID
+
                     this.stompClient.subscribe(`/topic/chat/${this.currentChatId}`, (messageOutput) => {
                         const message = JSON.parse(messageOutput.body);
-                        // Only display if it's not our own message (to avoid duplicates)
                         if (message.from !== this.currentUserId.toString()) {
                             this.displayMessage(message, false);
                         }
                     });
-                    
+
                     resolve();
                 }, (error) => {
                     console.error('WebSocket connection error:', error);
                     this.isConnected = false;
                     reject(error);
                 });
-                
+
             } catch (error) {
                 console.error('Error connecting to WebSocket:', error);
                 reject(error);
@@ -296,7 +281,7 @@ class ChatManager {
     async sendMessage() {
         const messageInput = $('#messageInput');
         const content = messageInput.val().trim();
-        
+
         if (!content) {
             return;
         }
@@ -307,18 +292,15 @@ class ChatManager {
         }
 
         try {
-            // Display message immediately (optimistic UI)
-        const chatMessage = {
+            const chatMessage = {
                 from: this.currentUserId.toString(),
                 content: content,
                 timestamp: new Date()
             };
             this.displayMessage(chatMessage, true);
 
-            // Send via WebSocket for real-time delivery
             this.stompClient.send(`/app/message/${this.currentChatId}`, {}, JSON.stringify(chatMessage));
 
-            // Clear input
             messageInput.val('');
 
         } catch (error) {
@@ -329,12 +311,11 @@ class ChatManager {
 
     displayMessage(message, isOwnMessage) {
         const messagesContainer = $('#chatMessages');
-        
-        // Hide "no chat history" message when first message appears
+
         $('#noChatHistory').hide();
-        
-        const timestamp = new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        
+
+        const timestamp = new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
         const messageHtml = `
             <div class="mb-3 d-flex ${isOwnMessage ? 'justify-content-end' : 'justify-content-start'}">
                 <div class="message-bubble">
@@ -345,7 +326,7 @@ class ChatManager {
                 </div>
             </div>
         `;
-        
+
         messagesContainer.append(messageHtml);
         this.scrollToBottom();
     }
@@ -355,8 +336,7 @@ class ChatManager {
         if (container.length) {
             container.scrollTop(container[0].scrollHeight);
         }
-        
-        // Also scroll admin chat container if it exists
+
         const adminContainer = $('#activeChatMessages');
         if (adminContainer.length && adminContainer.is(':visible')) {
             adminContainer.scrollTop(adminContainer[0].scrollHeight);
@@ -371,11 +351,10 @@ class ChatManager {
                     'Authorization': 'Bearer ' + token
                 }
             });
-            
+
             if (response.ok) {
                 const userData = await response.json();
                 this.currentUserId = userData.id;
-                // Store it in cookie for future use
                 setCookie("userId", userData.id, 1);
                 console.log("User ID retrieved from token:", userData.id);
             } else {
@@ -416,13 +395,10 @@ class ChatManager {
 
             console.log("Loading chats for post ID:", this.currentPostId);
 
-            // Load all chats for this post
             await this.loadOwnerChats();
 
-            // Show the chat list modal
             $('#chatListModal').modal('show');
 
-            // Connect to WebSocket for real-time updates
             await this.connectToAllChats();
 
         } catch (error) {
@@ -433,9 +409,8 @@ class ChatManager {
 
     async loadOwnerChats() {
         try {
-            // Get chats by post ID
             const response = await fetch(`http://localhost:8080/api/chat/post/${this.currentPostId}/chats`);
-            
+
             if (response.ok) {
                 const responseText = await response.text();
                 if (responseText) {
@@ -473,9 +448,9 @@ class ChatManager {
 
         let chatListHtml = '';
         this.ownerChats.forEach(chat => {
-            const lastMessageTime = chat.last_message_at ? 
+            const lastMessageTime = chat.last_message_at ?
                 new Date(chat.last_message_at).toLocaleString() : 'No messages';
-            
+
             chatListHtml += `
                 <div class="list-group-item list-group-item-action chat-list-item" data-chat-id="${chat.chat_id}">
                     <div class="d-flex align-items-center">
@@ -509,21 +484,17 @@ class ChatManager {
 
             console.log('Found selected chat:', selectedChat);
 
-            // Update active chat header
             $('#activeChatUserName').text(selectedChat.clientUserName);
             $('#activeChatTime').text('Last seen: ' + new Date(selectedChat.last_message_at || Date.now()).toLocaleString());
-            $('#activeChatUserImage').attr('src', 
+            $('#activeChatUserImage').attr('src',
                 `https://ui-avatars.com/api/?name=${encodeURIComponent(selectedChat.clientUserName)}&background=059669&color=fff&size=50&rounded=true`);
 
-            // Show chat interface elements
             $('#selectChatMessage').hide();
             $('#activeChatHeader').show();
             $('#activeChatInput').show();
 
-            // Load messages for this chat
             await this.loadOwnerChatMessages(chatId);
 
-            // Update active chat highlighting
             $('.chat-list-item').removeClass('active');
             $(`.chat-list-item[data-chat-id="${chatId}"]`).addClass('active');
 
@@ -570,8 +541,8 @@ class ChatManager {
 
         messages.forEach(msg => {
             const isOwnMessage = msg.senderUserId == this.currentUserId;
-            const timestamp = new Date(msg.sent_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            
+            const timestamp = new Date(msg.sent_at).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+
             const messageHtml = `
                 <div class="mb-3 d-flex ${isOwnMessage ? 'justify-content-end' : 'justify-content-start'}">
                     <div class="message-bubble">
@@ -582,24 +553,22 @@ class ChatManager {
                     </div>
                 </div>
             `;
-            
+
             messagesContainer.append(messageHtml);
         });
 
-        // Scroll to bottom
         messagesContainer.scrollTop(messagesContainer[0].scrollHeight);
     }
 
     async sendOwnerMessage() {
         const messageInput = $('#ownerMessageInput');
         const content = messageInput.val().trim();
-        
+
         if (!content || !this.activeOwnerChatId) {
             return;
         }
 
         try {
-            // Send message via API
             const messageData = {
                 senderUserId: parseInt(this.currentUserId),
                 chatId: parseInt(this.activeOwnerChatId),
@@ -616,10 +585,8 @@ class ChatManager {
             });
 
             if (response.ok) {
-                // Clear input
                 messageInput.val('');
-                
-                // Reload messages to show the new message
+
                 await this.loadOwnerChatMessages(this.activeOwnerChatId);
             } else {
                 console.error('Failed to send message');
@@ -636,37 +603,33 @@ class ChatManager {
         try {
             const socket = new SockJS('http://localhost:8080/ws');
             this.stompClient = Stomp.over(socket);
-            
+
             this.stompClient.connect({}, (frame) => {
                 console.log('Connected to owner chats:', frame);
                 this.isConnected = true;
-                
-                // Subscribe to all chats for this post
+
                 this.ownerChats.forEach(chat => {
                     this.stompClient.subscribe(`/topic/chat/${chat.chat_id}`, (messageOutput) => {
                         const message = JSON.parse(messageOutput.body);
                         this.handleOwnerChatMessage(message, chat.chat_id);
                     });
                 });
-                
+
             }, (error) => {
                 console.error('WebSocket connection error:', error);
                 this.isConnected = false;
             });
-            
+
         } catch (error) {
             console.error('Error connecting to WebSocket:', error);
         }
     }
 
     handleOwnerChatMessage(message, chatId) {
-        // If this message is for the currently active chat, display it
         if (chatId == this.activeOwnerChatId) {
-            // Reload messages for real-time update
             this.loadOwnerChatMessages(chatId);
         }
-        
-        // Update chat list to show new message
+
         this.loadOwnerChats();
     }
 
@@ -682,12 +645,10 @@ class ChatManager {
     }
 }
 
-// Initialize chat manager when document is ready
 $(document).ready(() => {
     window.chatManager = new ChatManager();
 });
 
-// Legacy functions for backward compatibility
 let sender, receiver, room, stompClient;
 
 function connect() {

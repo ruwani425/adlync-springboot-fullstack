@@ -671,7 +671,7 @@ function renderUserAds(posts) {
     }
 
     const html = posts.map(ad => `
-        <div class="col-md-6 col-lg-4">
+        <div class="col-md-6 col-lg-4" data-aos="flip-left" data-aos-delay="200">
             <div class="card ad-card h-100">
                 <div class="ad-image-container position-relative">
                     <img src="${ad.images && ad.images[0]?.image_url || 'https://via.placeholder.com/400x300?text=No+Image'}" 

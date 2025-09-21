@@ -131,13 +131,15 @@ function processPayment() {
 
 function processCardPayment() {
     $('#loadingOverlay').css('display', 'flex');
-    savePost('CARD'); // existing function for card
+
+    // savePost('CARD');
 
     setTimeout(() => {
         $('#loadingOverlay').hide();
-        alert('Redirecting to payment gateway...');
-    }, 2000);
+        window.location.href = "https://buy.stripe.com/test_14A3cofcm2Om9LxfdU8Zq00";
+    }, 1500);
 }
+
 
 async function processBankTransfer() {
     const bankSelect = $('#selectedBank');

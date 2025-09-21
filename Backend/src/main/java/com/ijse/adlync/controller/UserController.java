@@ -3,6 +3,8 @@ package com.ijse.adlync.controller;
 import com.ijse.adlync.dto.request.RegisterRequestDTO;
 import com.ijse.adlync.dto.response.RegisterResponseDTO;
 import com.ijse.adlync.dto.response.UserResponseDTO;
+import com.ijse.adlync.service.OtpService;
+import com.ijse.adlync.service.UserService;
 import com.ijse.adlync.service.impl.OtpServiceImpl;
 import com.ijse.adlync.service.impl.UserServiceImpl;
 import com.ijse.adlync.util.JwtUtil;
@@ -25,13 +27,11 @@ import java.util.Map;
 public class UserController {
 
     @Autowired
-    private UserServiceImpl service;
+    private UserService service;
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
-    private OtpServiceImpl otpService;
-
-    // Add this to your UserController.java
+    private OtpService otpService;
 
     @PatchMapping("/change-password")
     @Operation(summary = "Change Password", description = "Change user's password after validating current password")
@@ -51,7 +51,6 @@ public class UserController {
             String currentPassword = requestBody.get("currentPassword");
             String newPassword = requestBody.get("newPassword");
 
-            // Validate input
             if (currentPassword == null || currentPassword.trim().isEmpty()) {
                 return ResponseEntity.badRequest()
                         .body(Map.of("message", "Current password is required"));
@@ -62,7 +61,6 @@ public class UserController {
                         .body(Map.of("message", "New password is required"));
             }
 
-            // Change password through service
             service.changePassword(username, currentPassword, newPassword);
 
             return ResponseEntity.ok(Map.of("message", "Password changed successfully"));

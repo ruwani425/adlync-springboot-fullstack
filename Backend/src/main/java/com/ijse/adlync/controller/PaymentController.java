@@ -1,5 +1,6 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class PaymentController {
 
     @Autowired
-    private PaymentServiceImpl service;
+    private PaymentService service;
 
     @GetMapping
     @Operation(summary = "Get all Payments", description = "Retrieve a list of all Payment entities")

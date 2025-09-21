@@ -1,5 +1,6 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.dto.ChatMessage;
 import com.ijse.adlync.dto.request.ChatRequestDTO;
 import com.ijse.adlync.dto.request.MessageRequestDTO;
 import com.ijse.adlync.dto.response.ChatResponseDTO;
@@ -30,12 +31,10 @@ public class ChatController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    // WebSocket message handling
     @MessageMapping("/message/{chatId}")
     @SendTo("/topic/chat/{chatId}")
     public ChatMessage sendMessage(@DestinationVariable String chatId, ChatMessage message) {
         try {
-            // Save message to database
             MessageRequestDTO requestDTO = new MessageRequestDTO();
             requestDTO.setChatId(Long.parseLong(chatId));
             requestDTO.setSenderUserId(Long.parseLong(message.getFrom()));
@@ -48,12 +47,10 @@ public class ChatController {
             System.err.println("Error saving message: " + e.getMessage());
         }
 
-        // Set timestamp and return message for real-time broadcast
         message.setTimestamp(new Date());
         return message;
     }
 
-    // REST API endpoints
     @PostMapping("/create")
     public ResponseEntity<ChatResponseDTO> createOrGetChat(@RequestBody ChatRequestDTO requestDTO) {
         try {
@@ -103,7 +100,6 @@ public class ChatController {
     public ResponseEntity<MessageResponseDTO> sendDirectMessage(@RequestBody MessageRequestDTO requestDTO) {
         MessageResponseDTO response = chatService.sendMessage(requestDTO);
 
-        // Also send via WebSocket for real-time updates
         ChatMessage chatMessage = ChatMessage.builder()
                 .from(requestDTO.getSenderUserId().toString())
                 .content(requestDTO.getContent())

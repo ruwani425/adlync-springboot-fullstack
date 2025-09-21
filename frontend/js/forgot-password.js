@@ -14,25 +14,19 @@ class ForgotPasswordManager {
     }
 
     setupEventListeners() {
-        // Email form submission
         $('#emailForm').on('submit', (e) => this.handleEmailSubmit(e));
 
-        // OTP form submission
         $('#otpForm').on('submit', (e) => this.handleOTPSubmit(e));
 
-        // Password form submission
         $('#passwordForm').on('submit', (e) => this.handlePasswordSubmit(e));
 
-        // Navigation
         $('#backToEmail').on('click', (e) => {
             e.preventDefault();
             this.goToStep(1);
         });
 
-        // Resend OTP
         $('#resendBtn').on('click', () => this.resendOTP());
 
-        // Password visibility toggles
         $('#togglePassword1').on('click', () => this.togglePasswordVisibility('newPassword', 'togglePassword1'));
         $('#togglePassword2').on('click', () => this.togglePasswordVisibility('confirmPassword', 'togglePassword2'));
     }
@@ -89,7 +83,6 @@ class ForgotPasswordManager {
         try {
             this.setLoading(true, 'emailForm');
 
-            // Check if email exists
             const checkResponse = await $.ajax({
                 url: 'http://localhost:8080/api/users/checkEmail',
                 method: 'POST',
@@ -102,7 +95,6 @@ class ForgotPasswordManager {
                 return;
             }
 
-            // Send OTP
             const response = await $.ajax({
                 url: 'http://localhost:8080/api/users/sendOTP',
                 method: 'POST',
@@ -138,7 +130,6 @@ class ForgotPasswordManager {
         try {
             this.setLoading(true, 'otpForm');
 
-            // Verify OTP
             const response = await $.ajax({
                 url: 'http://localhost:8080/api/users/verifyOTP',
                 method: 'POST',
@@ -183,7 +174,6 @@ class ForgotPasswordManager {
         try {
             this.setLoading(true, 'passwordForm');
 
-            // Reset password
             const response = await $.ajax({
                 url: 'http://localhost:8080/api/users/resetPassword',
                 method: 'POST',

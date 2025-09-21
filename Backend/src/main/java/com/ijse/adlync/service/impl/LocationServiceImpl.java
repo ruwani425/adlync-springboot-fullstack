@@ -1,5 +1,6 @@
 package com.ijse.adlync.service.impl;
 
+import com.ijse.adlync.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -10,7 +11,7 @@ import com.ijse.adlync.dto.request.LocationRequestDTO;
 import com.ijse.adlync.dto.response.LocationResponseDTO;
 
 @Service
-public class LocationServiceImpl {
+public class LocationServiceImpl implements LocationService {
 
     @Autowired
     private LocationRepository repository;

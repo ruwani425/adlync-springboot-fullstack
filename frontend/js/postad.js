@@ -793,13 +793,13 @@ function displaySelectedImages(input) {
             warning.className = 'alert alert-warning py-2 mb-3';
             warning.innerHTML = `<small><strong>Note:</strong> Only the first ${maxImages} images will be uploaded.</small>`;
             selectedImagesDiv.insertBefore(warning, selectedImagesDiv.firstChild);
-            setTimeout(() => warning.remove(), 3000); // Auto-remove warning after 3 seconds
+            setTimeout(() => warning.remove(), 3000);
         }
 
         let imageContainer = selectedImagesDiv.querySelector('.image-container');
         if (!imageContainer) {
             imageContainer = document.createElement('div');
-            imageContainer.className = 'd-flex flex-row flex-nowrap overflow-auto gap-3 image-container'; // Horizontal layout
+            imageContainer.className = 'd-flex flex-row flex-nowrap overflow-auto gap-3 image-container';
             selectedImagesDiv.appendChild(imageContainer);
         }
 
@@ -824,8 +824,8 @@ function displaySelectedImages(input) {
                 colDiv.style.width = '150px';
                 colDiv.style.flexShrink = '0';
                 colDiv.style.opacity = '0';
-                colDiv.style.transition = 'opacity 0.3s ease-in'; // Fade-in animation
-                setTimeout(() => colDiv.style.opacity = '1', 100); // Trigger fade-in
+                colDiv.style.transition = 'opacity 0.3s ease-in';
+                setTimeout(() => colDiv.style.opacity = '1', 100);
 
                 const card = document.createElement('div');
                 card.className = 'card h-100 shadow-sm';

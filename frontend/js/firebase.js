@@ -13,7 +13,6 @@ firebase.initializeApp(firebaseConfig);
 const storage = firebase.storage();
 const auth = firebase.auth();
 
-// Configure Google Auth Provider
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.addScope('email');
 googleProvider.addScope('profile');
@@ -74,8 +73,6 @@ async function uploadImagesToFirebase(selected) {
                         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                         const overallProgress = ((i / selected.length) * 100) + (progress / selected.length);
 
-                        // progressFill.style.width = overallProgress + '%';
-                        // progressText.textContent = `Uploading images... ${Math.round(overallProgress)}%`;
                         console.log(overallProgress)
                     },
                     (error) => {
@@ -125,15 +122,13 @@ function validateImages(files) {
     return true;
 }
 
-// Add this function to your firebase.js file
 
 async function uploadProfilePhotoToFirebase(file) {
     if (!file) {
         throw new Error('No file selected');
     }
 
-    // Validate file
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     const allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
 
     if (file.size > maxSize) {
@@ -153,7 +148,6 @@ async function uploadProfilePhotoToFirebase(file) {
             (snapshot) => {
                 const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-                // Update progress bar
                 const progressBar = document.querySelector('#uploadProgress .progress-bar');
                 if (progressBar) {
                     progressBar.style.width = progress + '%';
@@ -175,7 +169,6 @@ async function uploadProfilePhotoToFirebase(file) {
     });
 }
 
-// Google Authentication Functions
 async function signInWithGoogle() {
     try {
         const result = await auth.signInWithPopup(googleProvider);
@@ -183,7 +176,6 @@ async function signInWithGoogle() {
 
         console.log('Google sign-in successful:', user);
 
-        // Extract user information
         const userData = {
             uid: user.uid,
             email: user.email,
@@ -199,28 +191,23 @@ async function signInWithGoogle() {
     }
 }
 
-// Google Login - Only for Login Page
 async function handleGoogleLogin() {
     try {
-        // Show loading state
         const googleBtn = document.querySelector('button[onclick="socialLogin(\'google\')"]');
         if (googleBtn) {
             googleBtn.disabled = true;
             googleBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Signing in...';
         }
 
-        // Sign in with Google
         const googleUser = await signInWithGoogle();
 
-        // Prepare login data for existing backend endpoint
         const loginData = {
-            username: googleUser.email, // Use full email as username for login
-            password: googleUser.email // Using email as password
+            username: googleUser.email,
+            password: googleUser.email
         };
 
         console.log('Attempting Google login:', loginData);
 
-        // Only try to login (don't register)
         const loginResponse = await fetch('http://localhost:8080/auth/login', {
             method: 'POST',
             headers: {
@@ -233,55 +220,46 @@ async function handleGoogleLogin() {
             const loginResult = await loginResponse.json();
             console.log('Google login successful:', loginResult);
 
-            // Handle successful login
             handleSuccessfulAuth(loginResult, 'login');
         } else {
-            // Login failed - user not found
             throw new Error('User not found. Please register first or use a different account.');
         }
 
     } catch (error) {
         console.error('Google login error:', error);
 
-        // Show user-friendly error message
         if (error.message.includes('User not found')) {
             alert('Account not found!\n\nThis Google account is not registered in our system.\nPlease go to the registration page to create an account first.');
         } else {
             alert('Google login failed: ' + error.message);
         }
     } finally {
-        // Reset button state
         resetGoogleButton('socialLogin');
     }
 }
 
-// Google Registration - Only for Registration Page
 async function handleGoogleRegistration() {
     try {
-        // Show loading state
         const googleBtn = document.querySelector('button[onclick="socialSignup(\'google\')"]');
         if (googleBtn) {
             googleBtn.disabled = true;
             googleBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Registering...';
         }
 
-        // Sign in with Google
         const googleUser = await signInWithGoogle();
 
-        // Prepare registration data
         const registerData = {
-            password: googleUser.email, // Using email as password
-            username: googleUser.email, // Use full email as username for consistency
-            role: 'USER', // Default role for Google users
+            password: googleUser.email,
+            username: googleUser.email,
+            role: 'USER',
             name: googleUser.displayName || googleUser.email.split('@')[0],
             email: googleUser.email,
-            status: 'ACTIVE', // Default status for new users
-            joinDate: new Date().toISOString() // Current date/time
+            status: 'ACTIVE',
+            joinDate: new Date().toISOString()
         };
 
         console.log('Attempting Google registration:', registerData);
 
-        // Only try to register (don't login)
         const registerResponse = await fetch('http://localhost:8080/auth/register', {
             method: 'POST',
             headers: {
@@ -294,7 +272,6 @@ async function handleGoogleRegistration() {
             const registerResult = await registerResponse.json();
             console.log('Google registration successful:', registerResult);
 
-            // Handle successful registration
             handleSuccessfulAuth(registerResult, 'register');
         } else {
             const errorText = await registerResponse.text();
@@ -306,7 +283,6 @@ async function handleGoogleRegistration() {
                 errorMessage = errorText || errorMessage;
             }
 
-            // Check if user already exists
             if (errorMessage.includes('already exists') || errorMessage.includes('duplicate')) {
                 throw new Error('Account already exists. Please go to the login page to sign in.');
             } else {
@@ -317,19 +293,16 @@ async function handleGoogleRegistration() {
     } catch (error) {
         console.error('Google registration error:', error);
 
-        // Show user-friendly error message
         if (error.message.includes('already exists')) {
             alert('Account already exists!\n\nThis Google account is already registered.\nPlease go to the login page to sign in.');
         } else {
             alert('Google registration failed: ' + error.message);
         }
     } finally {
-        // Reset button state
         resetGoogleButton('socialSignup');
     }
 }
 
-// Helper function to reset Google button state
 function resetGoogleButton(functionType) {
     const selector = functionType === 'socialLogin' ?
         'button[onclick="socialLogin(\'google\')"]' :
@@ -351,25 +324,20 @@ function resetGoogleButton(functionType) {
 }
 
 function handleSuccessfulAuth(result, type) {
-    // This function will be called from signin.js
-    // Store token and user data
     if (result.data && result.data.token) {
         setCookie("token", result.data.token, 1);
 
-        // Get user ID from token and store it
         getUserIdFromToken(result.data.token).then(userId => {
             if (userId) {
                 setCookie("userId", userId, 1);
             }
 
-            // Show success message
             if (type === 'register') {
                 alert('Google registration successful! Welcome to Adlync!');
             } else {
                 alert('Google login successful! Welcome back!');
             }
 
-            // Redirect to home page (handle both signin and signup page locations)
             const currentPath = window.location.pathname;
             if (currentPath.includes('/pages/')) {
                 window.location.href = '../index.html';
@@ -400,7 +368,6 @@ async function getUserIdFromToken(token) {
     return null;
 }
 
-// Cookie helper function
 function setCookie(name, value, days) {
     const expires = new Date();
     expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));

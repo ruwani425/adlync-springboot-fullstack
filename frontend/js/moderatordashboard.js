@@ -15,17 +15,15 @@ $(document).ready(function () {
     loadPosts();
 
     if ($('#dashboard').hasClass('active')) {
-        loadDashboardStatsOptimized(); // Use optimized version for better performance
+        loadDashboardStatsOptimized();
     }
 
-    // Also load stats when dashboard section is shown
     $(document).on('click', '[onclick*="showSection(\'dashboard\')"]', function () {
         setTimeout(() => {
             loadDashboardStatsOptimized();
         }, 100);
     });
 
-    // Refresh stats after post actions
     $(document).on('postActionCompleted', function () {
         refreshDashboardStats();
     });
@@ -172,11 +170,9 @@ function loadPosts(page = currentPage) {
     });
 }
 
-// Load reports - Fixed to match admin dashboard logic
 function loadReports(page = currentReportsPage) {
     currentReportsPage = page;
 
-    // Load only PENDING reports (same as admin dashboard)
     $.ajax({
         url: "http://localhost:8080/api/reports/status/PENDING",
         method: "GET",
@@ -196,7 +192,6 @@ function loadReports(page = currentReportsPage) {
     });
 }
 
-// Updated renderReports function to match admin dashboard structure
 function renderReports(reports) {
     const tbody = $('#reportsTableBody');
     tbody.empty();
@@ -206,7 +201,6 @@ function renderReports(reports) {
         return;
     }
 
-    // Handle pagination for reports (same as admin)
     const start = currentReportsPage * reportsPageSize;
     const paginatedReports = reports.slice(start, start + reportsPageSize);
 
@@ -257,7 +251,6 @@ function renderReports(reports) {
     });
 }
 
-// Pagination for reports
 function renderReportsPagination(current, totalPages) {
     const container = $('#reportsPagination');
     container.empty();
@@ -277,7 +270,6 @@ function renderReportsPagination(current, totalPages) {
         <a class="page-link" href="#" onclick="loadReports(${current + 1})">Next</a></li>`);
 }
 
-// View report detail function - updated to match admin dashboard
 function viewReportDetail(reportId) {
     const report = reportsList.find(r => (r.id || r.report_id) == reportId);
     if (!report) {
@@ -325,7 +317,6 @@ function viewReportDetail(reportId) {
     new bootstrap.Modal($('#postDetailModal')[0]).show();
 }
 
-// Reset filters for reports
 function resetReportsFilters() {
     $('#reportStatusFilter').val('PENDING');
     $('#reportDateFilter').val('all');
@@ -592,16 +583,13 @@ function markAsReviewed(reportId) {
                 method: "PUT",
                 headers: {"Authorization": "Bearer " + getCookie("token")},
                 success: function (response) {
-                    // Update local reportsList to reflect the new report status
                     reportsList = reportsList.map(r =>
                         (r.id || r.report_id) == reportId ? {...r, status: 'REVIEWED'} : r
                     );
 
-                    // Remove the report from UI (since it's no longer PENDING)
                     const row = $(`button[onclick*="markAsReviewed(${reportId})"]`).closest('tr');
                     row.fadeOut(300, function () {
                         $(this).remove();
-                        // Update counts
                         const remainingReports = reportsList.filter(r => r.status === 'PENDING');
                         updateReportsStats(remainingReports);
                         $('#reportsCountInfo').text(`Pending Reports (${remainingReports.length})`);
@@ -672,7 +660,6 @@ function loadPendingPostsCount() {
             const count = data.totalElements || 0;
             $('#pendingCount').text(count.toLocaleString());
 
-            // Update trend (optional - you can calculate based on previous data)
             updateStatTrend('pending', count);
         },
         error: function (xhr) {
@@ -682,7 +669,6 @@ function loadPendingPostsCount() {
     });
 }
 
-// Function to load approved posts count
 function loadApprovedPostsCount() {
     $.ajax({
         url: "http://localhost:8080/api/posts/page?page=0&size=1&status=APPROVED",
@@ -692,7 +678,6 @@ function loadApprovedPostsCount() {
             const count = data.totalElements || 0;
             $('#approvedCount').text(count.toLocaleString());
 
-            // Update trend (optional)
             updateStatTrend('approved', count);
         },
         error: function (xhr) {
@@ -702,7 +687,6 @@ function loadApprovedPostsCount() {
     });
 }
 
-// Function to load rejected posts count
 function loadRejectedPostsCount() {
     $.ajax({
         url: "http://localhost:8080/api/posts/page?page=0&size=1&status=REJECTED",
@@ -712,7 +696,6 @@ function loadRejectedPostsCount() {
             const count = data.totalElements || 0;
             $('#rejectedCount').text(count.toLocaleString());
 
-            // Update trend (optional)
             updateStatTrend('rejected', count);
         },
         error: function (xhr) {
@@ -722,7 +705,6 @@ function loadRejectedPostsCount() {
     });
 }
 
-// Function to load total posts count
 function loadTotalPostsCount() {
     $.ajax({
         url: "http://localhost:8080/api/posts/page?page=0&size=1",
@@ -732,7 +714,6 @@ function loadTotalPostsCount() {
             const count = data.totalElements || 0;
             $('#totalCount').text(count.toLocaleString());
 
-            // Update trend (optional)
             updateStatTrend('total', count);
         },
         error: function (xhr) {
@@ -742,10 +723,7 @@ function loadTotalPostsCount() {
     });
 }
 
-// Optional function to update trend indicators (you can customize this)
 function updateStatTrend(type, currentCount) {
-    // This is optional - you can implement trend calculation based on stored previous values
-    // For now, we'll just update with sample trends or leave as is
 
     const trends = {
         pending: {icon: 'bi-arrow-down', text: '-5% from last week', class: 'text-success'},
@@ -763,12 +741,10 @@ function updateStatTrend(type, currentCount) {
     }
 }
 
-// Function to refresh all statistics (useful after actions like approve/reject)
 function refreshDashboardStats() {
     loadDashboardStats();
 }
 
-// Alternative method using Promise.all for better performance (load all at once)
 function loadDashboardStatsOptimized() {
     const requests = [
         $.ajax({
@@ -795,23 +771,18 @@ function loadDashboardStatsOptimized() {
 
     Promise.all(requests)
         .then(results => {
-            // Update pending count
             const pendingCount = results[0].totalElements || 0;
             $('#pendingCount').text(pendingCount.toLocaleString());
 
-            // Update approved count
             const approvedCount = results[1].totalElements || 0;
             $('#approvedCount').text(approvedCount.toLocaleString());
 
-            // Update rejected count
             const rejectedCount = results[2].totalElements || 0;
             $('#rejectedCount').text(rejectedCount.toLocaleString());
 
-            // Update total count
             const totalCount = results[3].totalElements || 0;
             $('#totalCount').text(totalCount.toLocaleString());
 
-            // Update trends
             updateStatTrend('pending', pendingCount);
             updateStatTrend('approved', approvedCount);
             updateStatTrend('rejected', rejectedCount);

@@ -1,5 +1,6 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class CategoryController {
 
     @Autowired
-    private CategoryServiceImpl service;
+    private CategoryService service;
 
     @GetMapping
     @Operation(summary = "Get all Categorys", description = "Retrieve a list of all Category entities")

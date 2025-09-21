@@ -1,5 +1,6 @@
 package com.ijse.adlync.service.impl;
 
+import com.ijse.adlync.service.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -10,7 +11,7 @@ import com.ijse.adlync.dto.request.PaymentRequestDTO;
 import com.ijse.adlync.dto.response.PaymentResponseDTO;
 
 @Service
-public class PaymentServiceImpl {
+public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository repository;

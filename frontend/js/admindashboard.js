@@ -252,7 +252,6 @@ $(document).ready(function () {
 });
 
 
-// Debounce function for search
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -265,7 +264,6 @@ function debounce(func, wait) {
     };
 }
 
-// Update reset filters function
 function resetFilters() {
     $('#statusFilter').val('PENDING');
     selectedStatus = 'PENDING';
@@ -283,7 +281,6 @@ function resetFilters() {
     showToast('Filters have been reset successfully!');
 }
 
-// Updated loadModerators function with better error handling
 function loadModerators(page = 0) {
     currentModeratorsPage = page;
 
@@ -296,26 +293,22 @@ function loadModerators(page = 0) {
         success: function (users) {
             console.log('All users received:', users.length);
 
-            // Filter moderators
             moderatorsList = users.filter(user => user.role === "MODERATOR");
             console.log('Filtered moderators:', moderatorsList.length, moderatorsList);
 
-            // Render components
             renderModerators(moderatorsList);
-            updateModeratorStats(moderatorsList); // This should now work correctly
+            updateModeratorStats(moderatorsList);
             renderModeratorsPagination(page, Math.ceil(moderatorsList.length / moderatorsPageSize));
         },
         error: function (xhr) {
             console.error("Failed to fetch moderators:", xhr);
             $('#moderatorsTableBody').html('<tr><td colspan="4" class="text-center">Failed to load moderators</td></tr>');
 
-            // Set stats to 0 on error
             updateModeratorStats([]);
         }
     });
 }
 
-// Function to render moderators table
 function renderModerators(moderators) {
     const $tbody = $('#moderatorsTableBody');
     $tbody.empty();
@@ -364,7 +357,6 @@ function renderModerators(moderators) {
     });
 }
 
-// New function to render moderators pagination
 function renderModeratorsPagination(current, totalPages) {
     const $pagination = $('#moderatorsPagination');
     $pagination.empty();
@@ -392,13 +384,11 @@ function renderModeratorsPagination(current, totalPages) {
     `);
 }
 
-// New function to change moderators page
 function changeModeratorsPage(page) {
     if (page < 0 || page >= Math.ceil(moderatorsList.length / moderatorsPageSize)) return;
     loadModerators(page);
 }
 
-// Load reports when reports section is activated
 $(document).on('click', '[data-section="reports"]', function () {
     loadReports();
 });
@@ -411,7 +401,6 @@ function updateReportsStats(reports) {
 function loadReports(page = 0) {
     currentReportsPage = page;
 
-    // Load only PENDING reports
     $.ajax({
         url: "http://localhost:8080/api/reports/status/PENDING",
         method: "GET",
@@ -608,7 +597,7 @@ function showPostDetail(postData) {
         $("#modalPostPrice").text(postData.price ? "Rs. " + Number(postData.price).toLocaleString() : "N/A");
 
         $("#modalUserName").text(postData.user?.name || "Unknown user");
-        $("#modalUserAvatar").attr("src", postData.userAvatar || "https://via.placeholder.com/40");
+        $("#modalUserAvatar").attr("src", postData.user.profileImageUrl || "https://via.placeholder.com/40");
         $("#modalPostTime").text(postData.createdAt ? new Date(postData.createdAt).toLocaleString() : "N/A");
 
         $("#modalContactPhone").text(postData.contact_number || "N/A");
@@ -796,29 +785,24 @@ function updateImageDisplay() {
     $indicators.each((i, el) => $(el).toggleClass('active', i === currentImageIndex));
 }
 
-// Update the loadPosts function to use the filtering endpoint
 function loadPosts(page = 0, status = null) {
     currentPage = page;
     if (status) selectedStatus = status;
 
-    // Build filter parameters
     let params = {
         page: currentPage,
         size: pageSize
     };
 
-    // Add status filter
     if (selectedStatus && selectedStatus !== 'ALL') {
         params.status = selectedStatus;
     }
 
-    // Add category filter
     const activeCategory = $('.category-item.active').data('category');
     if (activeCategory && activeCategory !== 'all') {
         params.category = activeCategory;
     }
 
-    // Add date range filter
     const dateRange = $('#dateFilter').val();
     if (dateRange && dateRange !== 'all') {
         const now = new Date();
@@ -841,7 +825,6 @@ function loadPosts(page = 0, status = null) {
         }
     }
 
-    // Add search filter
     const search = $('#searchPosts').val();
     if (search && search.trim()) {
         params.search = search.trim();
@@ -892,7 +875,7 @@ function renderPosts(posts) {
                         <div class="col-md-7 col-6">
                             <h6 class="mb-1">${post.title || "No title"}</h6>
                             <div class="d-flex align-items-center mb-1">
-                                <img alt="User" class="avatar me-2 rounded-circle" src="${post.userAvatar || "https://via.placeholder.com/24"}">
+                                <img alt="User" class="avatar me-2 rounded-circle" src="${post.user.profileImageUrl || "https://via.placeholder.com/24"}">
                                 <span class="text-muted">${post.user?.name || "Unknown"} • ${createdTime}</span>
                             </div>
                             <p class="text-muted mb-2" style="font-size:0.8rem;line-height:1.3;">${post.description || ""}</p>
@@ -1069,26 +1052,21 @@ function markAsRejected(reportId) {
 function updateModeratorStats(moderators) {
     try {
         const totalModerators = moderators.length;
-        // Count active moderators - check for both "ACTIVE" status and users who don't have a status field
         const activeModerators = moderators.filter(m =>
             m.status === "ACTIVE" || !m.status || m.status === "active" || m.status === "Active"
         ).length;
 
         console.log(`Updating moderator stats:`, {totalModerators, activeModerators, moderators});
 
-        // Primary method: Find by position
         const $moderatorStats = $('#moderatorStats .card-body');
         const $statsRows = $moderatorStats.find('.d-flex');
 
         if ($statsRows.length >= 2) {
-            // Update Total Moderators (first row)
             $statsRows.eq(0).find('.fw-bold').text(totalModerators);
-            // Update Active Moderators (second row)
             $statsRows.eq(1).find('.fw-bold').text(activeModerators);
 
             console.log(`Stats updated via position method`);
         } else {
-            // Fallback method: Find by text content
             $moderatorStats.find('.d-flex').each(function () {
                 const $row = $(this);
                 const labelText = $row.find('span:first').text().trim();
@@ -1106,17 +1084,14 @@ function updateModeratorStats(moderators) {
 
     } catch (error) {
         console.error('Error updating moderator stats:', error);
-        // Set default values on error
         $('#moderatorStats .card-body .fw-bold').text('0');
     }
 }
 
-// Alternative approach - more specific selectors
 function updateModeratorStatsAlternative(moderators) {
     const totalModerators = moderators.length;
     const activeModerators = moderators.filter(m => m.status === "ACTIVE").length;
 
-    // Find the specific elements by their text content and update the adjacent count
     $('#moderatorStats .card-body .d-flex').each(function () {
         const labelText = $(this).find('span:first').text().trim();
         if (labelText === 'Total Moderators') {
@@ -1127,13 +1102,11 @@ function updateModeratorStatsAlternative(moderators) {
     });
 }
 
-// Enhanced version with error handling and logging
 function updateModeratorStatsEnhanced(moderators) {
     try {
         const totalModerators = moderators.length;
         const activeModerators = moderators.filter(m => m.status === "ACTIVE").length;
 
-        // Method 1: Update by position (current approach)
         const $moderatorStats = $('#moderatorStats .card-body');
         const $totalElement = $moderatorStats.find('.d-flex:first .fw-bold');
         const $activeElement = $moderatorStats.find('.d-flex:last .fw-bold');
@@ -1142,7 +1115,6 @@ function updateModeratorStatsEnhanced(moderators) {
             $totalElement.text(totalModerators);
             $activeElement.text(activeModerators);
         } else {
-            // Method 2: Update by finding text content
             $moderatorStats.find('.d-flex').each(function () {
                 const $row = $(this);
                 const labelText = $row.find('span:first').text().trim();
@@ -1162,32 +1134,25 @@ function updateModeratorStatsEnhanced(moderators) {
     }
 }
 
-// Updated and optimized moderator statistics functions
 
-// Remove the old updateModeratorStats function and replace with this enhanced version
 function updateModeratorStats(moderators) {
     try {
         const totalModerators = moderators.length;
-        // Count active moderators - check for both "ACTIVE" status and users who don't have a status field
         const activeModerators = moderators.filter(m =>
             m.status === "ACTIVE" || !m.status || m.status === "active" || m.status === "Active"
         ).length;
 
         console.log(`Updating moderator stats:`, {totalModerators, activeModerators, moderators});
 
-        // Primary method: Find by position
         const $moderatorStats = $('#moderatorStats .card-body');
         const $statsRows = $moderatorStats.find('.d-flex');
 
         if ($statsRows.length >= 2) {
-            // Update Total Moderators (first row)
             $statsRows.eq(0).find('.fw-bold').text(totalModerators);
-            // Update Active Moderators (second row)
             $statsRows.eq(1).find('.fw-bold').text(activeModerators);
 
             console.log(`Stats updated via position method`);
         } else {
-            // Fallback method: Find by text content
             $moderatorStats.find('.d-flex').each(function () {
                 const $row = $(this);
                 const labelText = $row.find('span:first').text().trim();
@@ -1205,12 +1170,10 @@ function updateModeratorStats(moderators) {
 
     } catch (error) {
         console.error('Error updating moderator stats:', error);
-        // Set default values on error
         $('#moderatorStats .card-body .fw-bold').text('0');
     }
 }
 
-// Updated loadModerators function with better error handling
 function loadModerators(page = 0) {
     currentModeratorsPage = page;
 
@@ -1223,26 +1186,22 @@ function loadModerators(page = 0) {
         success: function (users) {
             console.log('All users received:', users.length);
 
-            // Filter moderators
             moderatorsList = users.filter(user => user.role === "MODERATOR");
             console.log('Filtered moderators:', moderatorsList.length, moderatorsList);
 
-            // Render components
             renderModerators(moderatorsList);
-            updateModeratorStats(moderatorsList); // This should now work correctly
+            updateModeratorStats(moderatorsList);
             renderModeratorsPagination(page, Math.ceil(moderatorsList.length / moderatorsPageSize));
         },
         error: function (xhr) {
             console.error("Failed to fetch moderators:", xhr);
             $('#moderatorsTableBody').html('<tr><td colspan="4" class="text-center">Failed to load moderators</td></tr>');
 
-            // Set stats to 0 on error
             updateModeratorStats([]);
         }
     });
 }
 
-// Add debugging function to check HTML structure
 function debugModeratorStats() {
     console.log('=== Moderator Stats Debug ===');
     const $stats = $('#moderatorStats');
@@ -1268,7 +1227,6 @@ function updateModeratorStatsDirectly(moderators) {
     const totalModerators = moderators.length;
     const activeModerators = moderators.filter(m => m.status === "ACTIVE" || !m.status).length;
 
-    // Direct selector targeting
     $('#moderatorStats .card-body .mb-3:first-child .fw-bold').text(totalModerators);
     $('#moderatorStats .card-body .mb-3:last-child .fw-bold').text(activeModerators);
 

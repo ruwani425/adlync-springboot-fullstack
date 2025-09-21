@@ -1,24 +1,20 @@
-// Enhanced view-all-ads.js with backend filter integration
-
 const $ = window.$
 const bootstrap = window.bootstrap
 
 const API_BASE = "http://localhost:8080/api/posts/approved/all"
-const ADVANCED_FILTER_API = "http://localhost:8080/api/posts/page/advanced" // New advanced filter endpoint
+const ADVANCED_FILTER_API = "http://localhost:8080/api/posts/page/advanced"
 const pageSize = 9
 let currentPage = 0
 let totalPages = 0
 let postsCache = []
 let categoryFromURL = null
-let isFiltering = false // Track if we're using filters
+let isFiltering = false
 
-// Function to get URL parameters
 function getUrlParameter(name) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(name);
 }
 
-// Initialize from URL
 function initializeFromURL() {
     const categoryParam = getUrlParameter('category');
     if (categoryParam) {
@@ -71,12 +67,10 @@ $(document).ready(() => {
     loadPosts(0)
 })
 
-// Main function to load posts with or without filters
 function loadPosts(page = 0) {
     if (page < 0) page = 0
     currentPage = page
 
-    // Check if we have any active filters
     const hasActiveFilters = checkForActiveFilters()
 
     if (hasActiveFilters || categoryFromURL) {
@@ -86,7 +80,6 @@ function loadPosts(page = 0) {
     }
 }
 
-// Check for active filters
 function checkForActiveFilters() {
     const search = $("#searchInput").val().trim()
     const category = $("#categoryFilter").val()
@@ -98,16 +91,14 @@ function checkForActiveFilters() {
     return !!(search || category || location || minPrice || maxPrice || conditions.length > 0)
 }
 
-// Get selected condition filters
 function getSelectedConditions() {
     const conditions = []
-    $('input[type="checkbox"]:checked').each(function() {
+    $('input[type="checkbox"]:checked').each(function () {
         conditions.push($(this).val())
     })
     return conditions
 }
 
-// Load posts with advanced filtering
 function loadPostsWithFilters(page) {
     isFiltering = true
 
@@ -117,13 +108,11 @@ function loadPostsWithFilters(page) {
         status: 'APPROVED'
     })
 
-    // Add search parameter
     const search = $("#searchInput").val().trim()
     if (search) {
         params.append('search', search)
     }
 
-    // Add category parameter
     const category = $("#categoryFilter").val() || (categoryFromURL ? getBackendCategoryEnum(categoryFromURL) : null)
     if (category) {
         const backendCategory = getFrontendToBackendCategory(category)
@@ -132,13 +121,11 @@ function loadPostsWithFilters(page) {
         }
     }
 
-    // Add location parameter
     const location = $("#locationFilter").val()
     if (location) {
         params.append('location', location)
     }
 
-    // Add price parameters
     const minPrice = $("#minPrice").val()
     const maxPrice = $("#maxPrice").val()
     if (minPrice) {
@@ -148,13 +135,11 @@ function loadPostsWithFilters(page) {
         params.append('maxPrice', maxPrice)
     }
 
-    // Add condition parameter (take first selected condition for backend)
     const conditions = getSelectedConditions()
     if (conditions.length > 0) {
-        params.append('condition', conditions[0]) // Backend handles one condition
+        params.append('condition', conditions[0])
     }
 
-    // Add sorting parameter
     const sortBy = $("#sortBy").val()
     if (sortBy) {
         params.append('sortBy', sortBy)
@@ -171,7 +156,6 @@ function loadPostsWithFilters(page) {
     })
 }
 
-// Load posts without filters (default)
 function loadPostsDefault(page) {
     isFiltering = false
     const url = `${API_BASE}?page=${page}&size=${pageSize}`
@@ -186,7 +170,6 @@ function loadPostsDefault(page) {
     })
 }
 
-// Handle successful posts response
 function handlePostsSuccess(data) {
     postsCache = data.content || []
     totalPages = data.totalPages || Math.ceil((data.totalElements || 0) / pageSize) || 1
@@ -200,7 +183,6 @@ function handlePostsSuccess(data) {
     console.log(`Loaded ${postsCache.length} posts, total: ${data.totalElements}`)
 }
 
-// Handle posts loading error
 function handlePostsError(xhr) {
     console.error("Failed to load posts:", xhr)
     $("#adsContainer").html("<p class='text-danger'>Failed to load advertisements. Please try again.</p>")
@@ -208,7 +190,6 @@ function handlePostsError(xhr) {
     renderPagination(0, 1)
 }
 
-// Category mapping functions
 function getFrontendToBackendCategory(frontendCategory) {
     const categoryMap = {
         'vehicles': 'VEHICLE',
@@ -253,40 +234,31 @@ function getBackendCategoryEnum(backendEnum) {
     return displayCategoryMap[backendEnum]
 }
 
-// Initialize filters with proper event handlers
 function initializeFilters() {
-    // Apply filters button
-    $("#applyFilters").on("click", function(e) {
+    $("#applyFilters").on("click", function (e) {
         e.preventDefault()
         applyFilters()
     })
 
-    // Clear filters button
-    $("#clearFilters").on("click", function(e) {
+    $("#clearFilters").on("click", function (e) {
         e.preventDefault()
         clearAllFilters()
     })
 
-    // Search input with debounce
     $("#searchInput").on("input", debounce(applyFilters, 500))
 
-    // Dropdown filters
     $("#categoryFilter, #locationFilter, #sortBy").on("change", applyFilters)
 
-    // Price inputs with debounce
     $("#minPrice, #maxPrice").on("input", debounce(applyFilters, 600))
 
-    // Condition checkboxes
     $('input[type="checkbox"]').on("change", applyFilters)
 }
 
-// Apply filters function
 function applyFilters() {
     console.log('Applying filters...')
-    loadPosts(0) // Reset to first page when applying filters
+    loadPosts(0)
 }
 
-// Clear all filters
 function clearAllFilters() {
     $("#searchInput").val("")
     $("#categoryFilter").val("")
@@ -296,15 +268,12 @@ function clearAllFilters() {
     $("#sortBy").val("newest")
     $('input[type="checkbox"]').prop("checked", false)
 
-    // Clear URL category
     clearCategoryFromURL()
 
-    // Reset page header
     $(".breadcrumb-item.active").text("All Ads")
     $("h1.h3").text("All Advertisements")
     $("h1.h3").next("p").text("Discover amazing deals from verified sellers")
 
-    // Load default posts
     loadPosts(0)
 }
 
@@ -315,7 +284,6 @@ function clearCategoryFromURL() {
     categoryFromURL = null;
 }
 
-// Enhanced post rendering
 function renderPosts(posts) {
     const $container = $("#adsContainer")
     $container.empty()
@@ -354,7 +322,6 @@ function renderPosts(posts) {
     })
 }
 
-// Helper functions for extracting post data
 function getCategoryName(post) {
     if (post.category && post.category.name) return post.category.name
     if (post.category) return post.category
@@ -401,8 +368,8 @@ function getPostImage(post) {
     return "https://picsum.photos/seed/default/400/250"
 }
 
-// Create ad card HTML
-function createAdCard({ postId, title, price, categoryName, locationName, seller, rating, condition, imageUrl }) {
+
+function createAdCard({postId, title, price, categoryName, locationName, seller, rating, condition, imageUrl}) {
     const conditionDisplay = condition ? `
         <div class="small text-muted mb-2">
             <i class="bi bi-check-circle me-1"></i>Condition: ${escapeHtml(capitalize(condition))}
@@ -450,7 +417,6 @@ function createAdCard({ postId, title, price, categoryName, locationName, seller
     `
 }
 
-// Enhanced pagination
 function renderPagination(current, total) {
     const $pagination = $(".pagination")
     $pagination.empty()
@@ -459,7 +425,6 @@ function renderPagination(current, total) {
     if (current < 0) current = 0
     if (current >= total) current = total - 1
 
-    // Previous button
     const prevDisabled = current <= 0 ? "disabled" : ""
     const prevPage = Math.max(0, current - 1)
     $pagination.append(`
@@ -470,7 +435,6 @@ function renderPagination(current, total) {
         </li>
     `)
 
-    // Page numbers
     const maxButtons = 5
     let start = Math.max(0, current - Math.floor(maxButtons / 2))
     let end = Math.min(total - 1, start + maxButtons - 1)
@@ -505,7 +469,6 @@ function renderPagination(current, total) {
         `)
     }
 
-    // Next button
     const nextDisabled = current >= total - 1 ? "disabled" : ""
     const nextPage = Math.min(total - 1, current + 1)
     $pagination.append(`
@@ -516,7 +479,6 @@ function renderPagination(current, total) {
         </li>
     `)
 
-    // Attach click handlers
     $pagination.find("a.page-link[data-page]").on("click", function (e) {
         e.preventDefault()
         const page = parseInt($(this).data("page"))
@@ -526,7 +488,6 @@ function renderPagination(current, total) {
     })
 }
 
-// View toggle functionality
 function initializeViewToggle() {
     $("#gridView").on("click", function () {
         $(this).addClass("active")
@@ -547,7 +508,6 @@ function initializeSorting() {
     $("#sortBy").on("change", applyFilters)
 }
 
-// Favorites functionality
 $(document).on("click", '.btn[title="Add to Favorites"]', function (e) {
     e.preventDefault()
     const $btn = $(this)
@@ -564,7 +524,6 @@ $(document).on("click", '.btn[title="Add to Favorites"]', function (e) {
     }
 })
 
-// Keep existing helper functions
 function checkAuth() {
     const token = getCookie("token")
     if (!token) {

@@ -234,7 +234,7 @@
 
                     <!-- Seller Name -->
                     <div class="mb-2">
-                        <span class="me-1"><i class="bi bi-person me-1 text-primary-emerald"></i>Seller Name:</span>
+                        <span class="me-1">Seller Name:</span>
                         <span id="sellerNameValue">Loading...</span>
                     </div>
 
@@ -249,10 +249,6 @@
                             <i class="bi bi-calendar me-2 text-muted"></i>
                             <span>Member since:</span> <span id="sellerMemberSince">Loading...</span>
                         </div>
-                        <!--                        <div class="mb-2">-->
-                        <!--                            <i class="bi bi-star-fill me-2 text-warning"></i>-->
-                        <!--                            <span>Rating:</span> <span id="sellerRating">Loading...</span>-->
-                        <!--                        </div>-->
                     </div>
 
                     <!-- Action Buttons -->
@@ -280,22 +276,6 @@
 
                 </div>
             </div>
-
-
-<!--            &lt;!&ndash; Similar Ads &ndash;&gt;-->
-<!--            <div class="card card-hover">-->
-<!--                <div class="card-body">-->
-<!--                    <h6 class="fw-bold mb-3" id="similarAdsTitle">-->
-<!--                        <i class="bi bi-collection me-2 text-primary-emerald"></i>Similar Ads-->
-<!--                    </h6>-->
-<!--                    <div id="similarAdsContent">-->
-<!--                        &lt;!&ndash; Dynamic similar ads &ndash;&gt;-->
-<!--                    </div>-->
-<!--                    <button class="btn btn-outline-secondary w-100" id="viewMoreSimilar">-->
-<!--                        <i class="bi bi-arrow-right me-2"></i>View More Similar-->
-<!--                    </button>-->
-<!--                </div>-->
-<!--            </div>-->
 
             <div class="card card-hover">
                 <div class="card-body">
@@ -385,7 +365,7 @@
             <div class="modal-header bg-primary-emerald text-white">
                 <div class="d-flex align-items-center">
                     <div class="me-3">
-                        <img id="sellerAvatarImg" class="rounded-circle"
+                        <img class="rounded-circle" id="sellerAvatarImg"
                              src="https://ui-avatars.com/api/?name=Seller&background=ffffff&color=059669&size=45&rounded=true"
                              style="width: 45px; height: 45px; object-fit: cover; border: 2px solid rgba(255,255,255,0.3);">
                     </div>
@@ -450,13 +430,14 @@
                             <small class="text-muted">Click on a conversation to start chatting</small>
                         </div>
                         <div class="chat-list-container">
-                            <div id="chatList" class="list-group list-group-flush">
+                            <div class="list-group list-group-flush" id="chatList">
                                 <!-- Chat list items will be populated here -->
                                 <div class="text-center p-5 text-muted" id="noChatMessage">
                                     <div class="empty-state">
                                         <i class="bi bi-chat-square-dots display-4 mb-4"></i>
                                         <h6 class="mb-2">No conversations yet</h6>
-                                        <p class="small mb-0">When customers message you about this ad,<br>their conversations will appear here.</p>
+                                        <p class="small mb-0">When customers message you about this ad,<br>their
+                                            conversations will appear here.</p>
                                     </div>
                                 </div>
                             </div>
@@ -479,7 +460,8 @@
                                     </small>
                                 </div>
                                 <div class="chat-actions">
-                                    <button class="btn btn-sm btn-outline-secondary rounded-circle" title="Chat Info" style="width: 35px; height: 35px;">
+                                    <button class="btn btn-sm btn-outline-secondary rounded-circle" style="width: 35px; height: 35px;"
+                                            title="Chat Info">
                                         <i class="bi bi-info-circle"></i>
                                     </button>
                                 </div>
@@ -488,11 +470,13 @@
 
                         <!-- Messages Container -->
                         <div class="flex-grow-1" id="activeChatMessages">
-                            <div class="text-center text-muted h-100 d-flex align-items-center justify-content-center" id="selectChatMessage">
+                            <div class="text-center text-muted h-100 d-flex align-items-center justify-content-center"
+                                 id="selectChatMessage">
                                 <div class="empty-chat-state">
                                     <i class="bi bi-arrow-left display-4 mb-4"></i>
                                     <h5 class="mb-2">Select a conversation</h5>
-                                    <p class="text-muted mb-0">Choose a chat from the sidebar to view messages<br>and continue the conversation.</p>
+                                    <p class="text-muted mb-0">Choose a chat from the sidebar to view messages<br>and
+                                        continue the conversation.</p>
                                 </div>
                             </div>
                         </div>

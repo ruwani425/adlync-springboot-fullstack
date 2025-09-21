@@ -130,13 +130,12 @@ function setupLogoutHandler() {
             logout();
         }
     });
-    $("#profileDropdown .dropdown-menu").off('click.profile').on('click.profile', 'a[href="#"]', function (e) {
-        if ($(this).find('i').hasClass('bi-person')) {
-            e.preventDefault();
-            window.location.href = "user-profile.html";
-        }
+    $("#profileDropdown .dropdown-menu li:first-child .dropdown-item").off('click').on('click', function (e) {
+        e.preventDefault();
+        window.location.href = "user-profile.html";
     });
 }
+
 
 function logout() {
     if (confirm("Are you sure you want to logout?")) {
@@ -369,7 +368,10 @@ $(document).ready(() => {
 
             const conditionRaw = data.common?.[categoryName]?.condition;
             console.log(data);
-            if (conditionRaw) adTitle += " - " + conditionRaw.toLowerCase() + " condition ";
+            if (conditionRaw) {
+                const conditionFormatted = conditionRaw.replace(/_/g, " ").toLowerCase();
+                adTitle += " - " + conditionFormatted + " condition ";
+            }
 
             $("#adTitle").text(adTitle);
             $("#adPrice").text(`Rs. ${data.price?.toLocaleString() || "-"}`);
@@ -401,6 +403,16 @@ $(document).ready(() => {
                     .off('error')
                     .on('error', function () {
                         $(this).attr("src", `https://ui-avatars.com/api/?name=${encodeURIComponent(seller.name || 'Seller')}&background=059669&color=fff&size=80&rounded=true`);
+                    });
+
+                $("#sellerAvatarImg")
+                    .attr("src", profileUrl)
+                    .off("error")
+                    .on("error", function () {
+                        $(this).attr(
+                            "src",
+                            `https://ui-avatars.com/api/?name=${encodeURIComponent(seller.name || "Seller")}&background=059669&color=fff&size=80&rounded=true`
+                        );
                     });
             }
 
@@ -595,30 +607,34 @@ $(document).ready(() => {
     });
 
     $('#reportBtn').on('click', function () {
-        const adTitle = $('#adTitle').text() || 'Advertisement';
-        const postIdText = $('#postId').text() || '-';
+        requireLoginRedirect(() => {
+            const adTitle = $('#adTitle').text() || 'Advertisement';
+            const postIdText = $('#postId').text() || '-';
 
-        $('#reportAdTitle').text(adTitle);
-        $('#reportPostId').text(postIdText);
+            $('#reportAdTitle').text(adTitle);
+            $('#reportPostId').text(postIdText);
 
-        $('#reportForm')[0].reset();
-        $('#customReasonContainer').hide();
-        $('#customReason').prop('required', false);
-        $('#reportCharCount').text('0');
-        $('.form-control, .form-select').removeClass('is-valid is-invalid');
+            $('#reportForm')[0].reset();
+            $('#customReasonContainer').hide();
+            $('#customReason').prop('required', false);
+            $('#reportCharCount').text('0');
+            $('.form-control, .form-select').removeClass('is-valid is-invalid');
 
-        $('#reportModal').modal('show');
+            $('#reportModal').modal('show');
+        });
     });
 
     $('#addReviewBtnSidebar').on('click', function () {
-        const adTitle = $('#adTitle').text() || 'Advertisement';
-        const sellerName = $('#sellerNameValue').text() || 'Seller';
+        requireLoginRedirect(() => {
+            const adTitle = $('#adTitle').text() || 'Advertisement';
+            const sellerName = $('#sellerNameValue').text() || 'Seller';
 
-        $('#reviewAdTitle').text(adTitle);
-        $('#reviewSellerName').text(sellerName);
+            $('#reviewAdTitle').text(adTitle);
+            $('#reviewSellerName').text(sellerName);
 
-        resetReviewForm();
-        $('#reviewModal').modal('show');
+            resetReviewForm();
+            $('#reviewModal').modal('show');
+        });
     });
 
     $('.rating-selector .star-rating .star-btn').on('click', function () {
@@ -705,7 +721,7 @@ $(document).ready(() => {
             deliveryRating: parseInt($('.aspect-rating[data-aspect="delivery"] .star-rating').attr('data-rating')) || null,
             recommendation: $('input[name="recommendation"]:checked').val() === 'yes' ? 'YES' : 'NO',
             anonymous: $('#anonymousReview').is(':checked'),
-            postId: finalPostId  // FIXED: Numeric, non-null
+            postId: finalPostId
         };
 
         console.log('Submitting review:', reviewData);
@@ -1112,7 +1128,6 @@ function sortReviews(sort) {
             filteredReviews.sort((a, b) => a.rating - b.rating);
             break;
         case 'helpful':
-            // For now, sort by rating and date (you can implement helpful votes later)
             filteredReviews.sort((a, b) => {
                 if (b.rating !== a.rating) return b.rating - a.rating;
                 return new Date(b.created_at) - new Date(a.created_at);
@@ -1190,3 +1205,13 @@ $('#viewAllReviewsBtn').off('click').on('click', function () {
         alert('Unable to load reviews. Please refresh the page and try again.');
     }
 });
+
+function requireLoginRedirect(callback) {
+    const token = getCookie("token");
+    if (!token) {
+        window.location.href = "signup.html";
+        return false;
+    }
+    if (callback) callback(token);
+    return true;
+}

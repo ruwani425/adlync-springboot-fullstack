@@ -29,9 +29,6 @@ public class PostController {
     private final PostService service;
     private final JwtUtil jwtUtil;
 
-    // Add this method to your existing PostController.java class
-// Place it after the existing @GetMapping("/page") method
-
     @GetMapping("/page/advanced")
     @Operation(summary = "Advanced Filter Posts", description = "Filter posts with location, condition, price range, and other parameters")
     @ApiResponses(value = {
@@ -54,7 +51,6 @@ public class PostController {
             @RequestParam(required = false) String sortBy
     ) {
         try {
-            // Log incoming parameters for debugging
             System.out.println("=== Advanced Filter Request ===");
             System.out.println("Page: " + page + ", Size: " + size);
             System.out.println("Status: " + status);
@@ -66,39 +62,32 @@ public class PostController {
             System.out.println("MaxPrice: " + maxPrice);
             System.out.println("SortBy: " + sortBy);
 
-            // Validate page and size parameters
             if (page < 0) page = 0;
             if (size <= 0) size = 10;
-            if (size > 100) size = 100; // Limit maximum page size
+            if (size > 100) size = 100;
 
-            // Create pageable with sorting
             Pageable pageable;
             if (sortBy != null && !sortBy.trim().isEmpty()) {
                 Sort sort = createSort(sortBy.trim());
                 pageable = PageRequest.of(page, size, sort);
             } else {
-                // Default sort by creation date descending
                 Sort defaultSort = Sort.by(Sort.Direction.DESC, "createdAt");
                 pageable = PageRequest.of(page, size, defaultSort);
             }
 
-            // Validate price parameters
             if (minPrice != null && minPrice < 0) minPrice = null;
             if (maxPrice != null && maxPrice < 0) maxPrice = null;
 
-            // Ensure logical price range
             if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
                 Double temp = minPrice;
                 minPrice = maxPrice;
                 maxPrice = temp;
             }
 
-            // Default status to APPROVED if not provided
             if (status == null) {
                 status = PostEntityStatusEnum.APPROVED;
             }
 
-            // Call service method
             PageResponse<PostResponseDTO> response = service.advancedFilterPosts(
                     status, category, startDate, endDate, search,
                     location, condition, minPrice, maxPrice, pageable
@@ -112,7 +101,6 @@ public class PostController {
             System.err.println("Error in getAdvancedFilteredPosts: " + e.getMessage());
             e.printStackTrace();
 
-            // Return empty response for errors
             PageResponse<PostResponseDTO> emptyResponse = new PageResponse<>(
                     List.of(), 0, size, 0L, 0, true
             );
@@ -120,9 +108,6 @@ public class PostController {
         }
     }
 
-    /**
-     * Create Sort object based on sortBy parameter
-     */
     private Sort createSort(String sortBy) {
         switch (sortBy.toLowerCase()) {
             case "price-low":

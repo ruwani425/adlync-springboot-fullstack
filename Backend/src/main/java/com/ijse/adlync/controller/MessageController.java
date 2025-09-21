@@ -1,5 +1,6 @@
 package com.ijse.adlync.controller;
 
+import com.ijse.adlync.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class MessageController {
 
     @Autowired
-    private MessageServiceImpl service;
+    private MessageService service;
 
     @GetMapping
     @Operation(summary = "Get all Messages", description = "Retrieve a list of all Message entities")

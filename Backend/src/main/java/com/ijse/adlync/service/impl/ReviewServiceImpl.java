@@ -9,6 +9,7 @@ import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.PostRepository;
 import com.ijse.adlync.repository.ReviewRepository;
 import com.ijse.adlync.repository.UserRepository;
+import com.ijse.adlync.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -20,13 +21,13 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ReviewServiceImpl {
+public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
     private ReviewRepository repository;
 
     @Autowired
-    private PostRepository postRepository; // NEW: For post lookup
+    private PostRepository postRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -81,19 +82,16 @@ public class ReviewServiceImpl {
         dto.setVerified(entity.getVerified());
         dto.setCreated_at(entity.getCreated_at());
 
-        // Set reviewer name based on anonymity
         if (entity.getAnonymous()) {
             dto.setReviewerName("Anonymous");
         } else if (entity.getUser() != null) {
             dto.setReviewerName(entity.getUser().getName());
-            // No userId in response
         }
 
-        // Set post ID
         if (entity.getPost() != null) {
             dto.setPostId(entity.getPost().getPost_id());
         }
-        System.out.println("\n\n\nto responseDTO"+dto.toString());
+        System.out.println("\n\n\nto responseDTO" + dto.toString());
         return dto;
     }
 
@@ -111,14 +109,13 @@ public class ReviewServiceImpl {
         entity.setVerified(dto.getVerified() != null ? dto.getVerified() : false);
         entity.setAspects(dto.getAspects());
 
-        // Set user
+
         if (user != null) {
             entity.setUser(user);
         } else {
             throw new RuntimeException("User is required for review creation");
         }
 
-        // Set post
         if (dto.getPostId() != null) {
             PostEntity post = postRepository.findById(dto.getPostId())
                     .orElseThrow(() -> new RuntimeException("Post not found with id: " + dto.getPostId()));
@@ -141,7 +138,7 @@ public class ReviewServiceImpl {
         } else {
             reviews = repository.findByPost_OrderByCreated_atDesc(post);
         }
-        System.out.println("\n\n"+reviews.stream().map(ReviewEntity::getReview_id).collect(Collectors.toList())+"find by post method");
+        System.out.println("\n\n" + reviews.stream().map(ReviewEntity::getReview_id).collect(Collectors.toList()) + "find by post method");
 
         return reviews.stream()
                 .map(this::toResponseDTO)
@@ -152,12 +149,10 @@ public class ReviewServiceImpl {
         PostEntity postEntity = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
         ReviewStatsDTO stats = new ReviewStatsDTO();
 
-        // Get total reviews
         Long totalReviews = repository.countByPost_Post_id(postEntity);
         stats.setTotalReviews(totalReviews);
 
         if (totalReviews == 0) {
-            // Return default values if no reviews
             stats.setAverageRating(0.0);
             stats.setFiveStar(0L);
             stats.setFourStar(0L);
@@ -170,11 +165,9 @@ public class ReviewServiceImpl {
             return stats;
         }
 
-        // Get average rating
         Double avgRating = repository.findAverageRatingByPostId(postId);
         stats.setAverageRating(avgRating != null ? avgRating : 0.0);
 
-        // Get rating distribution
         List<Object[]> ratingDistribution = repository.findRatingDistributionByPostId(postId);
         Map<Integer, Long> ratingCounts = new HashMap<>();
 
@@ -192,19 +185,15 @@ public class ReviewServiceImpl {
         stats.setTwoStar(ratingCounts.getOrDefault(2, 0L));
         stats.setOneStar(ratingCounts.getOrDefault(1, 0L));
 
-        // Get recommended percentage
         Long recommendedCount = repository.countRecommendedByPostId(postId);
         Long recommendedPercentage = totalReviews > 0 ? (recommendedCount * 100) / totalReviews : 0L;
         stats.setRecommended(recommendedPercentage);
 
-        // Get verified count
         Long verifiedCount = repository.countVerifiedByPostId(postId);
         stats.setVerifiedCount(verifiedCount);
 
-        // For seller rating, you might want to calculate this differently
-        // For now, using the same as average rating
         stats.setSellerRating(avgRating != null ? avgRating : 0.0);
-        System.out.println("\nstats: "+stats);
+        System.out.println("\nstats: " + stats);
         return stats;
     }
 

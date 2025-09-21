@@ -1,6 +1,5 @@
 function socialSignup(provider) {
     if (provider === 'google') {
-        // Call the Google REGISTRATION function from firebase.js
         handleGoogleRegistration();
     } else if (provider === 'facebook') {
         showAlert('Facebook signup coming soon!', 'info');

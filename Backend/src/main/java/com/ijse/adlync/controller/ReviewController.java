@@ -3,6 +3,7 @@ package com.ijse.adlync.controller;
 import com.ijse.adlync.dto.response.ReviewStatsDTO;
 import com.ijse.adlync.entity.UserEntity;
 import com.ijse.adlync.repository.UserRepository;
+import com.ijse.adlync.service.ReviewService;
 import com.ijse.adlync.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class ReviewController {
 
     @Autowired
-    private ReviewServiceImpl service;
+    private ReviewService service;
 
     @Autowired
     private UserRepository userRepository;

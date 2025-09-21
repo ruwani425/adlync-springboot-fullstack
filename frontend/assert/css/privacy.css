@@ -1,0 +1,59 @@
+:root {
+    --emerald-600: #059669;
+    --emerald-500: #10b981;
+    --bg: #ffffff;
+    --fg: #475569;
+    --card: #f6f8fb;
+    --border: #e5e7eb;
+}
+
+body {
+    font-family: "DM Sans", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--fg);
+    background: var(--bg);
+}
+
+.text-primary-emerald {
+    color: var(--emerald-600) !important;
+}
+
+.btn-emerald {
+    background: var(--emerald-600);
+    color: #fff;
+    border-color: var(--emerald-600);
+}
+
+.btn-emerald:hover {
+    background: #047857;
+    border-color: #047857;
+    color: #fff;
+}
+
+.link-faded {
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+.link-faded:hover {
+    color: #fff;
+}
+
+.profile-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e5e7eb;
+    transition: border-color 0.2s ease;
+}
+
+.profile-avatar:hover {
+    border-color: var(--emerald-600);
+}
+
+.hero {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: #fff;
+    padding: 60px 0;
+    text-align: center;
+}

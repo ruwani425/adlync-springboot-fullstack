@@ -294,31 +294,24 @@ const categoryMap = {
     'essentials': 'ESSENTIALS'
 };
 
-// Category card click handler - add this to app.js
 $(document).on('click', '.category-col .card', function (e) {
     e.preventDefault();
 
-    // Get the category display name from the card
     const categoryDisplay = $(this).find('h6').text().trim().toLowerCase();
     console.log('Clicked category:', categoryDisplay);
 
-    // Map to backend enum value
     const categoryEnum = categoryMap[categoryDisplay];
 
     if (categoryEnum) {
-        // Navigate to advertisement page with category filter
         window.location.href = `pages/advertisement.html?category=${categoryEnum}`;
     } else {
         console.warn('Category not found in mapping:', categoryDisplay);
-        // Fallback to show all ads
         window.location.href = 'pages/advertisement.html';
     }
 });
 
-// Also handle if category cards have links inside them
 $(document).on('click', '.category-col .card a', function (e) {
     e.preventDefault();
-    // Trigger the card click instead
     $(this).closest('.card').trigger('click');
 });
 function updateCTASection() {
@@ -327,17 +320,14 @@ function updateCTASection() {
     const $ctaDescription = $("#ctaDescription")
     const $ctaMainBtn = $("#ctaMainBtn")
 
-    // Remove any existing click handlers
     $ctaMainBtn.off("click")
 
     if (token) {
-        // User is logged in - encourage them to post an ad
         $ctaTitle.text("Ready to Post an Ad?")
         $ctaDescription.text("Create your advertisement and reach thousands of potential buyers")
         $ctaMainBtn.text("Post Ad")
-        $ctaMainBtn.removeClass("btn-light").addClass("btn-light") // Ensure consistent styling
+        $ctaMainBtn.removeClass("btn-light").addClass("btn-light")
 
-        // Navigate directly to post ad page
         $ctaMainBtn.on("click", (e) => {
             e.preventDefault()
             window.location.href = "pages/postad.html"
@@ -345,13 +335,11 @@ function updateCTASection() {
 
         console.log("CTA updated for authenticated user")
     } else {
-        // User is not logged in - encourage signup
         $ctaTitle.text("Ready to Start Selling?")
         $ctaDescription.text("Join thousands of sellers and reach millions of buyers")
         $ctaMainBtn.text("Post Your First Ad")
         $ctaMainBtn.removeClass("btn-light").addClass("btn-light")
 
-        // Navigate to signup page to get started
         $ctaMainBtn.on("click", (e) => {
             e.preventDefault()
             window.location.href = "pages/signup.html"

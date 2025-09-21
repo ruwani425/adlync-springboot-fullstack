@@ -9,6 +9,7 @@ import com.ijse.adlync.entity.enums.ReportStatusEnum;
 import com.ijse.adlync.repository.PostRepository;
 import com.ijse.adlync.repository.ReportRepository;
 import com.ijse.adlync.repository.UserRepository;
+import com.ijse.adlync.service.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +19,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class ReportServiceImpl {
+public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private ReportRepository repository;
@@ -91,7 +92,6 @@ public class ReportServiceImpl {
         entity.setStatus(requestDTO.getStatus());
         entity.setPost(post);
 
-        // Set user if not anonymous and username is provided
         if (username != null && !username.trim().isEmpty() &&
                 (requestDTO.getAnonymous() == null || !requestDTO.getAnonymous())) {
             UserEntity user = userRepository.findByUsername(username).orElse(null);

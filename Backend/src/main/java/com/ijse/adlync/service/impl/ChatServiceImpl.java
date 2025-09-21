@@ -43,7 +43,6 @@ public class ChatServiceImpl implements ChatService {
         try {
             System.out.println("ChatService: Creating/getting chat for request: " + requestDTO);
             
-            // First check if chat already exists
             Optional<ChatEntity> existingChat = chatRepository.findChatBetweenUsers(
                 requestDTO.getPostId(), 
                 requestDTO.getClientUserId(), 
@@ -56,7 +55,6 @@ public class ChatServiceImpl implements ChatService {
                 chat = existingChat.get();
             } else {
                 System.out.println("ChatService: Creating new chat");
-                // Create new chat
                 chat = new ChatEntity();
                 
                 System.out.println("ChatService: Finding client user with ID: " + requestDTO.getClientUserId());
@@ -82,7 +80,6 @@ public class ChatServiceImpl implements ChatService {
                 System.out.println("ChatService: Chat saved with ID: " + chat.getChat_id());
             }
 
-            // Send first message if provided
             if (requestDTO.getFirstMessage() != null && !requestDTO.getFirstMessage().trim().isEmpty()) {
                 System.out.println("ChatService: Sending first message");
                 MessageRequestDTO messageRequest = new MessageRequestDTO();
@@ -151,7 +148,6 @@ public class ChatServiceImpl implements ChatService {
 
         message = messageRepository.save(message);
 
-        // Update chat's last message time
         chat.setLast_message_at(LocalDateTime.now());
         chatRepository.save(chat);
 
@@ -176,7 +172,6 @@ public class ChatServiceImpl implements ChatService {
         dto.setCreated_at(entity.getCreated_at());
         dto.setLast_message_at(entity.getLast_message_at());
         
-        // Get last message
         List<MessageEntity> messages = messageRepository.findMessagesByChatId(entity.getChat_id());
         if (!messages.isEmpty()) {
             MessageEntity lastMessage = messages.get(messages.size() - 1);
