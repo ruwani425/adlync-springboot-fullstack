@@ -353,7 +353,7 @@ function createPostCard(post) {
     ` : '';
 
     return $(`
-        <div class="post-card">
+        <div class="post-card" data-aos="flip-left" data-aos-delay="200">
             <img src="${post.images?.[0]?.image_url || '/assets/placeholder.png'}"
                  alt="${post.title}"
                  class="post-image">

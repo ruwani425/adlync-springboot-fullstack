@@ -5,8 +5,6 @@ import com.ijse.adlync.dto.response.RegisterResponseDTO;
 import com.ijse.adlync.dto.response.UserResponseDTO;
 import com.ijse.adlync.service.OtpService;
 import com.ijse.adlync.service.UserService;
-import com.ijse.adlync.service.impl.OtpServiceImpl;
-import com.ijse.adlync.service.impl.UserServiceImpl;
 import com.ijse.adlync.util.JwtUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -239,9 +237,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<UserResponseDTO> updateModerator(@RequestParam String token, @RequestParam String password) throws Exception {
-        System.out.println(token);
+        System.out.println(token.replace(" ", "+"));
         System.out.println(password);
-        UserResponseDTO response = service.updateModerator(token, password);
+        UserResponseDTO response = service.updateModerator(token.replace(" ", "+"), password);
         return ResponseEntity.ok(response);
     }
 
