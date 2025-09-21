@@ -24,7 +24,6 @@ efficiently connect, communicate, and manage listings with ease.
 ---
 
 ## 🖼️ Screenshots & Demo
-*(Replace the placeholder image links with actual screenshots after deployment)*  
 <img width="3024" height="4638" alt="screencapture-localhost-63342-adlync-springboot-fullstack-Adlync-fullstack-frontend-index-html-2025-09-21-18_55_23" src="https://github.com/user-attachments/assets/fdb6b309-1b51-42a7-9c3e-e947826ea75d" />
 
 <img width="3024" height="1714" alt="screencapture-localhost-63342-adlync-springboot-fullstack-Adlync-fullstack-frontend-pages-signin-html-2025-09-21-18_56_45" src="https://github.com/user-attachments/assets/e2d28246-f980-450e-8580-a0dd80637280" />
