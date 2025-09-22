@@ -41,7 +41,7 @@ efficiently connect, communicate, and manage listings with ease.
 
 
 🎬 **Watch Demo on YouTube:**  
-[Adlync Smart Classified Ads & Marketplace Demo](https://youtu.be/KOzYJi-yzoY?si=ifmAegE9Jgo9vXV0)
+[Adlync Smart Classified Ads & Marketplace Demo](https://youtu.be/GXPGD9f9S60?si=Xyyz9HLxlfI9qTOV)
 
 
 ---
