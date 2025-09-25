@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.AnimalEntity;
 
 @Repository
 public interface AnimalRepository extends JpaRepository<AnimalEntity, Long> {
-    // Add custom query methods here
 }

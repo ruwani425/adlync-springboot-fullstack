@@ -18,7 +18,6 @@ public class ReviewResponseDTO {
     private String title;
     private String content;
 
-    // Aspect ratings
     private Integer qualityRating;
     private Integer communicationRating;
     private Integer valueRating;
@@ -29,7 +28,6 @@ public class ReviewResponseDTO {
     private Boolean verified;
     private LocalDateTime created_at;
 
-    // User info
     private String reviewerName;
     private Long userId;
     private Long postId;

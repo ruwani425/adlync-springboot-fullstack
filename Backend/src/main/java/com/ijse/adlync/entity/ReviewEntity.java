@@ -22,7 +22,7 @@ public class ReviewEntity {
     @Column(unique = true)
     private Long review_id;
 
-    private Double rating;//1-5 stars
+    private Double rating;
 
     @Column(nullable = false, length = 100)
     private String title;
@@ -31,7 +31,7 @@ public class ReviewEntity {
     private String content;
 
     @Column(length = 500)
-    private String aspects; // JSON string of checked aspects
+    private String aspects;
 
     @Enumerated(EnumType.STRING)
     private RecommendationStatus recommendation;
@@ -41,12 +41,12 @@ public class ReviewEntity {
     private LocalDateTime created_at;
 
     @Column(nullable = false)
-    private Boolean verified = false;// Whether this is a verified purchase/interaction
+    private Boolean verified = false;
 
-    private Integer qualityRating;        // Product Quality rating (1-5)
-    private Integer communicationRating;  // Communication rating (1-5)
-    private Integer valueRating;          // Value for Money rating (1-5)
-    private Integer deliveryRating;       // Delivery/Pickup rating (1-5)
+    private Integer qualityRating;
+    private Integer communicationRating;
+    private Integer valueRating;
+    private Integer deliveryRating;
 
 
     @Column(nullable = false)

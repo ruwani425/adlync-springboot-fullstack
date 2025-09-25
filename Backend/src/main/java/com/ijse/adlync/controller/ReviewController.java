@@ -94,18 +94,15 @@ public class ReviewController {
             @Parameter(description = "Review data to create") @RequestBody ReviewRequestDTO requestDTO,
             @RequestHeader("Authorization") String authHeader) {
         try {
-            // Validate token
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
             }
             String token = authHeader.substring(7);
             String username = jwtUtil.extractUsername(token);
 
-            // Fetch user
             UserEntity user = userRepository.findByUsername(username)
                     .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
 
-            // Create review
             ReviewResponseDTO response = service.create(requestDTO, user);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {

@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.AgricultureEntity;
 
 @Repository
 public interface AgricultureRepository extends JpaRepository<AgricultureEntity, Long> {
-    // Add custom query methods here
 }

@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.PaymentEntity;
 
 @Repository
 public interface PaymentRepository extends JpaRepository<PaymentEntity, Long> {
-    // Add custom query methods here
 }

@@ -56,11 +56,6 @@ body {
     text-decoration: none;
 }
 
-/* ===============================
-   ENHANCED CHAT UI STYLES
-   =============================== */
-
-/* Client Chat Modal Styles */
 .modal-dialog .modal-content {
     border: none;
     border-radius: 15px;
@@ -79,7 +74,6 @@ body {
     font-size: 1.1rem;
 }
 
-/* Chat Messages Container - Client */
 #chatMessages {
     background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
     border: 1px solid #e9ecef;
@@ -112,7 +106,6 @@ body {
     background: #a0aec0;
 }
 
-/* Message Bubbles */
 .message-bubble {
     margin-bottom: 15px;
     animation: fadeInUp 0.3s ease-out;
@@ -130,7 +123,6 @@ body {
     max-width: 100%;
 }
 
-/* Sender Messages (Right side - User's messages) */
 .justify-content-end .message-bubble .bg-primary {
     background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
     color: white !important;
@@ -144,7 +136,6 @@ body {
     color: white !important;
 }
 
-/* Receiver Messages (Left side - Other person's messages) */
 .justify-content-start .message-bubble .bg-white {
     background: #ffffff !important;
     color: #333333 !important;
@@ -158,7 +149,6 @@ body {
     color: #333333 !important;
 }
 
-/* Force colors for all message elements */
 #chatMessages .bg-primary,
 #activeChatMessages .bg-primary {
     background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
@@ -182,7 +172,6 @@ body {
     color: #333333 !important;
 }
 
-/* Message Text Styling */
 .message-text {
     word-wrap: break-word !important;
     word-break: break-word !important;
@@ -199,7 +188,6 @@ body {
     white-space: nowrap !important;
 }
 
-/* Ensure message containers don't overflow */
 #chatMessages {
     word-wrap: break-word !important;
     overflow-wrap: break-word !important;
@@ -210,14 +198,12 @@ body {
     overflow-wrap: break-word !important;
 }
 
-/* Fix for long words and URLs */
 .message-bubble p {
     word-break: break-all !important;
     overflow-wrap: anywhere !important;
     hyphens: auto !important;
 }
 
-/* Chat Input Styling */
 #chat {
     display: flex !important;
     gap: 10px;
@@ -268,11 +254,6 @@ body {
     font-size: 16px !important;
 }
 
-/* ===============================
-   ADMIN CHAT LIST MODAL STYLES
-   =============================== */
-
-/* Chat List Modal */
 #chatListModal .modal-dialog {
     max-width: 1200px;
 }
@@ -284,7 +265,6 @@ body {
     overflow: hidden;
 }
 
-/* Chat List Sidebar */
 .chat-list-container {
     height: 520px !important;
     overflow-y: auto !important;
@@ -312,7 +292,6 @@ body {
     background: #a0aec0;
 }
 
-/* Chat List Items */
 .chat-list-item {
     border: none !important;
     padding: 18px 20px;
@@ -359,7 +338,6 @@ body {
     border-color: rgba(255, 255, 255, 0.5);
 }
 
-/* Active Chat Messages Container */
 #activeChatMessages {
     height: 400px !important;
     overflow-y: auto !important;
@@ -390,7 +368,6 @@ body {
     background: #a0aec0;
 }
 
-/* Admin Chat Header */
 #activeChatHeader {
     background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
     border-bottom: 2px solid #e9ecef !important;
@@ -403,7 +380,6 @@ body {
     height: 50px !important;
 }
 
-/* Admin Message Input */
 #activeChatInput {
     background: #ffffff !important;
     border-top: 2px solid #e9ecef !important;
@@ -449,7 +425,6 @@ body {
     font-size: 16px !important;
 }
 
-/* Empty States */
 #noChatMessage,
 #selectChatMessage {
     padding: 60px 20px !important;
@@ -462,7 +437,6 @@ body {
     animation: pulse 2s infinite;
 }
 
-/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -483,7 +457,6 @@ body {
     }
 }
 
-/* Responsive Design */
 @media (max-width: 768px) {
     #chatListModal .modal-dialog {
         margin: 10px;
@@ -654,7 +627,6 @@ body {
     border-radius: 1rem !important;
 }
 
-/* Added profile dropdown styles */
 .profile-avatar {
     width: 40px;
     height: 40px;
@@ -692,9 +664,6 @@ body {
     text-align: center;
 }
 
-/* Add these styles to your addetails.css file */
-
-/* Message Seller Modal Styles */
 #messageSellerModal .modal-content {
     border-radius: 16px;
     border: none;
@@ -718,7 +687,6 @@ body {
     border-top: 1px solid #e5e7eb;
 }
 
-/* Seller Info Bar */
 .seller-info-bar {
     border-left: 4px solid #059669;
 }
@@ -727,7 +695,6 @@ body {
     border: 2px solid #059669;
 }
 
-/* Form Styling */
 #messageSellerModal .form-label {
     font-weight: 600;
     color: #374151;
@@ -757,13 +724,11 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(5, 150, 105, 0.25);
 }
 
-/* Character Counter */
 #messageCharCount {
     font-weight: 600;
     color: #059669;
 }
 
-/* Alert Styling */
 #messageSellerModal .alert-info {
     background-color: rgba(5, 150, 105, 0.1);
     border-color: rgba(5, 150, 105, 0.2);
@@ -772,7 +737,6 @@ body {
     border-radius: 8px;
 }
 
-/* Button Styling */
 #messageSellerModal .btn-emerald {
     background: linear-gradient(135deg, #059669, #047857);
     border: none;
@@ -795,7 +759,6 @@ body {
     transition: all 0.3s ease;
 }
 
-/* Loading State */
 #messageSellerModal .btn-emerald.loading {
     position: relative;
     pointer-events: none;
@@ -865,7 +828,6 @@ body {
     }
 }
 
-/* Additional styles for the report modal */
 #reportModal .modal-content {
     border-radius: 16px;
     border: none;

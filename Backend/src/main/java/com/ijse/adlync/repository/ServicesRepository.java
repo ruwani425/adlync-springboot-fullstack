@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.ServicesEntity;
 
 @Repository
 public interface ServicesRepository extends JpaRepository<ServicesEntity, Long> {
-    // Add custom query methods here
 }

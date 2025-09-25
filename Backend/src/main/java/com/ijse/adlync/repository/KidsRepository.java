@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.KidsEntity;
 
 @Repository
 public interface KidsRepository extends JpaRepository<KidsEntity, Long> {
-    // Add custom query methods here
 }

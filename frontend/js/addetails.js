@@ -498,7 +498,7 @@ $(document).ready(() => {
 
             function loadSidebarReviewStats(postId) {
                 $.ajax({
-                    url: `http://localhost:8080/api/reviews/post/${postId}/stats`, // <-- adjust to your API
+                    url: `http://localhost:8080/api/reviews/post/${postId}/stats`,
                     method: "GET",
                     success: (stats) => {
                         console.log(stats)
@@ -510,7 +510,7 @@ $(document).ready(() => {
                         $('#recommendedCount').text(stats.recommended + '%');
 
                         $('#verifiedCount').text(stats.verifiedCount);
-                        $('#sellerRatingBadge').text(stats.sellerRating.toFixed(1) + '/5'); // add id="sellerRatingBadge"
+                        $('#sellerRatingBadge').text(stats.sellerRating.toFixed(1) + '/5');
 
                         const $stars = $('#sidebarOverallStars').empty();
                         for (let i = 1; i <= 5; i++) {

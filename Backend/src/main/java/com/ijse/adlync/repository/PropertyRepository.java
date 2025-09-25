@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.PropertyEntity;
 
 @Repository
 public interface PropertyRepository extends JpaRepository<PropertyEntity, Long> {
-    // Add custom query methods here
 }

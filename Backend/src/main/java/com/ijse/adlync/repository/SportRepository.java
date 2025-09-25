@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.SportEntity;
 
 @Repository
 public interface SportRepository extends JpaRepository<SportEntity, Long> {
-    // Add custom query methods here
 }

@@ -118,9 +118,6 @@ const itemsPerPage = 12;
 let selectedCategory = '';
 let selectedImageFiles = [];
 
-// let uploadedImageUrls = [];
-
-
 function initializeCategories() {
     renderCategories();
     updatePaginationControls();
@@ -290,7 +287,6 @@ $(document).ready(function () {
 
             const urls = await uploadImagesToFirebase(selectedImageFiles);
 
-            // Add uploaded image URLs to the form data
             const imageRequestDTOs = urls.map(url => ({
                 image_url: url
             }));

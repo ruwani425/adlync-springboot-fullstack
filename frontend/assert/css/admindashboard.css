@@ -166,7 +166,6 @@ body {
     background: linear-gradient(135deg, #ef4444, #dc2626);
 }
 
-/* Enhanced Filter Section Styles */
 .filter-section {
     background: white;
     border-radius: 16px;
@@ -183,7 +182,6 @@ body {
     font-size: 0.875rem;
 }
 
-/* Enhanced Category Dropdown Styles */
 .category-dropdown {
     position: relative;
 }
@@ -245,7 +243,6 @@ body {
     font-weight: 500;
 }
 
-/* Enhanced Form Controls */
 .form-select, .form-control {
     border: 2px solid #e5e7eb;
     border-radius: 8px;
@@ -259,7 +256,6 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
 }
 
-/* Enhanced Dropdown Toggle Button */
 .btn-outline-secondary.dropdown-toggle {
     border: 2px solid #e5e7eb;
     border-radius: 8px;
@@ -287,7 +283,6 @@ body {
     margin-left: auto;
 }
 
-/* Reset Button Styles */
 .btn-outline-secondary:not(.dropdown-toggle) {
     border: 2px solid #e5e7eb;
     color: #6b7280;
@@ -572,19 +567,16 @@ body {
     border-radius: 8px;
 }
 
-/* Loading Spinner */
 .spinner-border.text-emerald {
     color: var(--emerald-600) !important;
 }
 
-/* Toast Notifications */
 .toast-notification {
     border-radius: 12px;
     backdrop-filter: blur(10px);
     font-weight: 500;
 }
 
-/* Responsive Improvements */
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-280px);

@@ -20,7 +20,6 @@ public class ReviewRequestDTO {
     private String title;
     private String content;
 
-    // Aspect ratings
     private Integer qualityRating;
     private Integer communicationRating;
     private Integer valueRating;
@@ -29,9 +28,7 @@ public class ReviewRequestDTO {
     private RecommendationStatus recommendation;
     private Boolean anonymous;
     private Boolean verified;
-    private String aspects; // JSON string
-
-    // User info
+    private String aspects;
     private String reviewerName;
     private Long userId;
 

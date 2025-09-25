@@ -229,7 +229,6 @@ function savePostWithBankSlip(paymentMethod, bankName, slipUrl) {
         },
         data: JSON.stringify(adData),
         success: function (response) {
-            // localStorage.removeItem("adFormData");
             $('#loadingOverlay').hide();
 
             Swal.fire({

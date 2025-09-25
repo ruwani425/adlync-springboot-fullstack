@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.EntertaintmentEntity;
 
 @Repository
 public interface EntertaintmentRepository extends JpaRepository<EntertaintmentEntity, Long> {
-    // Add custom query methods here
 }

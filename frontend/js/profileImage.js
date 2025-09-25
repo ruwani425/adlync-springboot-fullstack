@@ -124,7 +124,6 @@ class ProfileImageManager {
         $('#profileDropdown').show();
         $('#signInBtn').hide();
 
-        // Enable post ad functionality for authenticated users
         $('#postAdBtn').off('click.auth').on('click.auth', () => {
             window.location.href = this.getRelativePath('postad.html');
         });

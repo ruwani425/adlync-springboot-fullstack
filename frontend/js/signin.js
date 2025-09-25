@@ -49,7 +49,6 @@ $(document).ready(function () {
                     setCookie("token", token, 1);
                     setCookie("msgId", loginIdentifier + "MSG");
 
-                    // Get user details including user ID
                     $.ajax({
                         url: 'http://localhost:8080/api/users/getUserByToken',
                         type: 'GET',
@@ -57,7 +56,6 @@ $(document).ready(function () {
                             'Authorization': 'Bearer ' + token
                         },
                         success: function (userResponse) {
-                            // Store the actual user ID for chat functionality
                             setCookie("userId", userResponse.id, 1);
                             console.log("User ID stored:", userResponse.id);
                         },
@@ -115,7 +113,6 @@ function socialLogin(provider) {
     console.log(`Social login with ${provider}`);
 
     if (provider === 'google') {
-        // Call the Google LOGIN function from firebase.js
         handleGoogleLogin();
     } else if (provider === 'facebook') {
         showAlert('Facebook login coming soon!', 'info');

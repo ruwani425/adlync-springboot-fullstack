@@ -13,7 +13,6 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
-    //    List<ReviewEntity> findByPost_OrderByCreated_atDesc(PostEntity post);
     @Query("SELECT r FROM ReviewEntity r WHERE r.post = :post ORDER BY r.created_at DESC")
     List<ReviewEntity> findByPost_OrderByCreated_atDesc(@Param("post") PostEntity post);
 

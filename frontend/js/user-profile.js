@@ -585,7 +585,6 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 3) {
         success: function (response) {
             let posts = response.content || [];
 
-            // ✅ Filter by status if needed
             if (status !== 'all') {
                 posts = posts.filter(p => p.status.toLowerCase() === status.toLowerCase());
             }
@@ -760,7 +759,6 @@ function editAd(adId) {
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
-            // Redirect to edit page with ad ID
             window.location.href = `edit-ad.html?id=${adId}`;
         }
     });
@@ -1132,12 +1130,10 @@ function initializeReviewsTab() {
             <div class="d-flex gap-2">
                 <select class="form-select form-select-sm" id="postSelect" style="width: auto;">
                     <option value="all">All Posts</option>
-                    <!-- Options will be populated dynamically -->
                 </select>
             </div>
         </div>
         <div id="reviewsContainer">
-            <!-- Reviews will be loaded here -->
         </div>
     `;
 

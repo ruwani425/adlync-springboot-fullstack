@@ -244,7 +244,7 @@ class ForgotPasswordManager {
     }
 
     startOTPTimer() {
-        let timeLeft = 300; // 5 minutes
+        let timeLeft = 300;
         this.otpTimer = setInterval(() => {
             const minutes = Math.floor(timeLeft / 60);
             const seconds = timeLeft % 60;

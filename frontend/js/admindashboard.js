@@ -977,18 +977,15 @@ function markAsReviewed(reportId) {
         method: "PUT",
         headers: {"Authorization": "Bearer " + getCookie("token")},
         success: function () {
-            // Step 2: Update post status to REPORTED
             $.ajax({
                 url: `http://localhost:8080/api/posts/${postId}/status/REPORTED`,
                 method: "PUT",
                 headers: {"Authorization": "Bearer " + getCookie("token")},
                 success: function (response) {
-                    // Update local reportsList to reflect the new report status
                     reportsList = reportsList.map(r =>
                         r.report_id === reportId ? {...r, status: 'REVIEWED'} : r
                     );
 
-                    // Remove the report card from UI (since it's no longer PENDING)
                     $(`.report-card[data-report-id="${reportId}"]`).fadeOut(300, function () {
                         $(this).remove();
                         updateReportsCount();

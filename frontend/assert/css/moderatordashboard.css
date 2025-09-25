@@ -108,8 +108,6 @@ body {
     align-items: center;
 }
 
-/* Update these sections in your moderatordashboard.css file */
-
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -127,7 +125,6 @@ body {
     overflow: hidden;
 }
 
-/* Individual card colors matching admin dashboard */
 .stat-card:nth-child(1) {
     background: linear-gradient(135deg, #f59e0b, #d97706);
 }
@@ -183,7 +180,6 @@ body {
     margin-right: 0.25rem;
 }
 
-/* Remove the old stat-icon styles since we're using the new layout */
 .stat-icon {
     width: auto;
     height: auto;
@@ -218,7 +214,7 @@ body {
     transition: transform 0.2s ease;
     display: flex;
     flex-direction: column;
-    height: 350px; /* uniform reduced height */
+    height: 350px;
 }
 
 .post-card:hover {
@@ -290,9 +286,6 @@ body {
     transition: all 0.2s ease;
 }
 
-/* Add these new styles to the existing moderator dashboard CSS */
-
-/* Filter Section Styles */
 .filters {
     background: white;
     border-radius: 16px;
@@ -308,7 +301,6 @@ body {
     font-size: 0.875rem;
 }
 
-/* Category Dropdown Styles */
 .category-dropdown {
     position: relative;
 }
@@ -369,7 +361,6 @@ body {
     font-weight: 500;
 }
 
-/* Form Controls */
 .form-select, .form-control {
     border: 2px solid #e5e7eb;
     border-radius: 8px;
@@ -383,7 +374,6 @@ body {
     box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.25);
 }
 
-/* Button Styles */
 .btn-outline-secondary.dropdown-toggle {
     border: 2px solid #e5e7eb;
     border-radius: 8px;
@@ -405,7 +395,6 @@ body {
     outline: none;
 }
 
-/* Reset Button Styles */
 .btn-outline-secondary:not(.dropdown-toggle) {
     border: 2px solid #e5e7eb;
     color: #6b7280;
@@ -429,7 +418,6 @@ body {
     color: white;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
     .filters .row {
         row-gap: 1rem;
@@ -611,7 +599,6 @@ body {
     height: 32px;
 }
 
-/* Reports Section Styles (Mirrors Admin) */
 .stat-card.danger {
     background: linear-gradient(135deg, #ef4444, #dc2626);
 }
@@ -641,7 +628,6 @@ body {
     font-size: 0.875rem;
 }
 
-/* Reports Table */
 .table-hover tbody tr:hover {
     background-color: #f8fafc;
 }
@@ -656,7 +642,6 @@ body {
     color: #dc2626;
 }
 
-/* Report Actions */
 .btn-group-sm .btn {
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
@@ -670,7 +655,6 @@ body {
     }
 }
 
-/* Detail Groups in Modal */
 .detail-group {
     margin-bottom: 1rem;
 }

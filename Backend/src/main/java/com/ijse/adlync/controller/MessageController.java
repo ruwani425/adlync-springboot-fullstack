@@ -90,7 +90,6 @@ public class MessageController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<MessageResponseDTO> sendMessageToSeller(@RequestBody MessageRequestDTO requestDTO) {
-        // requestDTO should contain: sellerId, adId, subject, message, contactPreferences, senderPhone
         MessageResponseDTO response = service.sendMessage(requestDTO);
         return ResponseEntity.ok(response);
     }

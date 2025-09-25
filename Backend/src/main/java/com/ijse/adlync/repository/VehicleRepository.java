@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.VehicleEntity;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<VehicleEntity, Long> {
-    // Add custom query methods here
 }

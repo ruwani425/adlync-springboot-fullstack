@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.Work_over_seasEntity;
 
 @Repository
 public interface Work_over_seasRepository extends JpaRepository<Work_over_seasEntity, Long> {
-    // Add custom query methods here
 }

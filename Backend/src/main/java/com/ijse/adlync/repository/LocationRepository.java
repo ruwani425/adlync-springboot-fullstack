@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.LocationEntity;
 
 @Repository
 public interface LocationRepository extends JpaRepository<LocationEntity, Long> {
-    // Add custom query methods here
 }

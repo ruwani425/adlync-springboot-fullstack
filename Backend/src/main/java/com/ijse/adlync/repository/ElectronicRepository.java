@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.ElectronicEntity;
 
 @Repository
 public interface ElectronicRepository extends JpaRepository<ElectronicEntity, Long> {
-    // Add custom query methods here
 }

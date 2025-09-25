@@ -452,9 +452,7 @@ function resetFilters() {
 }
 
 function updateCategoryCounts() {
-    // This function would update the counts in the category dropdown
-    // You can implement this based on your API response
-    // For now, we'll keep the placeholder counts
+
 }
 
 function loadDashboardStats() {
@@ -792,7 +790,6 @@ function loadDashboardStatsOptimized() {
         })
         .catch(error => {
             console.error('Failed to load dashboard statistics:', error);
-            // Set default values on error
             $('#pendingCount, #approvedCount, #rejectedCount, #totalCount').text('0');
         });
 }

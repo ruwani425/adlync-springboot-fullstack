@@ -99,7 +99,7 @@ async function uploadImagesToFirebase(selected) {
 }
 
 function validateImages(files) {
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    const maxSize = 5 * 1024 * 1024;
     const allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 
     for (let file of files) {

@@ -6,5 +6,4 @@ import com.ijse.adlync.entity.EssentialsEntity;
 
 @Repository
 public interface EssentialsRepository extends JpaRepository<EssentialsEntity, Long> {
-    // Add custom query methods here
 }
