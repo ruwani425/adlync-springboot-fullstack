@@ -1060,11 +1060,6 @@ function generateDynamicForm(categoryId) {
                             <option value="SELL">Sell</option>
                         </select>
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label" for="make">Make/Brand *</label>
-                        <input class="form-control" id="make" name="make" placeholder="e.g., Toyota, Honda" required 
-                               type="text">
-                    </div>
                 </div>
                 <div class="row mb-3">
                     <div class="col-md-6">

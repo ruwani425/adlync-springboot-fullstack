@@ -380,6 +380,40 @@ function createPostCard(post) {
     `);
 }
 
+// function viewPost(postId) {
+//     currentPost = filteredPosts.find(post => post.post_id === postId);
+//     if (!currentPost) return;
+//
+//     const formattedPrice = formatPrice(currentPost.price);
+//     const categoryName = getCategoryName(currentPost.category);
+//     const subcategoryName = getSubcategoryName(currentPost.subcategory);
+//
+//     const modalContent = `
+//         <div class="row">
+//             <div class="col-md-6">
+//                 <img src="${currentPost.images?.[0]?.image_url || '/assets/placeholder.png'}"
+//                      alt="${currentPost.title}"
+//                      class="img-fluid rounded">
+//             </div>
+//             <div class="col-md-6">
+//                 ${createDetailGroup("Title", currentPost.title)}
+//                 ${createDetailGroup("Price", `<div class="h4 text-success">${formattedPrice}</div>`)}
+//                 ${createDetailGroup("Category", `${categoryName}${subcategoryName ? " > " + subcategoryName : ""}`)}
+//                 ${createDetailGroup("Condition", currentPost.condition?.replace('-', ' '))}
+//                 ${createDetailGroup("Location", `${currentPost.location.address}, ${currentPost.location.city}, ${currentPost.location.district}`)}
+//                 ${createDetailGroup("Seller", `${currentPost.user.name} (${currentPost.user.email})`)}
+//                 ${createDetailGroup("Posted", new Date(currentPost.createdAt).toLocaleString())}
+//             </div>
+//         </div>
+//         <div class="mt-3">
+//             ${createDetailGroup("Description", currentPost.description)}
+//         </div>
+//     `;
+//
+//     $('#modalBody').html(modalContent);
+//     new bootstrap.Modal($('#postDetailModal')[0]).show();
+// }
+
 function viewPost(postId) {
     currentPost = filteredPosts.find(post => post.post_id === postId);
     if (!currentPost) return;
@@ -387,6 +421,14 @@ function viewPost(postId) {
     const formattedPrice = formatPrice(currentPost.price);
     const categoryName = getCategoryName(currentPost.category);
     const subcategoryName = getSubcategoryName(currentPost.subcategory);
+
+    const bankSlipLink = currentPost.payment?.payment_type === "BANK_TRANSFER" && currentPost.payment?.slip_url
+        ? `<a href="${currentPost.payment.slip_url}" 
+             target="_blank" 
+             class="btn btn-outline-primary btn-sm ms-2">
+             <i class="bi bi-receipt-cutoff me-1"></i>View Bank Slip
+           </a>`
+        : `<span class="text-muted">No Slip</span>`;
 
     const modalContent = `
         <div class="row">
@@ -403,6 +445,7 @@ function viewPost(postId) {
                 ${createDetailGroup("Location", `${currentPost.location.address}, ${currentPost.location.city}, ${currentPost.location.district}`)}
                 ${createDetailGroup("Seller", `${currentPost.user.name} (${currentPost.user.email})`)}
                 ${createDetailGroup("Posted", new Date(currentPost.createdAt).toLocaleString())}
+                ${createDetailGroup("Bank Slip", bankSlipLink)}
             </div>
         </div>
         <div class="mt-3">
