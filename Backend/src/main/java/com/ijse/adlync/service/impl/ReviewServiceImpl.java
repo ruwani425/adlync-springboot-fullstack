@@ -11,6 +11,8 @@ import com.ijse.adlync.repository.ReviewRepository;
 import com.ijse.adlync.repository.UserRepository;
 import com.ijse.adlync.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -44,12 +46,14 @@ public class ReviewServiceImpl implements ReviewService {
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "reviewStats", allEntries = true)
     public ReviewResponseDTO create(ReviewRequestDTO requestDTO, UserEntity user) {
         ReviewEntity entity = toEntity(requestDTO, user);
         entity = repository.save(entity);
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "reviewStats", allEntries = true)
     public ReviewResponseDTO update(Long id, ReviewRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("ReviewEntity not found with id: " + id);
@@ -60,6 +64,7 @@ public class ReviewServiceImpl implements ReviewService {
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "reviewStats", allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("ReviewEntity not found with id: " + id);
@@ -145,6 +150,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(value = "reviewStats", key = "#postId")
     public ReviewStatsDTO getReviewStatsByPostId(Long postId) {
         PostEntity postEntity = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
         ReviewStatsDTO stats = new ReviewStatsDTO();

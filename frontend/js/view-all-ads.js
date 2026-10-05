@@ -407,7 +407,7 @@ function createAdCard({postId, title, price, categoryName, locationName, seller,
                     <div class="mt-auto d-flex justify-content-between align-items-center">
                         <small class="text-muted">by ${escapeHtml(seller)}</small>
                         <a class="btn btn-emerald btn-sm view-details-btn" 
-                           href="advertisement-details.html?id=${postId}">
+                           href="ad-details.html?postId=${postId}">
                             View Details
                         </a>
                     </div>
@@ -598,9 +598,13 @@ function escapeHtml(unsafe) {
 }
 
 $(document).on("click", ".view-details-btn", function (e) {
-    e.preventDefault()
-    const $card = $(this).closest(".ad-item")
-    const categoryValue = $card.find(".category-badge").text().trim().toLowerCase()
-    const postId = $card.data("post-id") || ""
-    window.location.href = `../pages/ad-details.html?categoryName=${categoryValue}&postId=${postId}`
-})
+    e.preventDefault();
+    const $card = $(this).closest(".ad-item");
+    const categoryValue = $card.find(".category-badge").text().trim().toLowerCase();
+    const postId = $card.data("post-id") || "";
+    const inPagesDir = window.location.pathname.includes("/pages/");
+    const targetUrl = inPagesDir
+        ? `ad-details.html?categoryName=${encodeURIComponent(categoryValue)}&postId=${postId}`
+        : `pages/ad-details.html?categoryName=${encodeURIComponent(categoryValue)}&postId=${postId}`;
+    window.location.href = targetUrl;
+});

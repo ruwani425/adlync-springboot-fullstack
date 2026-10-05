@@ -6,6 +6,8 @@ import com.ijse.adlync.entity.Advertisement_typeEntity;
 import com.ijse.adlync.repository.Advertisement_typeRepository;
 import com.ijse.adlync.service.Advertisement_typeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class Advertisement_typeServiceImpl implements Advertisement_typeService 
     private Advertisement_typeRepository repository;
 
     @Override
+    @Cacheable("adTypes")
     public List<Advertisement_typeResponseDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::toResponseDTO)
@@ -32,6 +35,7 @@ public class Advertisement_typeServiceImpl implements Advertisement_typeService 
     }
 
     @Override
+    @CacheEvict(value = "adTypes", allEntries = true)
     public Advertisement_typeResponseDTO create(Advertisement_typeRequestDTO requestDTO) {
         Advertisement_typeEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
@@ -39,6 +43,7 @@ public class Advertisement_typeServiceImpl implements Advertisement_typeService 
     }
 
     @Override
+    @CacheEvict(value = "adTypes", allEntries = true)
     public Advertisement_typeResponseDTO update(Long id, Advertisement_typeRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("Advertisement_typeEntity not found with id: " + id);
@@ -50,6 +55,7 @@ public class Advertisement_typeServiceImpl implements Advertisement_typeService 
     }
 
     @Override
+    @CacheEvict(value = "adTypes", allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("Advertisement_typeEntity not found with id: " + id);

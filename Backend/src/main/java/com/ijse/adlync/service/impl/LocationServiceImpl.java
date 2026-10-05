@@ -2,6 +2,8 @@ package com.ijse.adlync.service.impl;
 
 import com.ijse.adlync.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,6 +18,7 @@ public class LocationServiceImpl implements LocationService {
     @Autowired
     private LocationRepository repository;
 
+    @Cacheable("locations")
     public List<LocationResponseDTO> findAll() {
         return repository.findAll().stream()
             .map(this::toResponseDTO)
@@ -28,12 +31,14 @@ public class LocationServiceImpl implements LocationService {
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "locations", allEntries = true)
     public LocationResponseDTO create(LocationRequestDTO requestDTO) {
         LocationEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "locations", allEntries = true)
     public LocationResponseDTO update(Long id, LocationRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("LocationEntity not found with id: " + id);
@@ -44,6 +49,7 @@ public class LocationServiceImpl implements LocationService {
         return toResponseDTO(entity);
     }
 
+    @CacheEvict(value = "locations", allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("LocationEntity not found with id: " + id);

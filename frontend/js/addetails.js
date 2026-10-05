@@ -176,7 +176,9 @@ function getTitleForCategory(categoryName) {
 
 function renderCategoryFields(data, fields, iconClass, categoryName) {
     const $container = $("#categoryDetailsContent").empty();
-    const categoryData = data.common?.[categoryName] || {};
+    const common = data.common || {};
+    const norm = typeof normalizeCategoryKey === 'function' ? normalizeCategoryKey(categoryName) : categoryName;
+    const categoryData = common[norm] || common[categoryName] || common[categoryName?.toLowerCase()] || common['services'] || common['service'] || common['essentials'] || common['essential'] || {};
 
     fields.forEach((field) => {
         const value = categoryData[field] || "-";
@@ -266,6 +268,46 @@ function updateSidebarReviewStats() {
     $('#sidebarTotalReviews').text(currentCount + 1);
 }
 
+function normalizeCategoryKey(raw) {
+    if (!raw) return 'vehicle';
+    const clean = raw.toLowerCase().trim().replace(/[- ]+/g, '_');
+    const map = {
+        'vehicles': 'vehicle',
+        'vehicle': 'vehicle',
+        'animals': 'animal',
+        'animal': 'animal',
+        'electronics': 'electronic',
+        'electronic': 'electronic',
+        'properties': 'property',
+        'property': 'property',
+        'jobs': 'job',
+        'job': 'job',
+        'services': 'service',
+        'service': 'service',
+        'sports': 'sport',
+        'sport': 'sport',
+        'agriculture': 'agriculture',
+        'kids': 'kids',
+        'fashion': 'fashion_and_beauty',
+        'fashion_and_beauty': 'fashion_and_beauty',
+        'fashion_beauty': 'fashion_and_beauty',
+        'entertainment': 'entertainment',
+        'entertaintment': 'entertainment',
+        'education': 'education',
+        'mobile': 'mobile',
+        'overseas': 'work_over_seas',
+        'work_overseas': 'work_over_seas',
+        'work_over_seas': 'work_over_seas',
+        'work_over_sea': 'work_over_seas',
+        'home': 'home_and_garden',
+        'home_garden': 'home_and_garden',
+        'home_and_garden': 'home_and_garden',
+        'essentials': 'essentials',
+        'essential': 'essentials'
+    };
+    return map[clean] || clean;
+}
+
 function setCookie(name, value) {
     document.cookie = `${name}=${value}; path=/`;
 }
@@ -276,76 +318,100 @@ $(document).ready(() => {
     initializeReviewsModal();
 
     const urlParams = new URLSearchParams(window.location.search);
-    const categoryName = urlParams.get("categoryName");
+    let categoryName = urlParams.get("categoryName") || "vehicle";
     let postId = urlParams.get("postId");
 
-    if (!categoryName || !postId) {
-        console.error("Missing categoryName or postId in URL");
+    if (!postId) {
+        console.error("Missing postId in URL");
         return;
     }
 
     const categoryMap = {
         agriculture: {
             fields: ["product_type", "quantity", "season", "variety", "production_Date", "certifications", "condition"],
-            icon: "bi-seedling"
+            icon: "bi-seedling",
+            name: "Agriculture"
         },
-        animal: {fields: ["species", "breed", "age", "gender", "vaccination_status"], icon: "bi-heart"},
+        animal: {
+            fields: ["species", "breed", "age", "gender", "vaccination_status"],
+            icon: "bi-heart",
+            name: "Animals"
+        },
         education: {
             fields: ["course_name", "institute", "duration", "qualification_offered", "subject_area", "study_mode", "education_level", "schedule", "requirements"],
-            icon: "bi-book"
+            icon: "bi-book",
+            name: "Education"
         },
-        electronic: {fields: ["brand", "type", "model", "warranty", "condition", "accessories"], icon: "bi-tv"},
+        electronic: {
+            fields: ["brand", "type", "model", "warranty", "condition", "accessories"],
+            icon: "bi-tv",
+            name: "Electronics"
+        },
         entertainment: {
             fields: ["type", "format", "brand", "genre", "release_year", "rating", "creator", "condition"],
-            icon: "bi-music-note-beamed"
+            icon: "bi-music-note-beamed",
+            name: "Entertainment"
         },
-        essential: {
+        essentials: {
             fields: ["brand", "quantity", "expiry_date", "product_type", "storage_instructions", "condition"],
-            icon: "bi-bag"
+            icon: "bi-bag",
+            name: "Essentials"
         },
-        "fashion and beauty": {
+        fashion_and_beauty: {
             fields: ["item_type", "brand", "size", "gender", "condition", "color", "material", "style_note"],
-            icon: "bi-gem"
+            icon: "bi-gem",
+            name: "Fashion & Beauty"
         },
-        "home and garden": {
+        home_and_garden: {
             fields: ["item_type", "material", "dimensions", "condition", "brand", "color", "weight", "assembly_required", "special_features"],
-            icon: "bi-house"
+            icon: "bi-house",
+            name: "Home & Garden"
         },
         job: {
             fields: ["position", "company", "salary_min", "salary_max", "industry", "job_type", "requirements", "expiriance_level"],
-            icon: "bi-briefcase"
+            icon: "bi-briefcase",
+            name: "Jobs"
         },
         kids: {
             fields: ["item_type", "age_rang", "brand", "condition", "size", "gender", "safety_information"],
-            icon: "bi-emoji-smile"
+            icon: "bi-emoji-smile",
+            name: "Kids"
         },
         mobile: {
             fields: ["storage", "condition", "warranty_status", "ram", "brand", "model", "colour", "included_accessories", "additional_information"],
-            icon: "bi-phone"
+            icon: "bi-phone",
+            name: "Mobile"
         },
-        property: {fields: ["type", "land_size", "bedroom", "barthroom", "furnished"], icon: "bi-building"},
+        property: {
+            fields: ["type", "land_size", "bedroom", "barthroom", "furnished"],
+            icon: "bi-building",
+            name: "Properties"
+        },
         service: {
             fields: ["service_type", "provider_name", "availability", "charges", "service_area", "qualifications"],
-            icon: "bi-tools"
+            icon: "bi-tools",
+            name: "Services"
         },
-        sport: {fields: ["equipment_type", "brand", "condition", "size", "additional_information"], icon: "bi-basket"},
+        sport: {
+            fields: ["equipment_type", "brand", "condition", "size", "additional_information"],
+            icon: "bi-basket",
+            name: "Sports"
+        },
         vehicle: {
             fields: ["vehicle_type", "mileage", "year", "brand", "model", "fuel_type", "transmission", "condition"],
-            icon: "bi-car-front"
+            icon: "bi-car-front",
+            name: "Vehicles"
         },
-        "work over seas": {
+        work_over_seas: {
             fields: ["position", "country", "salary", "requirements", "contract_duration", "company_or_agency_name", "visa_status", "accommodation", "additional_benefits"],
-            icon: "bi-globe"
-        },
+            icon: "bi-globe",
+            name: "Work Overseas"
+        }
     };
 
-    const category = categoryMap[categoryName.toLowerCase()];
-    if (!category) {
-        console.warn("Category not found");
-        return;
-    }
-
-    updateCategoryDetailsTitle(category.icon, categoryName);
+    let normKey = normalizeCategoryKey(categoryName);
+    let categoryConfig = categoryMap[normKey] || categoryMap.vehicle;
+    updateCategoryDetailsTitle(categoryConfig.icon, categoryConfig.name || categoryName);
 
     $.ajax({
         url: `http://localhost:8080/api/posts/post-detail/${postId}`,
@@ -364,24 +430,40 @@ $(document).ready(() => {
                 });
             };
 
+            // Detect actual category from backend response if available
+            if (data.category && data.category.name) {
+                categoryName = data.category.name;
+                normKey = normalizeCategoryKey(categoryName);
+                if (categoryMap[normKey]) {
+                    categoryConfig = categoryMap[normKey];
+                    updateCategoryDetailsTitle(categoryConfig.icon, categoryConfig.name || categoryName);
+                }
+            }
+
             let adTitle = data.title || "-";
 
-            const conditionRaw = data.common?.[categoryName]?.condition;
-            console.log(data);
+            const commonObj = data.common || {};
+            const catObj = commonObj[normKey] || commonObj[categoryName] || {};
+            const conditionRaw = catObj?.condition;
             if (conditionRaw) {
                 const conditionFormatted = conditionRaw.replace(/_/g, " ").toLowerCase();
                 adTitle += " - " + conditionFormatted + " condition ";
             }
 
+            const formattedPrice = (data.price !== undefined && data.price !== null) 
+                ? `Rs. ${Number(data.price).toLocaleString()}` 
+                : "-";
+
             $("#adTitle").text(adTitle);
-            $("#adPrice").text(`Rs. ${data.price?.toLocaleString() || "-"}`);
-            $("#postId").text(data.post_id || "-");
+            $("#adPrice").text(formattedPrice);
+            $("#postPrice").text(formattedPrice);
+            $("#postId").text(data.post_id ? `#${data.post_id}` : "-");
             $("#contactNumber").text(data.contact_number || "-");
             $("#postStatus").text(data.status || "-");
             $("#adDescription").html(`<p>${data.description || "-"}</p>`);
-            $("#adCategory").html(`<i class="bi bi-tag me-1"></i>${categoryName}`);
+            $("#adCategory").html(`<i class="bi bi-tag me-1"></i>${categoryConfig.name || categoryName}`);
             $("#adCreatedAt").html(`<i class="bi bi-calendar me-1"></i>${formatDate(data.createdAt)}`);
-            $("#adType").html(`<i class="bi bi-bookmark me-1"></i>${(data.advertisement_type.type || "-").toLowerCase()}`);
+            $("#adType").html(`<i class="bi bi-bookmark me-1"></i>${(data.advertisement_type?.type || "-").toLowerCase()}`);
 
             if (data.user) {
                 const seller = data.user;
@@ -390,7 +472,7 @@ $(document).ready(() => {
                 $("#sellerNameValue").text(seller.name);
                 $("#sellerEmail").attr("href", `mailto:${seller.email}`).text(seller.email);
 
-                const joinDate = seller.joinDate.split("T")[0];
+                const joinDate = seller.joinDate ? seller.joinDate.split("T")[0] : "-";
                 $("#sellerMemberSince").text(joinDate);
 
                 let profileUrl = seller.profileImageUrl;
@@ -419,7 +501,7 @@ $(document).ready(() => {
             window.currentSellerData = data.user;
             window.currentAdData = data;
 
-            renderCategoryFields(data, category.fields, category.icon, categoryName);
+            renderCategoryFields(data, categoryConfig.fields, categoryConfig.icon, normKey);
 
             if (data.images?.length > 0) {
                 const $indicators = $("#carouselIndicators").empty();

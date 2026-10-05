@@ -6,6 +6,8 @@ import com.ijse.adlync.entity.CategoryEntity;
 import com.ijse.adlync.repository.CategoryRepository;
 import com.ijse.adlync.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,6 +20,7 @@ public class CategoryServiceImpl implements CategoryService {
     private CategoryRepository repository;
 
     @Override
+    @Cacheable("categories")
     public List<CategoryResponseDTO> findAll() {
         return repository.findAll().stream()
                 .map(this::toResponseDTO)
@@ -32,6 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryResponseDTO create(CategoryRequestDTO requestDTO) {
         CategoryEntity entity = toEntity(requestDTO);
         entity = repository.save(entity);
@@ -39,6 +43,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "categories", allEntries = true)
     public CategoryResponseDTO update(Long id, CategoryRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("CategoryEntity not found with id: " + id);
@@ -50,6 +55,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @CacheEvict(value = "categories", allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("CategoryEntity not found with id: " + id);

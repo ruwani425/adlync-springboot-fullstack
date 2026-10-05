@@ -12,6 +12,8 @@ import com.ijse.adlync.service.UserService;
 import com.ijse.adlync.util.ValueEncoder;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,6 +67,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public RegisterResponseDTO update(Long id, RegisterRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("UserEntity not found with id: " + id);
@@ -76,6 +79,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("UserEntity not found with id: " + id);
@@ -84,6 +88,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public UserResponseDTO updateModerator(String token, String password) throws Exception {
         String email = valueEncoder.decrypt(token);
         UserEntity user = repository.findByEmail(email).orElseThrow(() -> new Exception("UserEntity not found with email: " + email));
@@ -94,6 +99,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Cacheable(value = "userInfo", key = "#username")
     public UserResponseDTO getUserByUsername(String username) {
         UserEntity user = repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -101,6 +107,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public UserResponseDTO updateProfilePhoto(String username, String profileImageUrl) {
         UserEntity user = repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -112,6 +119,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public void resetPassword(String email, String newPassword) throws Exception {
         if (!checkEmailExists(email)) {
             throw new Exception("Email not found in the system.");
@@ -172,6 +180,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(value = "userInfo", allEntries = true)
     public void changePassword(String username, String currentPassword, String newPassword) {
         UserEntity user = repository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));

@@ -296,13 +296,13 @@ $(document).ready(function () {
                     species: formDataObj.animal_type || formDataObj.species,
                     breed: formDataObj.breed,
                     age: parseInt(formDataObj.age) || null,
-                    gender: formDataObj.gender,
-                    vaccination_status: formDataObj.vaccinated,
+                    gender: formDataObj.gender || null,
+                    vaccination_status: formDataObj.vaccinated || null,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -310,24 +310,24 @@ $(document).ready(function () {
                         images: imageRequestDTOs
                     }
                 };
-                console.log(animalData)
+                console.log(animalData);
                 localStorage.setItem("adFormData", JSON.stringify(animalData));
             } else if (selectedCategory === 'vehicles') {
                 const vehicleData = {
                     vehicle_type: formDataObj.vehicle_type,
                     mileage: formDataObj.mileage,
-                    year: formDataObj.year,
+                    year: formDataObj.year ? parseInt(formDataObj.year) : null,
                     brand: formDataObj.brand,
                     model: formDataObj.model,
-                    fuel_type: formDataObj.fuel_type,
+                    fuel_type: formDataObj.fuel_type || null,
                     transmission: formDataObj.transmission,
                     condition: formDataObj.condition,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -337,7 +337,6 @@ $(document).ready(function () {
                 };
                 localStorage.setItem("adFormData", JSON.stringify(vehicleData));
             } else if (selectedCategory === 'electronics') {
-
                 let accessoriesArray = [];
                 if (formDataObj.accessories) {
                     accessoriesArray = formDataObj.accessories
@@ -350,14 +349,14 @@ $(document).ready(function () {
                     brand: formDataObj.brand,
                     model: formDataObj.model,
                     warranty: formDataObj.warranty,
-                    condition: formDataObj.condition,
+                    condition: formDataObj.condition || null,
                     accessories: accessoriesArray,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -369,16 +368,16 @@ $(document).ready(function () {
             } else if (selectedCategory === 'properties') {
                 const propertiesData = {
                     type: formDataObj.property_type,
-                    land_size: formDataObj.area,
-                    bedroom: parseInt(formDataObj.bedrooms) || 0,
-                    barthroom: parseInt(formDataObj.bathrooms) || 0,
-                    furnished: formDataObj.furnishing,
-                    advertisement_type: formDataObj.listing_type,
+                    land_size: formDataObj.area ? parseFloat(formDataObj.area) : null,
+                    bedroom: formDataObj.bedrooms ? String(formDataObj.bedrooms) : null,
+                    barthroom: formDataObj.bathrooms ? String(formDataObj.bathrooms) : null,
+                    furnished: formDataObj.furnishing || null,
+                    advertisement_type: formDataObj.listing_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -388,20 +387,21 @@ $(document).ready(function () {
                 };
                 localStorage.setItem("adFormData", JSON.stringify(propertiesData));
             } else if (selectedCategory === 'jobs') {
+                const validJobType = (formDataObj.job_type && formDataObj.job_type !== 'VOLUNTEER') ? formDataObj.job_type : 'FULL_TIME';
                 const jobsData = {
                     position: formDataObj.position,
                     company: formDataObj.company,
-                    salary_min: parseFloat(formDataObj.salary_min),
-                    salary_max: parseFloat(formDataObj.salary_max),
+                    salary_min: formDataObj.salary_min ? parseFloat(formDataObj.salary_min) : 0,
+                    salary_max: formDataObj.salary_max ? parseFloat(formDataObj.salary_max) : 0,
                     industry: formDataObj.industry,
-                    job_type: formDataObj.job_type,
+                    job_type: validJobType,
                     requirements: formDataObj.requirements,
                     expiriance_level: formDataObj.experience_level,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -422,7 +422,7 @@ $(document).ready(function () {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -435,15 +435,15 @@ $(document).ready(function () {
                 const sportsData = {
                     equipment_type: formDataObj.equipment_type,
                     brand: formDataObj.brand,
-                    condition: formDataObj.condition,
+                    condition: formDataObj.condition || null,
                     size: formDataObj.size,
                     additional_information: formDataObj.additional_info,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -455,17 +455,17 @@ $(document).ready(function () {
             } else if (selectedCategory === 'agriculture') {
                 const agricultureData = {
                     product_type: formDataObj.product_type,
-                    quantity: formDataObj.quantity,
+                    quantity: formDataObj.quantity ? parseInt(formDataObj.quantity) : null,
                     season: formDataObj.season,
                     variety: formDataObj.variety,
-                    production_Date: formDataObj.harvest_date,
+                    production_Date: formDataObj.harvest_date || null,
                     certifications: formDataObj.certifications,
-                    condition: formDataObj.condition,
+                    condition: formDataObj.condition || null,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -479,15 +479,15 @@ $(document).ready(function () {
                     item_type: formDataObj.item_type,
                     age_range: formDataObj.age_range,
                     brand: formDataObj.brand,
-                    condition: formDataObj.condition,
+                    condition: formDataObj.condition || null,
                     size: formDataObj.size,
-                    gender: formDataObj.gender,
+                    gender: formDataObj.gender || null,
                     safety_information: formDataObj.safety_info,
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -501,17 +501,17 @@ $(document).ready(function () {
                     item_type: formDataObj.item_type,
                     brand: formDataObj.brand,
                     size: formDataObj.size,
-                    gender: formDataObj.gender,
-                    condition: formDataObj.condition,
+                    gender: formDataObj.gender || null,
+                    condition: formDataObj.condition || null,
                     color: formDataObj.color,
                     material: formDataObj.material,
                     style_note: formDataObj.style_note,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -521,22 +521,24 @@ $(document).ready(function () {
                 };
                 localStorage.setItem("adFormData", JSON.stringify(fashionData));
             } else if (selectedCategory === 'entertainment') {
-
+                const formattedReleaseYear = formDataObj.release_year 
+                    ? (formDataObj.release_year.length === 4 ? `${formDataObj.release_year}-01-01` : formDataObj.release_year)
+                    : null;
                 const entertainmentData = {
                     type: formDataObj.type,
                     format: formDataObj.format,
                     brand: formDataObj.brand,
                     genre: formDataObj.genre,
-                    release_year: formDataObj.release_year,
+                    release_year: formattedReleaseYear,
                     rating: formDataObj.rating,
                     creator: formDataObj.artist_author,
-                    condition: formDataObj.condition,
-                    advertisementType: formDataObj.advertisement_type,
+                    condition: formDataObj.condition || null,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -545,7 +547,6 @@ $(document).ready(function () {
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(entertainmentData));
-
             } else if (selectedCategory === 'education') {
                 const educationData = {
                     course_name: formDataObj.course_name,
@@ -561,7 +562,7 @@ $(document).ready(function () {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -581,12 +582,12 @@ $(document).ready(function () {
                     colour: formDataObj.color,
                     included_accessories: formDataObj.accessories,
                     additional_information: formDataObj.additional_info,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -595,7 +596,6 @@ $(document).ready(function () {
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(mobileData));
-
             } else if (selectedCategory === 'work_overseas') {
                 const workOverSeasData = {
                     position: formDataObj.position,
@@ -612,7 +612,7 @@ $(document).ready(function () {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -621,7 +621,6 @@ $(document).ready(function () {
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(workOverSeasData));
-
             } else if (selectedCategory === 'home_garden') {
                 const homeGardenDetail = {
                     item_type: formDataObj.item_type,
@@ -633,12 +632,12 @@ $(document).ready(function () {
                     weight: formDataObj.weight,
                     assembly_required: formDataObj.assembly,
                     special_features: formDataObj.features,
-                    advertisementType: formDataObj.advertisement_type,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,
@@ -647,21 +646,20 @@ $(document).ready(function () {
                     }
                 };
                 localStorage.setItem("adFormData", JSON.stringify(homeGardenDetail));
-
             } else if (selectedCategory === 'essentials') {
                 const essentials = {
                     brand: formDataObj.brand,
-                    quantity: parseInt(formDataObj.quantity),
-                    expiry_date: formDataObj.expiry_date,
+                    quantity: formDataObj.quantity ? parseInt(formDataObj.quantity) : null,
+                    expiry_date: formDataObj.expiry_date || null,
                     product_type: formDataObj.product_type,
                     storage_instructions: formDataObj.storage_instructions,
-                    condition: formDataObj.condition,
-                    advertisementType: formDataObj.advertisement_type,
+                    condition: formDataObj.condition || null,
+                    advertisementType: formDataObj.advertisement_type || 'SELL',
                     postRequestDTO: {
                         title: formDataObj.title,
                         description: formDataObj.description,
                         contact_number: formDataObj.contact,
-                        price: parseFloat(formDataObj.price),
+                        price: parseFloat(formDataObj.price) || 0,
                         status: "PENDING",
                         city: formDataObj.city,
                         district: formDataObj.district,

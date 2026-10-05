@@ -714,10 +714,10 @@ function renderUserAds(posts) {
                         <span><i class="bi bi-eye me-1"></i>${ad.views || 0} views</span>
                     </div>
                     <div class="d-flex gap-2 action-buttons">
-                        <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="editAd(${ad.id})">
+                        <button class="btn btn-outline-secondary btn-sm flex-fill" onclick="editAd(${ad.post_id || ad.id})">
                             <i class="bi bi-pencil me-1"></i>Edit
                         </button>
-                        <button class="btn btn-outline-danger btn-sm flex-fill" onclick="deleteAd(${ad.id})">
+                        <button class="btn btn-outline-danger btn-sm flex-fill" onclick="deleteAd(${ad.post_id || ad.id})">
                             <i class="bi bi-trash me-1"></i>Delete
                         </button>
                     </div>

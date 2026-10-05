@@ -13,10 +13,10 @@ import java.util.List;
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long> {
 
-    @Query("SELECT r FROM ReviewEntity r WHERE r.post = :post ORDER BY r.created_at DESC")
+    @Query("SELECT r FROM ReviewEntity r LEFT JOIN FETCH r.user WHERE r.post = :post ORDER BY r.created_at DESC")
     List<ReviewEntity> findByPost_OrderByCreated_atDesc(@Param("post") PostEntity post);
 
-    @Query("SELECT r FROM ReviewEntity r WHERE r.post.post_id = :postId ORDER BY r.created_at DESC")
+    @Query("SELECT r FROM ReviewEntity r LEFT JOIN FETCH r.user WHERE r.post.post_id = :postId ORDER BY r.created_at DESC")
     List<ReviewEntity> findByPostIdWithLimit(@Param("postId") Long postId, Pageable pageable);
 
     @Query("SELECT COUNT(r) FROM ReviewEntity r WHERE r.post = :post")
