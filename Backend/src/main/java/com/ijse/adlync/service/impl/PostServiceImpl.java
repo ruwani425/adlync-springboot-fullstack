@@ -11,6 +11,8 @@ import com.ijse.adlync.service.PostService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,6 +78,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "approvedPosts", key = "#status.toString() + '_' + #pageable.pageNumber + '_' + #pageable.pageSize", condition = "#status == T(com.ijse.adlync.entity.enums.PostEntityStatusEnum).APPROVED")
     public PageResponse<PostResponseDTO> findAllByStatus(PostEntityStatusEnum status, Pageable pageable) {
         Page<PostEntity> postPage;
 
@@ -101,6 +104,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
     public PostResponseDTO approvePost(Long id) {
         PostEntity post = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
@@ -117,11 +121,11 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public long getPostCountByUser(Long userId) {
-        System.out.println(repository.countByUser_Id(userId));
         return repository.countByUser_Id(userId);
     }
 
     @Override
+    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
     public PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status) {
         PostEntity post = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
@@ -138,10 +142,10 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
+    @Cacheable(value = "singlePost", key = "#id")
     public PostResponseDTO findById(Long id) {
         PostEntity entity = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("PostEntity not found with id: " + id));
-        System.out.println("impl class post entity :" + entity.getAdvertisement_type().getAd_id());
         return toResponseDTO(entity);
     }
 
@@ -153,6 +157,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
     public PostResponseDTO update(Long id, PostRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("PostEntity not found with id: " + id);
@@ -164,9 +169,9 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
-            System.out.println("PostEntity not found with id: " + id);
             throw new RuntimeException("PostEntity not found with id: " + id);
         }
         repository.deleteById(id);

@@ -81,6 +81,7 @@ public class SecurityConfig {
                 "https://*.netlify.app",
                 "https://*.onrender.com",
                 "https://*.koyeb.app",
+                "https://*.hf.space",
                 "https://*.pages.dev"
         ));
 
