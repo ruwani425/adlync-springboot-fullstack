@@ -80,6 +80,7 @@ public class SecurityConfig {
                 "https://*.vercel.app",
                 "https://*.netlify.app",
                 "https://*.onrender.com",
+                "https://*.koyeb.app",
                 "https://*.pages.dev"
         ));
 
