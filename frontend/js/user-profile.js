@@ -567,15 +567,27 @@ function getUserByToken() {
 
 function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 3) {
     const container = $('#userAdsContainer');
-    container.html(`
-        <div class="col-12">
-            <div class="empty-state">
-                <i class="bi bi-arrow-clockwise"></i>
-                <h4>Loading your ads...</h4>
-                <p>Please wait while we fetch your advertisements.</p>
+    const cacheKey = `adlync_user_ads_${userId}_${status}_${page}`;
+    const cached = sessionStorage.getItem(cacheKey);
+
+    if (cached) {
+        try {
+            const cachedPosts = JSON.parse(cached);
+            if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
+                renderUserAds(cachedPosts);
+                updateStats(cachedPosts);
+            }
+        } catch (e) {}
+    } else if (container.children().length === 0 || container.find('.empty-state').length === 0) {
+        container.html(`
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-emerald" style="color: #059669;" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <p class="text-muted mt-2">Loading your advertisements...</p>
             </div>
-        </div>
-    `);
+        `);
+    }
 
     const token = getCookie("token");
     if (!token) return;
@@ -590,6 +602,10 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 3) {
             if (status !== 'all') {
                 posts = posts.filter(p => p.status.toLowerCase() === status.toLowerCase());
             }
+
+            try {
+                sessionStorage.setItem(cacheKey, JSON.stringify(posts));
+            } catch (e) {}
 
             renderUserAds(posts);
             updateStats(posts);

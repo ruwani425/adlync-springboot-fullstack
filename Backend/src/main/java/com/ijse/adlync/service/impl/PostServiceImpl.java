@@ -104,7 +104,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
+    @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO approvePost(Long id) {
         PostEntity post = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
@@ -125,7 +125,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
+    @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status) {
         PostEntity post = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
@@ -157,7 +157,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
+    @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO update(Long id, PostRequestDTO requestDTO) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("PostEntity not found with id: " + id);
@@ -169,7 +169,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @CacheEvict(value = {"approvedPosts", "singlePost"}, allEntries = true)
+    @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public void deleteById(Long id) {
         if (!repository.existsById(id)) {
             throw new RuntimeException("PostEntity not found with id: " + id);
@@ -733,6 +733,7 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    @Cacheable(value = "userPosts", key = "#userId + '_' + (#status != null ? #status : 'all') + '_' + #pageable.pageNumber + '_' + #pageable.pageSize")
     public PageResponse<PostResponseDTO> findPostsByUserWithPagination(Long userId, String status, Pageable pageable) {
         Page<PostEntity> postsPage;
 
