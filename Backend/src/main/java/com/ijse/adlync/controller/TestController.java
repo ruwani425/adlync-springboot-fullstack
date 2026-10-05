@@ -36,4 +36,16 @@ public class TestController {
         responseDTO.setCategory(modelMapper.map(categoryRepository.findById(post.get().getCategory().getCategory_id()), CategoryResponseDTO.class));
         return responseDTO;
     }
+
+    @GetMapping("/ping")
+    @Operation(summary = "Lightweight ping", description = "Returns pong for keep-alive monitoring")
+    public String ping() {
+        return "pong";
+    }
+
+    @GetMapping("/health")
+    @Operation(summary = "Health check", description = "Returns status for keep-alive monitoring")
+    public String health() {
+        return "OK";
+    }
 }
