@@ -1,0 +1,27 @@
+# Environment & Secrets (NEVER COMMIT)
+.env
+*.env
+*.env.local
+.env.*
+!.env.example
+frontend/js/env.js
+application-secret.properties
+
+# Java & Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+*.ipr
+*.iws
+
+# OS specific files
+.DS_Store
+Thumbs.db
+desktop.ini

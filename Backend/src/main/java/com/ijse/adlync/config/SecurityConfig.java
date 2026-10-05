@@ -36,6 +36,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/test/**").permitAll()
                         .requestMatchers("/v3/api-docs/**").permitAll()
                         .requestMatchers("/swagger-ui/**").permitAll()
@@ -46,7 +47,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/users/set-moderator-password/**").permitAll()
                         .requestMatchers("/api/posts/approved/recent/**").permitAll()
                         .requestMatchers("/api/posts/approved/all/**").permitAll()
-                        .requestMatchers("api/posts/post-detail/**").permitAll()
+                        .requestMatchers("/api/posts/post-detail/**").permitAll()
                         .requestMatchers("/api/users/checkEmail", "/api/users/sendOTP", "/api/users/verifyOTP", "/api/users/resetPassword").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
@@ -73,11 +74,13 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        config.setAllowedOrigins(Arrays.asList(
-                "http://localhost:3000",
-                "http://localhost:8080",
-                "http://localhost:63342",
-                "http://127.0.0.1:5500"
+        config.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:*",
+                "http://127.0.0.1:*",
+                "https://*.vercel.app",
+                "https://*.netlify.app",
+                "https://*.onrender.com",
+                "https://*.pages.dev"
         ));
 
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

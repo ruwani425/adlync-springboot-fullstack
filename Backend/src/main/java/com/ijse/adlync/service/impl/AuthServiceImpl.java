@@ -72,7 +72,11 @@ public class AuthServiceImpl implements AuthService {
                 .status("ACTIVE")
                 .build();
         userRepository.save(userEntity);
-        emailService.sendSignupEmail(userEntity.getEmail(), userEntity.getName());
+        try {
+            emailService.sendSignupEmail(userEntity.getEmail(), userEntity.getName());
+        } catch (Exception e) {
+            System.err.println("Warning: Failed to send signup email: " + e.getMessage());
+        }
         return "User Registration Success";
     }
 }

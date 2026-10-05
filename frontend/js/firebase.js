@@ -1,17 +1,16 @@
-const firebaseConfig = {
-    apiKey: "AIzaSyCP8U0SU_P6mQ7YuYdlfFI8AJS_cO8lTsA",
-    authDomain: "g-exxplore.firebaseapp.com",
-    databaseURL: "https://g-exxplore-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "g-exxplore",
-    storageBucket: "g-exxplore.appspot.com",
-    messagingSenderId: "171368449973",
-    appId: "1:171368449973:web:93e92f9f028dad13503bfc",
-    measurementId: "G-SNSBKHN49T"
-};
+// Use central configuration or fallback to local environment
+const firebaseConfig = (typeof FIREBASE_CONFIG !== 'undefined' && FIREBASE_CONFIG.apiKey) 
+    ? FIREBASE_CONFIG 
+    : (window.__ENV__?.FIREBASE_CONFIG || {});
 
 firebase.initializeApp(firebaseConfig);
-const storage = firebase.storage();
 const auth = firebase.auth();
+
+const activeImgbbKey = (typeof IMGBB_API_KEY !== 'undefined' && IMGBB_API_KEY) 
+    ? IMGBB_API_KEY 
+    : (window.__ENV__?.IMGBB_API_KEY || "");
+
+
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 googleProvider.addScope('email');
@@ -50,50 +49,38 @@ function removeImage(index) {
 }
 
 async function uploadImagesToFirebase(selected) {
-    console.log(selected)
-    if (selected.length === 0) {
-        console.log(selectedFiles);
+    if (!selected || selected.length === 0) {
         return [];
     }
 
-    const uploadPromises = [];
+    const uploadPromises = Array.from(selected).map(async (file, index) => {
+        const formData = new FormData();
+        formData.append('image', file);
 
-    for (let i = 0; i < selected.length; i++) {
-        console.log("//////////////////////////////////////////////////////////")
-        const file = selected[i];
-        const fileName = `animals/${Date.now()}_${i}_${file.name}`;
-        const storageRef = storage.ref(fileName);
+        const response = await fetch(`https://api.imgbb.com/1/upload?key=${activeImgbbKey}`, {
+            method: 'POST',
+            body: formData
+        });
 
-        const uploadTask = storageRef.put(file);
+        if (!response.ok) {
+            throw new Error(`Failed to upload image ${index + 1}: ${response.statusText}`);
+        }
 
-        uploadPromises.push(
-            new Promise((resolve, reject) => {
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        const overallProgress = ((i / selected.length) * 100) + (progress / selected.length);
-
-                        console.log(overallProgress)
-                    },
-                    (error) => {
-                        console.error('Upload failed:', error);
-                        reject(error);
-                    },
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            resolve(downloadURL);
-                        });
-                    }
-                );
-            })
-        );
-    }
+        const result = await response.json();
+        if (result.success && result.data && result.data.url) {
+            console.log(`Image ${index + 1} uploaded to ImgBB:`, result.data.url);
+            return result.data.url;
+        } else {
+            throw new Error(result.error?.message || 'ImgBB upload failed');
+        }
+    });
 
     try {
         const urls = await Promise.all(uploadPromises);
         uploadedImageUrls = urls;
         return urls;
     } catch (error) {
+        console.error('Image upload failed:', error);
         throw error;
     }
 }
@@ -139,34 +126,34 @@ async function uploadProfilePhotoToFirebase(file) {
         throw new Error('Invalid file type. Only JPG, PNG, and WebP are allowed');
     }
 
-    const fileName = `profile-photos/${Date.now()}_${file.name}`;
-    const storageRef = storage.ref(fileName);
-    const uploadTask = storageRef.put(file);
+    const formData = new FormData();
+    formData.append('image', file);
 
-    return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+    const progressBar = document.querySelector('#uploadProgress .progress-bar');
+    if (progressBar) {
+        progressBar.style.width = '50%';
+    }
 
-                const progressBar = document.querySelector('#uploadProgress .progress-bar');
-                if (progressBar) {
-                    progressBar.style.width = progress + '%';
-                }
-
-                console.log(`Upload progress: ${Math.round(progress)}%`);
-            },
-            (error) => {
-                console.error('Upload failed:', error);
-                reject(error);
-            },
-            () => {
-                uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                    console.log('Profile photo uploaded successfully:', downloadURL);
-                    resolve(downloadURL);
-                }).catch(reject);
-            }
-        );
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${activeImgbbKey}`, {
+        method: 'POST',
+        body: formData
     });
+
+    if (progressBar) {
+        progressBar.style.width = '100%';
+    }
+
+    if (!response.ok) {
+        throw new Error(`Profile photo upload failed: ${response.statusText}`);
+    }
+
+    const result = await response.json();
+    if (result.success && result.data && result.data.url) {
+        console.log('Profile photo uploaded to ImgBB:', result.data.url);
+        return result.data.url;
+    } else {
+        throw new Error(result.error?.message || 'ImgBB upload failed');
+    }
 }
 
 async function signInWithGoogle() {
@@ -208,7 +195,8 @@ async function handleGoogleLogin() {
 
         console.log('Attempting Google login:', loginData);
 
-        const loginResponse = await fetch('http://localhost:8080/auth/login', {
+        const apiUrl = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : 'http://localhost:8080';
+        const loginResponse = await fetch(`${apiUrl}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -260,7 +248,8 @@ async function handleGoogleRegistration() {
 
         console.log('Attempting Google registration:', registerData);
 
-        const registerResponse = await fetch('http://localhost:8080/auth/register', {
+        const apiUrl = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : 'http://localhost:8080';
+        const registerResponse = await fetch(`${apiUrl}/auth/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
