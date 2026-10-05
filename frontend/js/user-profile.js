@@ -554,8 +554,6 @@ function getUserByToken() {
 
             $('#photoPreview').attr('src', profileUrl);
             loadUserAdsByUserId(currentUserId);
-            loadUserPostsForDropdown(currentUserId);
-            loadUserReviews(currentUserId);
         },
         error: function () {
             Swal.fire({
@@ -596,6 +594,14 @@ function loadUserAdsByUserId(userId, status = 'all', page = 0, size = 3) {
             renderUserAds(posts);
             updateStats(posts);
             renderPagination(response, status, userId, size);
+
+            const dropdown = $('#postSelect');
+            if (dropdown.length && dropdown.children().length <= 1) {
+                dropdown.empty().append('<option value="all">All Posts</option>');
+                posts.forEach(post => {
+                    dropdown.append(`<option value="${post.post_id || post.id}">${post.title}</option>`);
+                });
+            }
         },
         error: function (xhr, status, error) {
             console.error("Error loading ads:", error);

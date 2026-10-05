@@ -116,7 +116,7 @@ public class PostServiceImpl implements PostService {
         post.setStatus(PostEntityStatusEnum.APPROVED);
         post = repository.save(post);
 
-        return modelMapper.map(post, PostResponseDTO.class);
+        return toResponseDTO(post);
     }
 
     @Override
@@ -137,7 +137,7 @@ public class PostServiceImpl implements PostService {
         post.setStatus(status);
         post = repository.save(post);
 
-        return modelMapper.map(post, PostResponseDTO.class);
+        return toResponseDTO(post);
     }
 
 
@@ -728,7 +728,7 @@ public class PostServiceImpl implements PostService {
         List<PostEntity> posts = repository.findPostEntitYByUser_id(userId);
         System.out.println(posts.toString());
         return posts.stream()
-                .map(post -> modelMapper.map(post, PostResponseDTO.class))
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
 
@@ -745,7 +745,7 @@ public class PostServiceImpl implements PostService {
 
         List<PostResponseDTO> dtos = postsPage.getContent()
                 .stream()
-                .map(post -> modelMapper.map(post, PostResponseDTO.class))
+                .map(this::toResponseDTO)
                 .collect(Collectors.toList());
 
         return new PageResponse<>(
