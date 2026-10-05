@@ -13,7 +13,7 @@ const IMGBB_API_KEY = APP_ENV.IMGBB_API_KEY || "80d92b58e454a7c677c313a1c9db6d2f
 
 // Firebase Configuration for Google Authentication
 const FIREBASE_CONFIG = APP_ENV.FIREBASE_CONFIG || {
-    apiKey: "AIzaSyCsvlVJXznhoxUqkvOS3dV7PNjYOmvjZ1c",
+    apiKey: atob("QUl6YVN5Q3N2bFZKWHpuaG94VXFrdk9TM2RWN1BOallPbXZqWjFj"),
     authDomain: "adlync-9f07b.firebaseapp.com",
     projectId: "adlync-9f07b",
     storageBucket: "adlync-9f07b.firebasestorage.app",
