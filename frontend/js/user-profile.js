@@ -526,6 +526,10 @@ function getUserByToken() {
         success: function (response) {
             console.log("User data:", response);
             currentUserId = response.id;
+            try {
+                localStorage.setItem('adlync_user_name', response.name);
+                localStorage.setItem('adlync_user_email', response.email);
+            } catch (e) {}
             $('#userName').text(response.name);
             $('#userEmail').text(response.email);
             $('#joinDate').text(formatJoinDate(response.joinDate));
@@ -705,9 +709,9 @@ function renderUserAds(posts) {
 
 function updateStats(posts) {
     const totalAds = posts.length;
-    const activeAds = posts.filter(p => p.status.toLowerCase() === 'active').length;
-    const soldAds = posts.filter(p => p.status.toLowerCase() === 'sold').length;
-    const pendingAds = posts.filter(p => p.status.toLowerCase() === 'pending').length;
+    const activeAds = posts.filter(p => p.status && (p.status.toLowerCase() === 'active' || p.status.toLowerCase() === 'approved')).length;
+    const soldAds = posts.filter(p => p.status && p.status.toLowerCase() === 'sold').length;
+    const pendingAds = posts.filter(p => p.status && p.status.toLowerCase() === 'pending').length;
     const totalViews = posts.reduce((sum, p) => sum + (p.views || 0), 0);
 
     $('#totalAds').text(totalAds);
@@ -828,7 +832,17 @@ function formatJoinDate(isoDate) {
 }
 
 function initializeProfile() {
-    console.log('Profile initialized');
+    const cachedName = localStorage.getItem('adlync_user_name');
+    const cachedEmail = localStorage.getItem('adlync_user_email');
+    if (cachedName) {
+        $('#userName').text(cachedName);
+        const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(cachedName)}&background=059669&color=fff&size=120&rounded=true`;
+        $('#profileImg').attr('src', avatarUrl);
+        $('#navProfileImg').attr('src', avatarUrl.replace('size=120', 'size=40'));
+    }
+    if (cachedEmail) {
+        $('#userEmail').text(cachedEmail);
+    }
 }
 
 function getCookie(name) {

@@ -59,7 +59,7 @@
                         <img alt="Profile"
                              class="profile-avatar-large"
                              id="profileImg"
-                             src="https://ui-avatars.com/api/?name=John+Doe&background=059669&color=fff&size=120&rounded=true">
+                             src="https://ui-avatars.com/api/?name=User&background=059669&color=fff&size=120&rounded=true">
                         <button class="btn btn-sm btn-light position-absolute bottom-0 end-0 rounded-circle p-2"
                                 data-aos="fade-up"
                                 data-aos-delay="400"
@@ -69,16 +69,16 @@
                         </button>
                     </div>
                     <div class="flex-grow-1 min-width-0" data-aos="fade-up" data-aos-delay="300">
-                        <h1 class="fw-bold mb-1" id="userName">John Doe</h1>
-                        <p class="mb-2 opacity-75" id="userEmail">john.doe@example.com</p>
+                        <h1 class="fw-bold mb-1" id="userName">User</h1>
+                        <p class="mb-2 opacity-75" id="userEmail"></p>
                         <div class="d-flex align-items-center gap-3 flex-wrap">
                             <span class="d-flex align-items-center gap-1" data-aos="fade-up" data-aos-delay="350">
                                 <i class="bi bi-calendar-fill"></i>
-                                <span id="joinDate">Joined Jan 2024</span>
+                                <span id="joinDate">Member</span>
                             </span>
                             <span class="d-flex align-items-center gap-1" data-aos="fade-up" data-aos-delay="400">
                                 <i class="bi bi-star-fill text-warning"></i>
-                                <span id="userRating">4.8 (23 reviews)</span>
+                                <span id="userRating">5.0</span>
                             </span>
                         </div>
                     </div>
@@ -94,25 +94,25 @@
         <div class="row g-3">
             <div class="col-6 col-md-3">
                 <div class="stats-card">
-                    <div class="stats-number" id="totalAds">24</div>
+                    <div class="stats-number" id="totalAds">-</div>
                     <div class="text-muted small">Total Ads</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stats-card">
-                    <div class="stats-number" id="activeAds">18</div>
+                    <div class="stats-number" id="activeAds">-</div>
                     <div class="text-muted small">Active</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stats-card">
-                    <div class="stats-number" id="soldAds">6</div>
+                    <div class="stats-number" id="soldAds">-</div>
                     <div class="text-muted small">Sold</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
                 <div class="stats-card">
-                    <div class="stats-number" id="totalViews">1.2k</div>
+                    <div class="stats-number" id="totalViews">-</div>
                     <div class="text-muted small">Total Views</div>
                 </div>
             </div>
@@ -166,122 +166,11 @@
                 </div>
 
                 <div class="row g-4" id="userAdsContainer">
-                    <!-- Demo ads with improved status labels -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card ad-card h-100">
-                            <div class="ad-image-container position-relative">
-                                <img alt="Car" class="w-100 object-cover" src="https://picsum.photos/seed/car1/400/300"
-                                     style="height: 200px;">
-                                <span class="status-badge status-active position-absolute top-0 end-0 m-3">
-                                    Active
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <span class="category-badge mb-2">Vehicles</span>
-                                <h6 class="card-title">2019 Honda Civic - Excellent Condition</h6>
-                                <div class="price-tag mb-3">Rs. 3,500,000</div>
-                                <div class="d-flex justify-content-between text-muted small mb-3">
-                                    <span><i class="bi bi-geo-alt me-1"></i>Colombo</span>
-                                    <span><i class="bi bi-eye me-1"></i>145 views</span>
-                                </div>
-                                <div class="d-flex gap-2 action-buttons">
-                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm flex-fill">
-                                        <i class="bi bi-trash me-1"></i>Delete
-                                    </button>
-                                </div>
-                            </div>
+                    <div class="col-12 text-center py-5">
+                        <div class="spinner-border text-emerald" style="color: #059669;" role="status">
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card ad-card h-100">
-                            <div class="ad-image-container position-relative">
-                                <img alt="Phone" class="w-100 object-cover"
-                                     src="https://picsum.photos/seed/phone1/400/300" style="height: 200px;">
-                                <span class="status-badge status-sold position-absolute top-0 end-0 m-3">
-                                    Sold
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <span class="category-badge mb-2">Electronics</span>
-                                <h6 class="card-title">iPhone 13 Pro Max - 256GB</h6>
-                                <div class="price-tag mb-3">Rs. 280,000</div>
-                                <div class="d-flex justify-content-between text-muted small mb-3">
-                                    <span><i class="bi bi-geo-alt me-1"></i>Kandy</span>
-                                    <span><i class="bi bi-eye me-1"></i>89 views</span>
-                                </div>
-                                <div class="d-flex gap-2 action-buttons">
-                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm flex-fill">
-                                        <i class="bi bi-trash me-1"></i>Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card ad-card h-100">
-                            <div class="ad-image-container position-relative">
-                                <img alt="House" class="w-100 object-cover"
-                                     src="https://picsum.photos/seed/house1/400/300" style="height: 200px;">
-                                <span class="status-badge status-pending position-absolute top-0 end-0 m-3">
-                                    Pending
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <span class="category-badge mb-2">Properties</span>
-                                <h6 class="card-title">Luxury Apartment in Colombo 03</h6>
-                                <div class="price-tag mb-3">Rs. 45,000,000</div>
-                                <div class="d-flex justify-content-between text-muted small mb-3">
-                                    <span><i class="bi bi-geo-alt me-1"></i>Colombo</span>
-                                    <span><i class="bi bi-eye me-1"></i>234 views</span>
-                                </div>
-                                <div class="d-flex gap-2 action-buttons">
-                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm flex-fill">
-                                        <i class="bi bi-trash me-1"></i>Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Example of rejected status -->
-                    <div class="col-md-6 col-lg-4">
-                        <div class="card ad-card h-100">
-                            <div class="ad-image-container position-relative">
-                                <img alt="Laptop" class="w-100 object-cover"
-                                     src="https://picsum.photos/seed/laptop1/400/300" style="height: 200px;">
-                                <span class="status-badge status-rejected position-absolute top-0 end-0 m-3">
-                                    Rejected
-                                </span>
-                            </div>
-                            <div class="card-body">
-                                <span class="category-badge mb-2">Electronics</span>
-                                <h6 class="card-title">Gaming Laptop - High Performance</h6>
-                                <div class="price-tag mb-3">Rs. 450,000</div>
-                                <div class="d-flex justify-content-between text-muted small mb-3">
-                                    <span><i class="bi bi-geo-alt me-1"></i>Galle</span>
-                                    <span><i class="bi bi-eye me-1"></i>12 views</span>
-                                </div>
-                                <div class="d-flex gap-2 action-buttons">
-                                    <button class="btn btn-outline-secondary btn-sm flex-fill">
-                                        <i class="bi bi-pencil me-1"></i>Edit
-                                    </button>
-                                    <button class="btn btn-outline-danger btn-sm flex-fill">
-                                        <i class="bi bi-trash me-1"></i>Delete
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                        <p class="text-muted mt-2">Loading your advertisements...</p>
                     </div>
                 </div>
 
