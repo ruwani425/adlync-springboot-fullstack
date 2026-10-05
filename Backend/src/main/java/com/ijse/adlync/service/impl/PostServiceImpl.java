@@ -582,7 +582,6 @@ public class PostServiceImpl implements PostService {
 
         if (entity.getPayment() != null) {
             dto.setPayment(modelMapper.map(entity.getPayment(), PaymentResponseDTO.class));
-            System.out.println(entity.getPayment());
         }
 
         if (entity.getAdvertisement_type() != null) {
@@ -600,22 +599,27 @@ public class PostServiceImpl implements PostService {
             dto.setCommon(new CommonPostResponseDTO());
         }
 
-        dto.getCommon().setAnimal(entity.getAnimal() != null ? modelMapper.map(entity.getAnimal(), AnimalResponseDTO.class) : null);
-        dto.getCommon().setEducation(entity.getEducation() != null ? modelMapper.map(entity.getEducation(), EducationResponseDTO.class) : null);
-        dto.getCommon().setSport(entity.getSport() != null ? modelMapper.map(entity.getSport(), SportResponseDTO.class) : null);
-        dto.getCommon().setServices(entity.getServices() != null ? modelMapper.map(entity.getServices(), ServicesResponseDTO.class) : null);
-        dto.getCommon().setKids(entity.getKids() != null ? modelMapper.map(entity.getKids(), KidsResponseDTO.class) : null);
-        dto.getCommon().setWork_over_seas(entity.getWork_over_seas() != null ? modelMapper.map(entity.getWork_over_seas(), Work_over_seasResponseDTO.class) : null);
-        dto.getCommon().setAgriculture(entity.getAgriculture() != null ? modelMapper.map(entity.getAgriculture(), AgricultureResponseDTO.class) : null);
-        dto.getCommon().setElectronic(entity.getElectronic() != null ? modelMapper.map(entity.getElectronic(), ElectronicResponseDTO.class) : null);
-        dto.getCommon().setEntertainment(entity.getEntertainment() != null ? modelMapper.map(entity.getEntertainment(), EntertaintmentResponseDTO.class) : null);
-        dto.getCommon().setJob(entity.getJob() != null ? modelMapper.map(entity.getJob(), JobResponseDTO.class) : null);
-        dto.getCommon().setEssentials(entity.getEssentials() != null ? modelMapper.map(entity.getEssentials(), EssentialsResponseDTO.class) : null);
-        dto.getCommon().setFashion_and_beauty(entity.getFashion_and_beauty() != null ? modelMapper.map(entity.getFashion_and_beauty(), Fashion_and_beautyResponseDTO.class) : null);
-        dto.getCommon().setHome_and_garden(entity.getHome_and_garden() != null ? modelMapper.map(entity.getHome_and_garden(), Home_and_gardenResponseDTO.class) : null);
-        dto.getCommon().setMobile(entity.getMobile() != null ? modelMapper.map(entity.getMobile(), MobileResponseDTO.class) : null);
-        dto.getCommon().setProperty(entity.getProperty() != null ? modelMapper.map(entity.getProperty(), PropertyResponseDTO.class) : null);
-        dto.getCommon().setVehicle(entity.getVehicle() != null ? modelMapper.map(entity.getVehicle(), VehicleResponseDTO.class) : null);
+        if (entity.getCategory() != null && entity.getCategory().getName() != null) {
+            CategoryEntityNameEnum catName = entity.getCategory().getName();
+            switch (catName) {
+                case VEHICLE -> dto.getCommon().setVehicle(entity.getVehicle() != null ? modelMapper.map(entity.getVehicle(), VehicleResponseDTO.class) : null);
+                case ANIMAL -> dto.getCommon().setAnimal(entity.getAnimal() != null ? modelMapper.map(entity.getAnimal(), AnimalResponseDTO.class) : null);
+                case PROPERTY -> dto.getCommon().setProperty(entity.getProperty() != null ? modelMapper.map(entity.getProperty(), PropertyResponseDTO.class) : null);
+                case JOB -> dto.getCommon().setJob(entity.getJob() != null ? modelMapper.map(entity.getJob(), JobResponseDTO.class) : null);
+                case MOBILE -> dto.getCommon().setMobile(entity.getMobile() != null ? modelMapper.map(entity.getMobile(), MobileResponseDTO.class) : null);
+                case ELECTRONIC -> dto.getCommon().setElectronic(entity.getElectronic() != null ? modelMapper.map(entity.getElectronic(), ElectronicResponseDTO.class) : null);
+                case ENTERTAINTMENT -> dto.getCommon().setEntertainment(entity.getEntertainment() != null ? modelMapper.map(entity.getEntertainment(), EntertaintmentResponseDTO.class) : null);
+                case EDUCATION -> dto.getCommon().setEducation(entity.getEducation() != null ? modelMapper.map(entity.getEducation(), EducationResponseDTO.class) : null);
+                case SERVICES -> dto.getCommon().setServices(entity.getServices() != null ? modelMapper.map(entity.getServices(), ServicesResponseDTO.class) : null);
+                case AGRICULTURE -> dto.getCommon().setAgriculture(entity.getAgriculture() != null ? modelMapper.map(entity.getAgriculture(), AgricultureResponseDTO.class) : null);
+                case FASHION_AND_BEAUTY -> dto.getCommon().setFashion_and_beauty(entity.getFashion_and_beauty() != null ? modelMapper.map(entity.getFashion_and_beauty(), Fashion_and_beautyResponseDTO.class) : null);
+                case KIDS -> dto.getCommon().setKids(entity.getKids() != null ? modelMapper.map(entity.getKids(), KidsResponseDTO.class) : null);
+                case ESSENTIALS -> dto.getCommon().setEssentials(entity.getEssentials() != null ? modelMapper.map(entity.getEssentials(), EssentialsResponseDTO.class) : null);
+                case SPORT -> dto.getCommon().setSport(entity.getSport() != null ? modelMapper.map(entity.getSport(), SportResponseDTO.class) : null);
+                case WORK_OVERSEAS -> dto.getCommon().setWork_over_seas(entity.getWork_over_seas() != null ? modelMapper.map(entity.getWork_over_seas(), Work_over_seasResponseDTO.class) : null);
+                case HOME_AND_GARDEN -> dto.getCommon().setHome_and_garden(entity.getHome_and_garden() != null ? modelMapper.map(entity.getHome_and_garden(), Home_and_gardenResponseDTO.class) : null);
+            }
+        }
         return dto;
     }
 
