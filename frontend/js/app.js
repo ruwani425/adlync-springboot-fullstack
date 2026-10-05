@@ -176,14 +176,50 @@ $(document).ready(() => {
     let totalPages = 1
     const cardsPerPage = 3
 
+    // Instant cached paint from sessionStorage for 0-delay load
+    const cachedPostsJson = sessionStorage.getItem('adlync_featured_posts');
+    if (cachedPostsJson) {
+        try {
+            const cachedPosts = JSON.parse(cachedPostsJson);
+            if (Array.isArray(cachedPosts) && cachedPosts.length > 0) {
+                renderPage(cachedPosts);
+            }
+        } catch (e) {
+            console.warn("Failed to parse cached posts", e);
+        }
+    }
+
+    function showLoadingSkeleton() {
+        const $container = $("#featuredPostsContainer");
+        if ($container.children().length === 0) {
+            $container.html(`
+                <div class="col-12 text-center py-5">
+                    <div class="spinner-border text-emerald" style="color: #059669;" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="text-muted mt-2">Loading latest listings...</p>
+                </div>
+            `);
+        }
+    }
+
     function fetchFeaturedPosts(page = 0) {
+        showLoadingSkeleton();
+
         $.ajax({
             url: `http://localhost:8080/api/posts/approved/recent?page=${page}&size=${cardsPerPage}`,
             method: "GET",
             success: (data) => {
                 console.log("API Response:", data);
+                const posts = data.content || [];
 
-                renderPage(data.content || []);
+                renderPage(posts);
+
+                if (page === 0 && posts.length > 0) {
+                    try {
+                        sessionStorage.setItem('adlync_featured_posts', JSON.stringify(posts));
+                    } catch (e) {}
+                }
 
                 currentPage = data.pageNumber !== undefined ? data.pageNumber : 0;
                 totalPages = data.totalPages !== undefined ? data.totalPages : 1;
@@ -200,7 +236,9 @@ $(document).ready(() => {
             },
             error: (xhr, status, error) => {
                 console.error("Failed to fetch featured posts:", error);
-                $("#featuredPostsContainer").html("<p class='text-danger'>Failed to load featured posts.</p>");
+                if ($("#featuredPostsContainer").children('.ad-item').length === 0) {
+                    $("#featuredPostsContainer").html("<p class='text-danger text-center w-100'>Failed to load featured posts. Please refresh.</p>");
+                }
             },
         })
     }
@@ -214,8 +252,8 @@ $(document).ready(() => {
                 post.images && post.images.length ? post.images[0].image_url : "https://picsum.photos/seed/default/800/480"
 
             const card = `
-                <div class="col-md-6 col-lg-4 ad-item" data-aos="flip-left" data-aos-delay="200" data-post-id="${post.post_id}">
-                    <div class="card card-hover h-100 overflow-hidden">
+                <div class="col-md-6 col-lg-4 ad-item" data-aos="flip-left" data-aos-delay="100" data-post-id="${post.post_id}">
+                    <div class="card card-hover h-100 overflow-hidden shadow-sm">
                         <div class="position-relative">
                             <img alt="${post.title}" class="w-100 object-cover" src="${imageUrl}" style="height:220px"/>
                             <span class="badge text-bg-emerald position-absolute top-0 start-0 m-3 category-badge">
@@ -238,6 +276,10 @@ $(document).ready(() => {
                 </div>`
             $container.append(card)
         })
+
+        if (window.AOS && typeof window.AOS.refresh === 'function') {
+            window.AOS.refresh();
+        }
     }
 
     $(".nav-link").filter(function () {
