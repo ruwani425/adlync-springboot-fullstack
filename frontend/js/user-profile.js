@@ -775,25 +775,174 @@ function formatViews(views) {
 }
 
 function editAd(adId) {
+    const token = getCookie("token");
+    if (!token) {
+        Swal.fire('Error', 'Please log in again to edit this advertisement.', 'error');
+        return;
+    }
+
+    const apiBase = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'https://adlync-springboot-fullstack.onrender.com';
+
     Swal.fire({
-        title: 'Edit Advertisement',
-        text: 'This will redirect you to the edit page',
-        icon: 'info',
-        confirmButtonColor: '#059669',
-        showCancelButton: true,
-        confirmButtonText: 'Go to Edit',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            window.location.href = `edit-ad.html?id=${adId}`;
+        title: 'Loading Ad Details...',
+        text: 'Please wait',
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        willOpen: () => {
+            Swal.showLoading();
         }
     });
+
+    $.ajax({
+        url: `${apiBase}/api/posts/post-detail/${adId}`,
+        method: "GET",
+        headers: { "Authorization": "Bearer " + token },
+        success: function (post) {
+            Swal.close();
+            if (!post) {
+                Swal.fire('Error', 'Advertisement details could not be loaded.', 'error');
+                return;
+            }
+
+            $('#editPostId').val(post.post_id || post.id || adId);
+            $('#editAdTitle').val(post.title || '');
+            $('#editAdPrice').val(post.price || '');
+            $('#editAdCategory').val(post.category?.name || 'Uncategorized');
+            $('#editAdContact').val(post.contact_number || '');
+            $('#editAdStatus').val(post.status || 'APPROVED');
+            $('#editAdDistrict').val(post.location?.district || '');
+            $('#editAdCity').val(post.location?.city || '');
+            $('#editAdAddress').val(post.location?.address || '');
+            $('#editAdDescription').val(post.description || '');
+
+            // Thumbnails preview if images exist
+            const $thumbContainer = $('#editAdImageThumbs').empty();
+            if (post.images && post.images.length > 0) {
+                $('#editAdImagePreviewContainer').removeClass('d-none');
+                post.images.forEach(img => {
+                    const imgUrl = typeof img === 'string' ? img : (img.image_url || img.url);
+                    if (imgUrl) {
+                        $thumbContainer.append(`
+                            <img src="${imgUrl}" class="rounded border" style="width: 70px; height: 70px; object-fit: cover;" alt="Thumbnail">
+                        `);
+                    }
+                });
+            } else {
+                $('#editAdImagePreviewContainer').addClass('d-none');
+            }
+
+            $('#editAdModal').modal('show');
+        },
+        error: function (xhr, status, error) {
+            console.error("Failed to fetch ad details:", error);
+            Swal.fire({
+                title: 'Error!',
+                text: 'Could not fetch ad details. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#059669'
+            });
+        }
+    });
+}
+
+$(document).on('click', '#saveEditAdBtn', function () {
+    const adId = $('#editPostId').val();
+    const token = getCookie("token");
+
+    if (!token) {
+        Swal.fire('Error', 'Please log in again to continue.', 'error');
+        return;
+    }
+
+    const title = $('#editAdTitle').val().trim();
+    const priceVal = $('#editAdPrice').val();
+    const contact = $('#editAdContact').val().trim();
+    const status = $('#editAdStatus').val();
+    const district = $('#editAdDistrict').val().trim();
+    const city = $('#editAdCity').val().trim();
+    const address = $('#editAdAddress').val().trim();
+    const description = $('#editAdDescription').val().trim();
+
+    if (!title) {
+        Swal.fire('Validation Error', 'Please enter an advertisement title.', 'warning');
+        return;
+    }
+    if (!priceVal || isNaN(priceVal) || parseFloat(priceVal) < 0) {
+        Swal.fire('Validation Error', 'Please enter a valid price.', 'warning');
+        return;
+    }
+    if (!contact) {
+        Swal.fire('Validation Error', 'Please enter a contact number.', 'warning');
+        return;
+    }
+
+    const payload = {
+        title: title,
+        description: description,
+        price: parseFloat(priceVal),
+        contact_number: contact,
+        status: status,
+        district: district,
+        city: city,
+        address: address
+    };
+
+    const $btn = $(this);
+    $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> Saving...');
+
+    const apiBase = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'https://adlync-springboot-fullstack.onrender.com';
+
+    $.ajax({
+        url: `${apiBase}/api/posts/${adId}`,
+        method: "PUT",
+        contentType: "application/json",
+        headers: {
+            "Authorization": "Bearer " + token
+        },
+        data: JSON.stringify(payload),
+        success: function (response) {
+            $btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i>Save Changes');
+            $('#editAdModal').modal('hide');
+
+            clearUserAdsCache();
+
+            Swal.fire({
+                title: 'Updated!',
+                text: 'Your advertisement has been updated successfully.',
+                icon: 'success',
+                timer: 2000,
+                showConfirmButton: false
+            }).then(() => {
+                getUserByToken();
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Update error:", xhr.responseText || error);
+            $btn.prop('disabled', false).html('<i class="bi bi-check2-circle me-1"></i>Save Changes');
+            Swal.fire({
+                title: 'Update Failed',
+                text: 'Could not update advertisement. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#059669'
+            });
+        }
+    });
+});
+
+function clearUserAdsCache() {
+    try {
+        Object.keys(sessionStorage).forEach(key => {
+            if (key.startsWith('adlync_user_ads_')) {
+                sessionStorage.removeItem(key);
+            }
+        });
+    } catch (e) {}
 }
 
 function deleteAd(adId) {
     Swal.fire({
         title: 'Delete Advertisement?',
-        text: 'This action cannot be undone!',
+        text: 'This action cannot be undone! Are you sure you want to permanently delete this ad?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#dc2626',
@@ -818,11 +967,15 @@ function deleteAd(adId) {
                 }
             });
 
+            const apiBase = typeof API_BASE_URL !== 'undefined' ? API_BASE_URL : 'https://adlync-springboot-fullstack.onrender.com';
+
             $.ajax({
-                url: `http://localhost:8080/api/posts/${adId}`,
+                url: `${apiBase}/api/posts/${adId}`,
                 method: "DELETE",
                 headers: {"Authorization": "Bearer " + token},
                 success: function () {
+                    clearUserAdsCache();
+
                     Swal.fire({
                         title: 'Deleted!',
                         text: 'Your advertisement has been deleted successfully.',

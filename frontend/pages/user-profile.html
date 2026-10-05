@@ -376,6 +376,92 @@
         </div>
     </div>
 </div>
+
+<!-- Edit Advertisement Modal -->
+<div class="modal fade" id="editAdModal" tabindex="-1" aria-labelledby="editAdModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fw-bold" id="editAdModalLabel">
+                    <i class="bi bi-pencil-square me-2 text-emerald"></i>Edit Advertisement
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editAdForm">
+                    <input type="hidden" id="editPostId">
+                    
+                    <!-- Image Preview / Thumbnails -->
+                    <div id="editAdImagePreviewContainer" class="mb-4 text-center d-none">
+                        <div class="d-flex gap-2 overflow-auto justify-content-center py-2" id="editAdImageThumbs"></div>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Title -->
+                        <div class="col-12">
+                            <label for="editAdTitle" class="form-label fw-semibold">Advertisement Title <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="editAdTitle" placeholder="e.g. Toyota Corolla 121" required>
+                        </div>
+
+                        <!-- Price & Category -->
+                        <div class="col-md-6">
+                            <label for="editAdPrice" class="form-label fw-semibold">Price (Rs.) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text">Rs.</span>
+                                <input type="number" class="form-control" id="editAdPrice" min="0" step="any" placeholder="0.00" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAdCategory" class="form-label fw-semibold">Category</label>
+                            <input type="text" class="form-control bg-light" id="editAdCategory" readonly>
+                        </div>
+
+                        <!-- Contact & Status -->
+                        <div class="col-md-6">
+                            <label for="editAdContact" class="form-label fw-semibold">Contact Number <span class="text-danger">*</span></label>
+                            <input type="tel" class="form-control" id="editAdContact" placeholder="07XXXXXXXX" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="editAdStatus" class="form-label fw-semibold">Status</label>
+                            <select class="form-select" id="editAdStatus">
+                                <option value="APPROVED">Active / Approved</option>
+                                <option value="SOLD">Sold</option>
+                                <option value="PENDING">Pending Review</option>
+                            </select>
+                        </div>
+
+                        <!-- Location: District, City, Address -->
+                        <div class="col-md-4">
+                            <label for="editAdDistrict" class="form-label fw-semibold">District</label>
+                            <input type="text" class="form-control" id="editAdDistrict" placeholder="e.g. Colombo">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editAdCity" class="form-label fw-semibold">City</label>
+                            <input type="text" class="form-control" id="editAdCity" placeholder="e.g. Nugegoda">
+                        </div>
+                        <div class="col-md-4">
+                            <label for="editAdAddress" class="form-label fw-semibold">Address</label>
+                            <input type="text" class="form-control" id="editAdAddress" placeholder="e.g. High Level Road">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label for="editAdDescription" class="form-label fw-semibold">Description</label>
+                            <textarea class="form-control" id="editAdDescription" rows="4" placeholder="Detailed description of your item/service..."></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-emerald" id="saveEditAdBtn">
+                    <i class="bi bi-check2-circle me-1"></i>Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
 <script>
     AOS.init({

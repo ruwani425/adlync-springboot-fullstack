@@ -156,25 +156,56 @@ public class PostServiceImpl implements PostService {
         return toResponseDTO(entity);
     }
 
+    @Transactional
     @Override
     @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO update(Long id, PostRequestDTO requestDTO) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("PostEntity not found with id: " + id);
+        PostEntity existing = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PostEntity not found with id: " + id));
+
+        if (requestDTO.getTitle() != null && !requestDTO.getTitle().trim().isEmpty()) {
+            existing.setTitle(requestDTO.getTitle().trim());
         }
-        PostEntity entity = toEntity(requestDTO);
-        entity.setPost_id(id);
-        entity = repository.save(entity);
-        return toResponseDTO(entity);
+        if (requestDTO.getDescription() != null) {
+            existing.setDescription(requestDTO.getDescription().trim());
+        }
+        if (requestDTO.getPrice() > 0) {
+            existing.setPrice(requestDTO.getPrice());
+        }
+        if (requestDTO.getContact_number() != null && !requestDTO.getContact_number().trim().isEmpty()) {
+            existing.setContact_number(requestDTO.getContact_number().trim());
+        }
+        if (requestDTO.getStatus() != null) {
+            existing.setStatus(requestDTO.getStatus());
+        }
+        if (requestDTO.getCity() != null || requestDTO.getDistrict() != null || requestDTO.getAddress() != null) {
+            LocationEntity loc = existing.getLocation();
+            if (loc == null) {
+                loc = new LocationEntity();
+                existing.setLocation(loc);
+            }
+            if (requestDTO.getCity() != null && !requestDTO.getCity().trim().isEmpty()) {
+                loc.setCity(requestDTO.getCity().trim());
+            }
+            if (requestDTO.getDistrict() != null && !requestDTO.getDistrict().trim().isEmpty()) {
+                loc.setDistrict(requestDTO.getDistrict().trim());
+            }
+            if (requestDTO.getAddress() != null && !requestDTO.getAddress().trim().isEmpty()) {
+                loc.setAddress(requestDTO.getAddress().trim());
+            }
+        }
+
+        PostEntity saved = repository.save(existing);
+        return toResponseDTO(saved);
     }
 
+    @Transactional
     @Override
     @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public void deleteById(Long id) {
-        if (!repository.existsById(id)) {
-            throw new RuntimeException("PostEntity not found with id: " + id);
-        }
-        repository.deleteById(id);
+        PostEntity post = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("PostEntity not found with id: " + id));
+        repository.delete(post);
     }
 
     @Transactional
