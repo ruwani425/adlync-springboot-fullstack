@@ -254,7 +254,17 @@ async function handleGoogleLogin() {
 
     } catch (error) {
         console.error('Google login error:', error);
-        alert('Google login failed: ' + error.message);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Login Failed',
+                text: error.message || 'Google login failed. Please try again.',
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            console.error('Google login failed:', error);
+        }
     } finally {
         resetGoogleButton('socialLogin');
     }
@@ -338,7 +348,17 @@ async function handleGoogleRegistration() {
 
     } catch (error) {
         console.error('Google registration error:', error);
-        alert('Google registration failed: ' + error.message);
+        if (typeof Swal !== 'undefined') {
+            Swal.fire({
+                icon: 'error',
+                title: 'Registration Failed',
+                text: error.message || 'Google registration failed. Please try again.',
+                showConfirmButton: false,
+                timer: 2500
+            });
+        } else {
+            console.error('Google registration failed:', error);
+        }
     } finally {
         resetGoogleButton('socialSignup');
     }
@@ -374,18 +394,25 @@ function handleSuccessfulAuth(result, type) {
                 setCookie("userId", userId, 1);
             }
 
-            if (type === 'register') {
-                alert('Google registration successful! Welcome to Adlync!');
-            } else {
-                alert('Google login successful! Welcome back!');
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: type === 'register' ? 'Registration Successful!' : 'Welcome Back!',
+                    text: 'Redirecting to home...',
+                    showConfirmButton: false,
+                    timer: 900,
+                    timerProgressBar: true
+                });
             }
 
-            const currentPath = window.location.pathname;
-            if (currentPath.includes('/pages/')) {
-                window.location.href = '../index.html';
-            } else {
-                window.location.href = 'index.html';
-            }
+            setTimeout(() => {
+                const currentPath = window.location.pathname;
+                if (currentPath.includes('/pages/')) {
+                    window.location.href = '../index.html';
+                } else {
+                    window.location.href = 'index.html';
+                }
+            }, 600);
         });
     }
 }

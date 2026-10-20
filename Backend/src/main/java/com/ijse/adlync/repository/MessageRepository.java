@@ -11,6 +11,6 @@ import java.util.List;
 @Repository
 public interface MessageRepository extends JpaRepository<MessageEntity, Long> {
 
-    @Query("SELECT m FROM MessageEntity m WHERE m.chat.chat_id = :chatId ORDER BY m.sent_at ASC")
+    @Query("SELECT m FROM MessageEntity m JOIN FETCH m.senderUser JOIN FETCH m.chat WHERE m.chat.chat_id = :chatId ORDER BY m.sent_at ASC")
     List<MessageEntity> findMessagesByChatId(@Param("chatId") Long chatId);
 }

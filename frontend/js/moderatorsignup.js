@@ -195,8 +195,8 @@ $('#moderatorSignupForm').on('submit', function (e) {
         $loadingSpinner.removeClass('d-none');
         setTimeout(() => {
             $loadingSpinner.addClass('d-none');
-            alert('Sign up successful! Redirecting to moderator dashboard...');
-        }, 2000);
+            window.location.href = "../pages/signin.html";
+        }, 1000);
     }
 });
 

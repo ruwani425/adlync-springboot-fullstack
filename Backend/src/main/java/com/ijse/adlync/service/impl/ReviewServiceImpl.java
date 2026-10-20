@@ -35,7 +35,7 @@ public class ReviewServiceImpl implements ReviewService {
     private UserRepository userRepository;
 
     public List<ReviewResponseDTO> findAll() {
-        return repository.findAll().stream()
+        return repository.findAllWithDetails().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -96,7 +96,6 @@ public class ReviewServiceImpl implements ReviewService {
         if (entity.getPost() != null) {
             dto.setPostId(entity.getPost().getPost_id());
         }
-        System.out.println("\n\n\nto responseDTO" + dto.toString());
         return dto;
     }
 
@@ -128,22 +127,19 @@ public class ReviewServiceImpl implements ReviewService {
         } else {
             throw new RuntimeException("postId is required for review creation");
         }
-        System.out.println("\n\nto entity: " + entity);
         return entity;
     }
 
 
     public List<ReviewResponseDTO> findByPostId(Long postId, Integer limit) {
-        PostEntity post = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
         List<ReviewEntity> reviews;
 
         if (limit != null && limit > 0) {
             PageRequest pageRequest = PageRequest.of(0, limit, Sort.by("created_at").descending());
             reviews = repository.findByPostIdWithLimit(postId, pageRequest);
         } else {
-            reviews = repository.findByPost_OrderByCreated_atDesc(post);
+            reviews = repository.findByPostIdOrderByCreated_atDesc(postId);
         }
-        System.out.println("\n\n" + reviews.stream().map(ReviewEntity::getReview_id).collect(Collectors.toList()) + "find by post method");
 
         return reviews.stream()
                 .map(this::toResponseDTO)
@@ -152,10 +148,9 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Cacheable(value = "reviewStats", key = "#postId")
     public ReviewStatsDTO getReviewStatsByPostId(Long postId) {
-        PostEntity postEntity = postRepository.findById(postId).orElseThrow(() -> new RuntimeException("Post not found with id: " + postId));
         ReviewStatsDTO stats = new ReviewStatsDTO();
 
-        Long totalReviews = repository.countByPost_Post_id(postEntity);
+        Long totalReviews = repository.countByPostId(postId);
         stats.setTotalReviews(totalReviews);
 
         if (totalReviews == 0) {

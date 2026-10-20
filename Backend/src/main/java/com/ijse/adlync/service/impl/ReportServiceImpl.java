@@ -31,7 +31,7 @@ public class ReportServiceImpl implements ReportService {
     private PostRepository postRepository;
 
     public List<ReportResponseDTO> findAll() {
-        return repository.findAll().stream()
+        return repository.findAllWithDetails().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }

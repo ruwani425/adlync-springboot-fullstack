@@ -67,8 +67,14 @@ $('#signupForm').on('submit', function (e) {
 
     setLoading(true);
 
+    const apiUrl = typeof getAuthApiUrl === 'function' ? getAuthApiUrl() : (
+        (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+            ? 'http://localhost:8080'
+            : 'https://adlync-springboot-fullstack.onrender.com'
+    );
+
     $.ajax({
-        url: 'http://localhost:8080/auth/register',
+        url: `${apiUrl}/auth/register`,
         type: 'POST',
         data: JSON.stringify({
             name: formData.fullName,
@@ -80,26 +86,74 @@ $('#signupForm').on('submit', function (e) {
         contentType: 'application/json',
         dataType: 'json',
         success: function (response) {
-            Swal.fire({
-                icon: 'success',
-                title: 'Registration Success',
-                text: response.message || 'Account created successfully!',
-                showConfirmButton: false,
-                timer: 1500
+            // Attempt auto-login seamlessly
+            $.ajax({
+                url: `${apiUrl}/auth/login`,
+                type: 'POST',
+                data: JSON.stringify({
+                    username: formData.username,
+                    password: formData.password
+                }),
+                contentType: 'application/json',
+                dataType: 'json',
+                success: function (loginRes) {
+                    const token = loginRes.data?.token;
+                    if (token) {
+                        setCookie("token", token, 1);
+                        setCookie("msgId", formData.username + "MSG");
+
+                        $.ajax({
+                            url: `${apiUrl}/api/users/getUserByToken`,
+                            type: 'GET',
+                            headers: { 'Authorization': 'Bearer ' + token },
+                            success: function (userRes) {
+                                if (userRes && userRes.id) {
+                                    setCookie("userId", userRes.id, 1);
+                                }
+                                finishSignupRedirect();
+                            },
+                            error: function () {
+                                finishSignupRedirect();
+                            }
+                        });
+                        return;
+                    }
+                    finishSignupRedirect();
+                },
+                error: function () {
+                    finishSignupRedirect();
+                }
             });
-            setTimeout(() => {
-                window.location.href = '../index.html';
-            }, 1500);
+
+            function finishSignupRedirect() {
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Welcome to Adlync!',
+                        text: 'Account created successfully. Redirecting...',
+                        showConfirmButton: false,
+                        timer: 900,
+                        timerProgressBar: true
+                    });
+                }
+                setTimeout(() => {
+                    window.location.href = '../index.html';
+                }, 600);
+            }
         },
         error: function (xhr) {
             const errorMsg = xhr.responseJSON?.message || 'Registration failed. Please try again.';
-            Swal.fire({
-                icon: 'error',
-                title: 'Registration Failed',
-                text: errorMsg,
-                showConfirmButton: false,
-                timer: 2000
-            });
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Registration Failed',
+                    text: errorMsg,
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                showAlert(errorMsg, 'danger');
+            }
             setLoading(false);
         }
     });

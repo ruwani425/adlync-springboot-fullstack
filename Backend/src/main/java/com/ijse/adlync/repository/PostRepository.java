@@ -70,7 +70,16 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             Pageable pageable
     );
 
-    List<PostEntity> findPostEntitYByUser_id(Long userId);
+    @Query(value = """
+            SELECT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            WHERE p.user.id = :userId
+            ORDER BY p.createdAt DESC
+            """)
+    List<PostEntity> findPostEntitYByUser_id(@Param("userId") Long userId);
 
     @Query(value = """
             SELECT p FROM PostEntity p

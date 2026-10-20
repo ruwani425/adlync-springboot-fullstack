@@ -34,8 +34,9 @@ $(document).ready(function () {
             const identifierType = identifierValidation.type === 'email' ? 'email' : 'username';
             console.log(`Attempting login with ${identifierType}: ${loginIdentifier}`);
 
+            const apiUrl = getAuthApiUrl();
             $.ajax({
-                url: 'http://localhost:8080/auth/login',
+                url: `${apiUrl}/auth/login`,
                 type: 'POST',
                 data: JSON.stringify({
                     username: loginIdentifier,
@@ -44,51 +45,64 @@ $(document).ready(function () {
                 contentType: 'application/json',
                 dataType: 'json',
                 success: function (response) {
-                    let token = response.data.token;
-                    var role = response.data.role;
+                    const token = response.data?.token;
+                    const role = response.data?.role;
                     setCookie("token", token, 1);
                     setCookie("msgId", loginIdentifier + "MSG");
 
+                    const proceedRedirect = () => {
+                        if (typeof Swal !== 'undefined') {
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Welcome Back!',
+                                text: 'Redirecting...',
+                                showConfirmButton: false,
+                                timer: 800,
+                                timerProgressBar: true
+                            });
+                        }
+                        setTimeout(() => {
+                            if (role === "ADMIN") {
+                                window.location.href = "../pages/admindashboard.html";
+                            } else if (role === "MODERATOR") {
+                                window.location.href = "../pages/moderatordashboard.html";
+                            } else {
+                                window.location.href = "../index.html";
+                            }
+                        }, 600);
+                    };
+
                     $.ajax({
-                        url: 'http://localhost:8080/api/users/getUserByToken',
+                        url: `${apiUrl}/api/users/getUserByToken`,
                         type: 'GET',
                         headers: {
                             'Authorization': 'Bearer ' + token
                         },
                         success: function (userResponse) {
-                            setCookie("userId", userResponse.id, 1);
-                            console.log("User ID stored:", userResponse.id);
+                            if (userResponse && userResponse.id) {
+                                setCookie("userId", userResponse.id, 1);
+                            }
+                            proceedRedirect();
                         },
                         error: function (xhr, status, error) {
                             console.error('Failed to get user details:', error);
+                            proceedRedirect();
                         }
                     });
-
-                    console.log(document.cookie);
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Login Success',
-                        text: response.message || 'Login successfully!',
-                        showConfirmButton: false,
-                        timer: 1500
-                    });
-                    if (role === "ADMIN") {
-                        window.location.href = "../pages/admindashboard.html";
-                    } else if (role === "USER") {
-                        window.location.href = "../index.html";
-                    } else if (role === "MODERATOR") {
-                        window.location.href = "../pages/moderatordashboard.html";
-                    }
                 },
                 error: function (xhr) {
                     const errorMsg = xhr.responseJSON?.message || 'Login failed. Please try again.';
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Login Failed',
-                        text: errorMsg,
-                        showConfirmButton: false,
-                        timer: 2000
-                    });
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Login Failed',
+                            text: errorMsg,
+                            showConfirmButton: false,
+                            timer: 2000
+                        });
+                    } else {
+                        showAlert(errorMsg, 'error');
+                    }
                     $loginBtn.removeClass('loading').text('Sign In');
                 }
             });
@@ -168,4 +182,12 @@ function setCookie(name, value, days) {
         expires = "; expires=" + date.toUTCString();
     }
     document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
+
+function getAuthApiUrl() {
+    if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return 'http://localhost:8080';
+    }
+    return 'https://adlync-springboot-fullstack.onrender.com';
 }
