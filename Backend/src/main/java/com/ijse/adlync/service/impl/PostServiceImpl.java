@@ -103,10 +103,11 @@ public class PostServiceImpl implements PostService {
         );
     }
 
+    @Transactional
     @Override
     @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO approvePost(Long id) {
-        PostEntity post = repository.findById(id)
+        PostEntity post = repository.findWithDetailsById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
         if (post.getStatus() == PostEntityStatusEnum.APPROVED) {
@@ -116,7 +117,20 @@ public class PostServiceImpl implements PostService {
         post.setStatus(PostEntityStatusEnum.APPROVED);
         post = repository.save(post);
 
-        return toResponseDTO(post);
+        PostResponseDTO dto = new PostResponseDTO();
+        dto.setPost_id(post.getPost_id());
+        dto.setStatus(post.getStatus());
+        dto.setTitle(post.getTitle());
+        dto.setDescription(post.getDescription());
+        dto.setPrice(post.getPrice());
+        dto.setCreatedAt(post.getCreatedAt());
+        if (post.getUser() != null) {
+            dto.setUser(modelMapper.map(post.getUser(), UserResponseDTO.class));
+        }
+        if (post.getCategory() != null) {
+            dto.setCategory(modelMapper.map(post.getCategory(), CategoryResponseDTO.class));
+        }
+        return dto;
     }
 
     @Override
@@ -124,10 +138,11 @@ public class PostServiceImpl implements PostService {
         return repository.countByUser_Id(userId);
     }
 
+    @Transactional
     @Override
     @CacheEvict(value = {"approvedPosts", "singlePost", "userPosts"}, allEntries = true)
     public PostResponseDTO updatePostStatus(Long id, PostEntityStatusEnum status) {
-        PostEntity post = repository.findById(id)
+        PostEntity post = repository.findWithDetailsById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found with id: " + id));
 
         if (post.getStatus() == status) {
@@ -137,7 +152,20 @@ public class PostServiceImpl implements PostService {
         post.setStatus(status);
         post = repository.save(post);
 
-        return toResponseDTO(post);
+        PostResponseDTO dto = new PostResponseDTO();
+        dto.setPost_id(post.getPost_id());
+        dto.setStatus(post.getStatus());
+        dto.setTitle(post.getTitle());
+        dto.setDescription(post.getDescription());
+        dto.setPrice(post.getPrice());
+        dto.setCreatedAt(post.getCreatedAt());
+        if (post.getUser() != null) {
+            dto.setUser(modelMapper.map(post.getUser(), UserResponseDTO.class));
+        }
+        if (post.getCategory() != null) {
+            dto.setCategory(modelMapper.map(post.getCategory(), CategoryResponseDTO.class));
+        }
+        return dto;
     }
 
 

@@ -26,6 +26,16 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             countQuery = "SELECT count(p) FROM PostEntity p WHERE p.status = :status")
     Page<PostEntity> findAllByStatus(@Param("status") PostEntityStatusEnum status, Pageable pageable);
 
+    @Query(value = """
+            SELECT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            WHERE p.post_id = :id
+            """)
+    java.util.Optional<PostEntity> findWithDetailsById(@Param("id") Long id);
+
     long countByUser_Id(Long userId);
 
     @Query(value = """
