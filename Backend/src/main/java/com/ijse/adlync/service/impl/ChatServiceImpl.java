@@ -108,8 +108,9 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatResponseDTO findChatById(Long chatId) {
-        ChatEntity chat = chatRepository.findById(chatId)
-            .orElseThrow(() -> new RuntimeException("Chat not found"));
+        ChatEntity chat = chatRepository.findByIdWithDetails(chatId)
+            .orElseGet(() -> chatRepository.findById(chatId)
+                .orElseThrow(() -> new RuntimeException("Chat not found")));
         return toChatResponseDTO(chat);
     }
 

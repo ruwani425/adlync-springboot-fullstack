@@ -12,12 +12,15 @@ import java.util.Optional;
 @Repository
 public interface ChatRepository extends JpaRepository<ChatEntity, Long> {
     
-    @Query("SELECT c FROM ChatEntity c WHERE c.post.post_id = :postId AND ((c.clientUser.id = :userId1 AND c.ownerUser.id = :userId2) OR (c.clientUser.id = :userId2 AND c.ownerUser.id = :userId1)) ORDER BY c.last_message_at DESC")
+    @Query("SELECT c FROM ChatEntity c JOIN FETCH c.clientUser JOIN FETCH c.ownerUser JOIN FETCH c.post WHERE c.post.post_id = :postId AND ((c.clientUser.id = :userId1 AND c.ownerUser.id = :userId2) OR (c.clientUser.id = :userId2 AND c.ownerUser.id = :userId1)) ORDER BY c.last_message_at DESC")
     List<ChatEntity> findChatsBetweenUsers(@Param("postId") Long postId, @Param("userId1") Long userId1, @Param("userId2") Long userId2);
     
     @Query("SELECT c FROM ChatEntity c JOIN FETCH c.clientUser JOIN FETCH c.ownerUser JOIN FETCH c.post WHERE c.clientUser.id = :userId OR c.ownerUser.id = :userId ORDER BY c.last_message_at DESC")
     List<ChatEntity> findChatsByUserId(@Param("userId") Long userId);
     
-    @Query("SELECT c FROM ChatEntity c WHERE c.post.post_id = :postId ORDER BY c.last_message_at DESC")
+    @Query("SELECT c FROM ChatEntity c JOIN FETCH c.clientUser JOIN FETCH c.ownerUser JOIN FETCH c.post WHERE c.post.post_id = :postId ORDER BY c.last_message_at DESC")
     List<ChatEntity> findChatsByPostId(@Param("postId") Long postId);
+
+    @Query("SELECT c FROM ChatEntity c JOIN FETCH c.clientUser JOIN FETCH c.ownerUser JOIN FETCH c.post WHERE c.chat_id = :chatId")
+    Optional<ChatEntity> findByIdWithDetails(@Param("chatId") Long chatId);
 }

@@ -103,8 +103,48 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
             countQuery = "SELECT count(p) FROM PostEntity p WHERE p.user.id = :userId")
     Page<PostEntity> findByUser_Id(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("""
+    @Query(value = """
             SELECT DISTINCT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            LEFT JOIN p.location l
+            LEFT JOIN p.vehicle v
+            LEFT JOIN p.electronic e
+            LEFT JOIN p.mobile m
+            LEFT JOIN p.agriculture a
+            LEFT JOIN p.entertainment ent
+            LEFT JOIN p.essentials es
+            LEFT JOIN p.fashion_and_beauty f
+            LEFT JOIN p.home_and_garden h
+            LEFT JOIN p.kids k
+            LEFT JOIN p.sport s
+            WHERE (:status IS NULL OR p.status = :status)
+              AND (:category IS NULL OR p.category.name = :category)
+              AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                  OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))
+              AND (:startDate IS NULL OR p.createdAt >= :startDate)
+              AND (:endDate IS NULL OR p.createdAt <= :endDate)
+              AND (:location IS NULL OR LOWER(l.city) LIKE LOWER(CONCAT('%', :location, '%'))
+                  OR LOWER(l.district) LIKE LOWER(CONCAT('%', :location, '%'))
+                  OR LOWER(l.address) LIKE LOWER(CONCAT('%', :location, '%')))
+              AND (:condition IS NULL OR 
+                  LOWER(v.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(e.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(m.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(a.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(ent.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(es.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(f.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(h.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(k.condition) LIKE LOWER(CONCAT('%', :condition, '%')) OR
+                  LOWER(s.condition) LIKE LOWER(CONCAT('%', :condition, '%')))
+              AND (:minPrice IS NULL OR p.price >= :minPrice)
+              AND (:maxPrice IS NULL OR p.price <= :maxPrice)
+            """,
+            countQuery = """
+            SELECT count(DISTINCT p) FROM PostEntity p
             LEFT JOIN p.location l
             LEFT JOIN p.vehicle v
             LEFT JOIN p.electronic e
