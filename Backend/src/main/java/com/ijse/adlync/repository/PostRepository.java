@@ -15,12 +15,25 @@ import java.util.List;
 
 @Repository
 public interface PostRepository extends JpaRepository<PostEntity, Long> {
-    Page<PostEntity> findAllByStatus(PostEntityStatusEnum status, Pageable pageable);
+    @Query(value = """
+            SELECT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            WHERE p.status = :status
+            """,
+            countQuery = "SELECT count(p) FROM PostEntity p WHERE p.status = :status")
+    Page<PostEntity> findAllByStatus(@Param("status") PostEntityStatusEnum status, Pageable pageable);
 
     long countByUser_Id(Long userId);
 
-    @Query("""
+    @Query(value = """
                 SELECT p FROM PostEntity p
+                LEFT JOIN FETCH p.user
+                LEFT JOIN FETCH p.category
+                LEFT JOIN FETCH p.location
+                LEFT JOIN FETCH p.advertisement_type
                 WHERE (:status IS NULL OR p.status = :status)
                   AND (:category IS NULL OR p.category.name = :category)
                   AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))
@@ -28,6 +41,15 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
                   AND (:startDate IS NULL OR p.createdAt >= :startDate)
                   AND (:endDate IS NULL OR p.createdAt <= :endDate)
                 ORDER BY p.createdAt DESC
+            """,
+            countQuery = """
+                SELECT count(p) FROM PostEntity p
+                WHERE (:status IS NULL OR p.status = :status)
+                  AND (:category IS NULL OR p.category.name = :category)
+                  AND (:search IS NULL OR LOWER(p.title) LIKE LOWER(CONCAT('%', :search, '%'))
+                      OR LOWER(p.description) LIKE LOWER(CONCAT('%', :search, '%')))
+                  AND (:startDate IS NULL OR p.createdAt >= :startDate)
+                  AND (:endDate IS NULL OR p.createdAt <= :endDate)
             """)
     Page<PostEntity> findFilteredPosts(
             @Param("status") PostEntityStatusEnum status,
@@ -40,9 +62,27 @@ public interface PostRepository extends JpaRepository<PostEntity, Long> {
 
     List<PostEntity> findPostEntitYByUser_id(Long userId);
 
-    Page<PostEntity> findByUser_idAndStatus(Long userId, PostEntityStatusEnum status, Pageable pageable);
+    @Query(value = """
+            SELECT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            WHERE p.user.id = :userId AND p.status = :status
+            """,
+            countQuery = "SELECT count(p) FROM PostEntity p WHERE p.user.id = :userId AND p.status = :status")
+    Page<PostEntity> findByUser_idAndStatus(@Param("userId") Long userId, @Param("status") PostEntityStatusEnum status, Pageable pageable);
 
-    Page<PostEntity> findByUser_Id(Long userId, Pageable pageable);
+    @Query(value = """
+            SELECT p FROM PostEntity p
+            LEFT JOIN FETCH p.user
+            LEFT JOIN FETCH p.category
+            LEFT JOIN FETCH p.location
+            LEFT JOIN FETCH p.advertisement_type
+            WHERE p.user.id = :userId
+            """,
+            countQuery = "SELECT count(p) FROM PostEntity p WHERE p.user.id = :userId")
+    Page<PostEntity> findByUser_Id(@Param("userId") Long userId, Pageable pageable);
 
     @Query("""
             SELECT DISTINCT p FROM PostEntity p

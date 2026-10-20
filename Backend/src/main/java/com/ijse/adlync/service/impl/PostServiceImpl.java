@@ -751,7 +751,14 @@ public class PostServiceImpl implements PostService {
                 .map(this::toResponseDTO)
                 .toList();
 
-        return new PageResponse<>(dtos, pageResult.getNumber(), pageResult.getTotalPages());
+        return new PageResponse<>(
+                dtos,
+                pageResult.getNumber(),
+                pageResult.getSize(),
+                pageResult.getTotalElements(),
+                pageResult.getTotalPages(),
+                pageResult.isLast()
+        );
     }
 
     @Override
