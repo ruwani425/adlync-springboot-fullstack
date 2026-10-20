@@ -281,3 +281,131 @@ body {
     position: relative;
     z-index: 1;
 }
+
+/* =========================================================
+   Responsive Design Rules for Mobile & Tablet Devices
+   ========================================================= */
+
+/* Smooth touch scroll for Category carousel */
+#catGrid {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(16, 185, 129, 0.4) transparent;
+}
+#catGrid::-webkit-scrollbar {
+    height: 4px;
+}
+#catGrid::-webkit-scrollbar-thumb {
+    background: rgba(16, 185, 129, 0.4);
+    border-radius: 4px;
+}
+
+/* Tablets and small laptops (max-width: 991.98px) */
+@media (max-width: 991.98px) {
+    .navbar-collapse {
+        background: #ffffff;
+        padding: 1rem;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        margin-top: 0.5rem;
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem !important;
+    }
+
+    .navbar-collapse .d-flex {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+    }
+
+    .navbar-collapse .d-flex .btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar-collapse .dropdown {
+        width: 100%;
+    }
+
+    .navbar-collapse .dropdown-menu {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Mobile Devices (max-width: 767.98px) */
+@media (max-width: 767.98px) {
+    .display-5 {
+        font-size: 1.85rem !important;
+        line-height: 1.25;
+    }
+
+    .lead {
+        font-size: 0.95rem !important;
+    }
+
+    .hero-gradient {
+        padding-top: 2.5rem !important;
+        padding-bottom: 2.5rem !important;
+    }
+
+    .hero-gradient .fs-2 {
+        font-size: 1.4rem !important;
+    }
+
+    .category-col {
+        min-width: 160px;
+    }
+
+    .category-col .card {
+        padding: 1.25rem 0.75rem !important;
+    }
+
+    .icon-pill {
+        width: 52px;
+        height: 52px;
+        font-size: 22px;
+    }
+
+    .icon-pill i {
+        font-size: 22px;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .footer-col {
+        margin-bottom: 1.5rem;
+    }
+}
+
+/* Very Small Mobile Screens (max-width: 480px) */
+@media (max-width: 480px) {
+    .display-5 {
+        font-size: 1.6rem !important;
+    }
+
+    .category-col {
+        min-width: 140px;
+    }
+
+    .icon-pill {
+        width: 46px;
+        height: 46px;
+        font-size: 20px;
+    }
+
+    .icon-pill i {
+        font-size: 20px;
+    }
+
+    .hero-gradient .row.g-4 {
+        --bs-gutter-x: 0.75rem;
+        --bs-gutter-y: 1rem;
+    }
+}

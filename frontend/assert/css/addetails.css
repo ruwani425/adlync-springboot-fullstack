@@ -1644,4 +1644,63 @@ star-rating {
         margin-bottom: 0.3rem;
         margin-right: 0;
     }
+
+    #adPrice {
+        font-size: 1.6rem !important;
+        text-align: left !important;
+        margin-top: 0.5rem;
+    }
+
+    #mainImage {
+        max-height: 280px !important;
+        object-fit: contain;
+    }
+
+    .thumbnail-container, #thumbnailContainer {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap !important;
+        padding-bottom: 6px;
+    }
+
+    .thumbnail-container img, #thumbnailContainer img {
+        min-width: 60px;
+        height: 60px;
+        flex-shrink: 0;
+    }
+
+    #breadcrumbNav {
+        overflow-x: auto;
+        white-space: nowrap;
+        flex-wrap: nowrap;
+        padding: 0.5rem 0.75rem !important;
+    }
+
+    #breadcrumbNav .breadcrumb-item {
+        display: inline-block;
+    }
+
+    .modal-dialog {
+        margin: 0.5rem;
+        max-width: calc(100% - 1rem);
+    }
+}
+
+@media (max-width: 576px) {
+    #adTitle {
+        font-size: 1.35rem !important;
+    }
+
+    #adPrice {
+        font-size: 1.4rem !important;
+    }
+
+    .btn-group-responsive {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .btn-group-responsive .btn {
+        width: 100%;
+    }
 }

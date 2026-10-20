@@ -562,9 +562,30 @@ body {
     }
 }
 
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.sidebar-overlay.show {
+    display: block;
+    opacity: 1;
+}
+
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        z-index: 1050;
+        box-shadow: 0 0 25px rgba(0, 0, 0, 0.3);
     }
 
     .sidebar.show {
@@ -576,8 +597,28 @@ body {
         padding: 1rem;
     }
 
+    .top-navbar {
+        padding: 0.75rem 1rem;
+    }
+
     .stats-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 576px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .top-navbar .dropdown button {
+        padding: 0.35rem 0.5rem;
+        font-size: 0.85rem;
     }
 }
 

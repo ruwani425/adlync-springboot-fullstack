@@ -219,6 +219,11 @@ body {
         margin: 1rem;
         padding: 1.5rem;
     }
+
+    .social-signup {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
 
 .loading {

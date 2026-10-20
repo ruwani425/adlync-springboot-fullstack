@@ -95,9 +95,62 @@
     margin: 0.5rem 0;
 }
 
+@media (max-width: 991.98px) {
+    .filter-sidebar {
+        margin-bottom: 1.5rem;
+        position: static !important;
+        top: auto !important;
+    }
+
+    .results-header {
+        padding: 1rem;
+    }
+
+    .results-header .d-flex {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
 @media (max-width: 768px) {
     .profile-avatar {
         width: 35px;
         height: 35px;
+    }
+
+    .results-header .col-md-6 {
+        margin-bottom: 0.75rem;
+    }
+
+    .results-header .col-md-6:last-child {
+        margin-bottom: 0;
+    }
+
+    .results-header .d-flex.justify-content-md-end {
+        justify-content: flex-start !important;
+    }
+
+    .ad-card .card-img-top {
+        height: 180px;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .ad-card.list-view .row {
+        flex-direction: column;
+    }
+
+    .ad-card.list-view .col-md-4,
+    .ad-card.list-view .col-md-8 {
+        width: 100%;
+    }
+
+    .ad-card .card-body {
+        padding: 1rem !important;
+    }
+
+    .price-badge {
+        font-size: 0.85rem;
     }
 }

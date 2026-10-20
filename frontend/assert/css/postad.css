@@ -265,3 +265,80 @@ body {
     box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
     border-radius: 16px;
 }
+
+/* =========================================================
+   Responsive Design Rules for Mobile & Tablet Devices
+   ========================================================= */
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0;
+    }
+
+    .step-indicator {
+        margin-bottom: 1.25rem;
+    }
+
+    .step {
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
+        margin: 0 0.25rem;
+        font-size: 0.85rem;
+    }
+
+    .card {
+        border-radius: 12px;
+    }
+
+    .card-body {
+        padding: 1.25rem !important;
+    }
+
+    .icon-pill {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+
+    .icon-pill i {
+        font-size: 22px;
+    }
+
+    .image-preview-container, #imagePreviewContainer {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        gap: 0.5rem;
+    }
+
+    .image-preview img {
+        width: 100%;
+        height: 80px;
+        object-fit: cover;
+    }
+}
+
+@media (max-width: 576px) {
+    .step-indicator {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .step {
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        font-size: 0.75rem;
+    }
+
+    .btn-group-responsive,
+    .d-flex.justify-content-between.mt-4 {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .d-flex.justify-content-between.mt-4 .btn {
+        width: 100%;
+    }
+}

@@ -243,6 +243,11 @@ body {
     .brand-logo h1 {
         font-size: 1.5rem;
     }
+
+    .social-login {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
 }
 
 .loading {

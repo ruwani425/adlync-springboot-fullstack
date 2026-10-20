@@ -12,6 +12,22 @@ let selectedReportStatus = 'PENDING';
 let selectedReportDateRange = 'all';
 
 $(document).ready(function () {
+    if ($('#sidebarOverlay').length === 0) {
+        $('body').append('<div class="sidebar-overlay" id="sidebarOverlay"></div>');
+    }
+
+    $('#sidebarToggle').on('click', function () {
+        $('.sidebar').toggleClass('show');
+        $('#sidebarOverlay').toggleClass('show');
+    });
+
+    $(document).on('click', '#sidebarOverlay, .sidebar .nav-link', function () {
+        if ($(window).width() <= 768) {
+            $('.sidebar').removeClass('show');
+            $('#sidebarOverlay').removeClass('show');
+        }
+    });
+
     loadPosts();
 
     if ($('#dashboard').hasClass('active')) {

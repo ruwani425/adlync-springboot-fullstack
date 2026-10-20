@@ -258,3 +258,54 @@ body {
     box-shadow: 0 10px 30px rgba(2, 6, 23, 0.08);
     border-radius: 16px;
 }
+
+/* =========================================================
+   Responsive Design Rules for Mobile & Tablet Devices
+   ========================================================= */
+
+@media (max-width: 768px) {
+    body {
+        padding: 1rem 0;
+    }
+
+    .payment-container {
+        padding: 0 0.75rem;
+    }
+
+    .payment-header {
+        padding: 1.5rem 1rem;
+    }
+
+    .payment-header h1 {
+        font-size: 1.4rem;
+    }
+
+    .payment-method-card {
+        padding: 1rem;
+    }
+
+    .card-body {
+        padding: 1.25rem !important;
+    }
+
+    .d-flex.justify-content-between.align-items-center {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.5rem;
+    }
+
+    .amount-display {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 576px) {
+    .btn-lg {
+        padding: 0.6rem 1rem;
+        font-size: 1rem;
+    }
+
+    .payment-options-grid {
+        grid-template-columns: 1fr;
+    }
+}
