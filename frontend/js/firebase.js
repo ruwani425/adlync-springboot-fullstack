@@ -178,6 +178,14 @@ async function signInWithGoogle() {
     }
 }
 
+function getAuthApiUrl() {
+    if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return 'http://localhost:8080';
+    }
+    return 'https://adlync-springboot-fullstack.onrender.com';
+}
+
 async function handleGoogleLogin() {
     try {
         const googleBtn = document.querySelector('button[onclick="socialLogin(\'google\')"]');
@@ -187,6 +195,7 @@ async function handleGoogleLogin() {
         }
 
         const googleUser = await signInWithGoogle();
+        const apiUrl = getAuthApiUrl();
 
         const loginData = {
             username: googleUser.email,
@@ -195,8 +204,7 @@ async function handleGoogleLogin() {
 
         console.log('Attempting Google login:', loginData);
 
-        const apiUrl = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : 'http://localhost:8080';
-        const loginResponse = await fetch(`${apiUrl}/auth/login`, {
+        let loginResponse = await fetch(`${apiUrl}/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -204,23 +212,49 @@ async function handleGoogleLogin() {
             body: JSON.stringify(loginData)
         });
 
+        // If user not found, auto-register and retry login seamlessly
+        if (!loginResponse.ok) {
+            console.log('User not found on login, attempting auto-registration...');
+            const registerData = {
+                password: googleUser.email,
+                username: googleUser.email,
+                role: 'USER',
+                name: googleUser.displayName || googleUser.email.split('@')[0],
+                email: googleUser.email,
+                status: 'ACTIVE',
+                joinDate: new Date().toISOString()
+            };
+
+            const registerResponse = await fetch(`${apiUrl}/auth/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(registerData)
+            });
+
+            if (registerResponse.ok) {
+                loginResponse = await fetch(`${apiUrl}/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+            }
+        }
+
         if (loginResponse.ok) {
             const loginResult = await loginResponse.json();
             console.log('Google login successful:', loginResult);
-
             handleSuccessfulAuth(loginResult, 'login');
         } else {
-            throw new Error('User not found. Please register first or use a different account.');
+            throw new Error('Google sign in failed. Please try again.');
         }
 
     } catch (error) {
         console.error('Google login error:', error);
-
-        if (error.message.includes('User not found')) {
-            alert('Account not found!\n\nThis Google account is not registered in our system.\nPlease go to the registration page to create an account first.');
-        } else {
-            alert('Google login failed: ' + error.message);
-        }
+        alert('Google login failed: ' + error.message);
     } finally {
         resetGoogleButton('socialLogin');
     }
@@ -235,6 +269,7 @@ async function handleGoogleRegistration() {
         }
 
         const googleUser = await signInWithGoogle();
+        const apiUrl = getAuthApiUrl();
 
         const registerData = {
             password: googleUser.email,
@@ -248,7 +283,6 @@ async function handleGoogleRegistration() {
 
         console.log('Attempting Google registration:', registerData);
 
-        const apiUrl = (typeof API_BASE_URL !== 'undefined') ? API_BASE_URL : 'http://localhost:8080';
         const registerResponse = await fetch(`${apiUrl}/auth/register`, {
             method: 'POST',
             headers: {
@@ -257,12 +291,8 @@ async function handleGoogleRegistration() {
             body: JSON.stringify(registerData)
         });
 
-        if (registerResponse.ok) {
-            const registerResult = await registerResponse.json();
-            console.log('Google registration successful:', registerResult);
-
-            handleSuccessfulAuth(registerResult, 'register');
-        } else {
+        // If registration failed, check if account already exists
+        if (!registerResponse.ok) {
             const errorText = await registerResponse.text();
             let errorMessage = 'Registration failed';
             try {
@@ -272,21 +302,43 @@ async function handleGoogleRegistration() {
                 errorMessage = errorText || errorMessage;
             }
 
-            if (errorMessage.includes('already exists') || errorMessage.includes('duplicate')) {
-                throw new Error('Account already exists. Please go to the login page to sign in.');
-            } else {
+            if (!errorMessage.includes('already exists') && !errorMessage.includes('duplicate')) {
                 throw new Error(errorMessage);
             }
+            console.log('Account already exists for this Google user, continuing with auto-login...');
+        } else {
+            console.log('Google registration successful, proceeding to auto-login...');
+        }
+
+        // Auto-login to obtain JWT token and log user in immediately
+        if (googleBtn) {
+            googleBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Logging in...';
+        }
+
+        const loginData = {
+            username: googleUser.email,
+            password: googleUser.email
+        };
+
+        const loginResponse = await fetch(`${apiUrl}/auth/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(loginData)
+        });
+
+        if (loginResponse.ok) {
+            const loginResult = await loginResponse.json();
+            console.log('Google auto-login successful:', loginResult);
+            handleSuccessfulAuth(loginResult, 'register');
+        } else {
+            throw new Error('Registration was completed, but automatic login failed. Please sign in.');
         }
 
     } catch (error) {
         console.error('Google registration error:', error);
-
-        if (error.message.includes('already exists')) {
-            alert('Account already exists!\n\nThis Google account is already registered.\nPlease go to the login page to sign in.');
-        } else {
-            alert('Google registration failed: ' + error.message);
-        }
+        alert('Google registration failed: ' + error.message);
     } finally {
         resetGoogleButton('socialSignup');
     }
@@ -339,7 +391,8 @@ function handleSuccessfulAuth(result, type) {
 
 async function getUserIdFromToken(token) {
     try {
-        const response = await fetch('http://localhost:8080/api/users/getUserByToken', {
+        const apiUrl = getAuthApiUrl();
+        const response = await fetch(`${apiUrl}/api/users/getUserByToken`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${token}`,
