@@ -1,3 +1,11 @@
+const CHAT_API_BASE = (function() {
+    if (typeof API_BASE_URL !== 'undefined') return API_BASE_URL;
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+        return 'http://localhost:8080';
+    }
+    return 'https://adlync-springboot-fullstack.onrender.com';
+})();
+
 class ChatManager {
     constructor() {
         this.stompClient = null;
@@ -122,7 +130,7 @@ class ChatManager {
             console.log(`Checking for existing chat: postId=${this.currentPostId}, userId=${this.currentUserId}, ownerId=${this.currentOwnerId}`);
 
             const existingChatResponse = await fetch(
-                `http://localhost:8080/api/chat/between/${this.currentPostId}/${this.currentUserId}/${this.currentOwnerId}`
+                `${CHAT_API_BASE}/api/chat/between/${this.currentPostId}/${this.currentUserId}/${this.currentOwnerId}`
             );
 
             if (existingChatResponse.ok) {
@@ -160,7 +168,7 @@ class ChatManager {
 
             console.log('Creating chat with data:', chatData);
 
-            const response = await fetch('http://localhost:8080/api/chat/create', {
+            const response = await fetch(`${CHAT_API_BASE}/api/chat/create`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -203,7 +211,7 @@ class ChatManager {
             if (!this.currentChatId) return;
 
             console.log('Loading chat history for chat:', this.currentChatId);
-            const response = await fetch(`http://localhost:8080/api/chat/${this.currentChatId}/messages`);
+            const response = await fetch(`${CHAT_API_BASE}/api/chat/${this.currentChatId}/messages`);
             if (response.ok) {
                 const messages = await response.json();
                 console.log('Loaded chat history:', messages);
@@ -240,8 +248,8 @@ class ChatManager {
     connect() {
         return new Promise((resolve, reject) => {
             try {
-                console.log("hi")
-                const socket = new SockJS('http://localhost:8080/ws');
+                console.log("Connecting WebSocket to:", `${CHAT_API_BASE}/ws`);
+                const socket = new SockJS(`${CHAT_API_BASE}/ws`);
                 this.stompClient = Stomp.over(socket);
 
                 this.stompClient.connect({}, (frame) => {
@@ -345,7 +353,7 @@ class ChatManager {
 
     async getUserIdFromToken(token) {
         try {
-            const response = await fetch('http://localhost:8080/api/users/getUserByToken', {
+            const response = await fetch(`${CHAT_API_BASE}/api/users/getUserByToken`, {
                 method: 'GET',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -409,7 +417,7 @@ class ChatManager {
 
     async loadOwnerChats() {
         try {
-            const response = await fetch(`http://localhost:8080/api/chat/post/${this.currentPostId}/chats`);
+            const response = await fetch(`${CHAT_API_BASE}/api/chat/post/${this.currentPostId}/chats`);
 
             if (response.ok) {
                 const responseText = await response.text();
@@ -509,7 +517,7 @@ class ChatManager {
     async loadOwnerChatMessages(chatId) {
         try {
             console.log('Loading messages for chat:', chatId);
-            const response = await fetch(`http://localhost:8080/api/chat/${chatId}/messages`);
+            const response = await fetch(`${CHAT_API_BASE}/api/chat/${chatId}/messages`);
             if (response.ok) {
                 const messages = await response.json();
                 console.log('Loaded messages:', messages);
@@ -576,7 +584,7 @@ class ChatManager {
                 sent_at: new Date().toISOString()
             };
 
-            const response = await fetch('http://localhost:8080/api/chat/message', {
+            const response = await fetch(`${CHAT_API_BASE}/api/chat/message`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -601,7 +609,7 @@ class ChatManager {
 
     async connectToAllChats() {
         try {
-            const socket = new SockJS('http://localhost:8080/ws');
+            const socket = new SockJS(`${CHAT_API_BASE}/ws`);
             this.stompClient = Stomp.over(socket);
 
             this.stompClient.connect({}, (frame) => {

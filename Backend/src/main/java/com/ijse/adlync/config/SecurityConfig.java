@@ -50,7 +50,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/posts/approved/all/**").permitAll()
                         .requestMatchers("/api/posts/post-detail/**").permitAll()
                         .requestMatchers("/api/users/checkEmail", "/api/users/sendOTP", "/api/users/verifyOTP", "/api/users/resetPassword").permitAll()
-                        .requestMatchers("/ws/**").permitAll()
+                        .requestMatchers("/ws", "/ws/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/reviews/**").permitAll()
                         .requestMatchers("/api/chat/**").permitAll()
                         .requestMatchers("/api/posts/page/**").permitAll()
