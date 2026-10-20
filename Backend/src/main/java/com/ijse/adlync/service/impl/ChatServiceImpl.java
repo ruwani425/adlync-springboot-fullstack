@@ -43,19 +43,21 @@ public class ChatServiceImpl implements ChatService {
         try {
             System.out.println("ChatService: Creating/getting chat for request: " + requestDTO);
             
-            Optional<ChatEntity> existingChat = chatRepository.findChatBetweenUsers(
+            List<ChatEntity> existingChats = chatRepository.findChatsBetweenUsers(
                 requestDTO.getPostId(), 
                 requestDTO.getClientUserId(), 
                 requestDTO.getOwnerUserId()
             );
 
             ChatEntity chat;
-            if (existingChat.isPresent()) {
+            boolean isNewChat = false;
+            if (!existingChats.isEmpty()) {
                 System.out.println("ChatService: Found existing chat");
-                chat = existingChat.get();
+                chat = existingChats.get(0);
             } else {
                 System.out.println("ChatService: Creating new chat");
                 chat = new ChatEntity();
+                isNewChat = true;
                 
                 System.out.println("ChatService: Finding client user with ID: " + requestDTO.getClientUserId());
                 UserEntity clientUser = userRepository.findById(requestDTO.getClientUserId())
@@ -80,8 +82,9 @@ public class ChatServiceImpl implements ChatService {
                 System.out.println("ChatService: Chat saved with ID: " + chat.getChat_id());
             }
 
-            if (requestDTO.getFirstMessage() != null && !requestDTO.getFirstMessage().trim().isEmpty()) {
-                System.out.println("ChatService: Sending first message");
+            // ONLY send first message if this is a newly created chat
+            if (isNewChat && requestDTO.getFirstMessage() != null && !requestDTO.getFirstMessage().trim().isEmpty()) {
+                System.out.println("ChatService: Sending first message for new chat");
                 MessageRequestDTO messageRequest = new MessageRequestDTO();
                 messageRequest.setChatId(chat.getChat_id());
                 messageRequest.setSenderUserId(requestDTO.getClientUserId());
@@ -119,7 +122,20 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public List<ChatResponseDTO> getChatsByPostId(Long postId) {
-        return chatRepository.findChatsByPostId(postId).stream()
+        List<ChatEntity> chats = chatRepository.findChatsByPostId(postId);
+
+        // Deduplicate chats by client user ID so only the latest active chat thread per client is returned
+        java.util.Map<Long, ChatEntity> uniqueChats = new java.util.LinkedHashMap<>();
+        for (ChatEntity chat : chats) {
+            if (chat.getClientUser() != null) {
+                Long clientId = chat.getClientUser().getId();
+                if (!uniqueChats.containsKey(clientId)) {
+                    uniqueChats.put(clientId, chat);
+                }
+            }
+        }
+
+        return uniqueChats.values().stream()
             .map(this::toChatResponseDTO)
             .collect(Collectors.toList());
     }
@@ -156,8 +172,11 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     public ChatResponseDTO findChatBetweenUsers(Long postId, Long userId1, Long userId2) {
-        Optional<ChatEntity> chat = chatRepository.findChatBetweenUsers(postId, userId1, userId2);
-        return chat.map(this::toChatResponseDTO).orElse(null);
+        List<ChatEntity> chats = chatRepository.findChatsBetweenUsers(postId, userId1, userId2);
+        if (!chats.isEmpty()) {
+            return toChatResponseDTO(chats.get(0));
+        }
+        return null;
     }
 
     private ChatResponseDTO toChatResponseDTO(ChatEntity entity) {

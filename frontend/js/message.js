@@ -422,7 +422,15 @@ class ChatManager {
             if (response.ok) {
                 const responseText = await response.text();
                 if (responseText) {
-                    this.ownerChats = JSON.parse(responseText);
+                    const rawChats = JSON.parse(responseText);
+                    // Deduplicate by clientUserId/clientUserName (keep latest)
+                    const seenClients = new Set();
+                    this.ownerChats = rawChats.filter(chat => {
+                        const key = chat.clientUserId || chat.clientUserName;
+                        if (!key || seenClients.has(key)) return false;
+                        seenClients.add(key);
+                        return true;
+                    });
                     this.displayChatList();
                 } else {
                     this.ownerChats = [];
@@ -445,9 +453,10 @@ class ChatManager {
         const noChatMessage = $('#noChatMessage');
         const chatCount = $('#chatCount');
 
-        if (this.ownerChats.length === 0) {
+        if (!this.ownerChats || this.ownerChats.length === 0) {
             noChatMessage.show();
             chatCount.text('0');
+            chatList.empty();
             return;
         }
 
